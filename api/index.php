@@ -54,6 +54,20 @@
     background:#241a1c; /* fallback while bg images load */
     transition:background 0.6s ease;
   }
+  .stage.room-transitioning::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(36,26,28,0.7);
+    z-index:10;
+    pointer-events:none;
+    animation:roomFade 0.5s ease-in-out;
+  }
+  @keyframes roomFade{
+    0%{opacity:0;}
+    50%{opacity:1;}
+    100%{opacity:0;}
+  }
   .stage.room-living{--accent:var(--sage);--accent-deep:var(--sage-deep);}
   .stage.room-kitchen{--accent:var(--gold);--accent-deep:var(--gold-deep);}
   .stage.room-bedroom{--accent:var(--dusk);--accent-deep:var(--dusk-deep);}
@@ -74,10 +88,6 @@
     0%{transform:translate(0,0) scale(1);}
     100%{transform:translate(14px,-18px) scale(1.08);}
   }
-  /* Warm candlelit vignette + soft paper grain laid over the whole
-     room. Sits above the background art (z-index 0/1) and below the
-     cat (.cat-stage is z-index 5, untouched), purely decorative and
-     non-interactive, so it never affects cat placement. */
   .stage-ambience{
     position:absolute;
     inset:0;
@@ -119,17 +129,6 @@
     92%{opacity:0.6;}
     100%{transform:translate(calc(var(--drift,18px) * 1.6),-108vh) scale(0.8);opacity:0;}
   }
-  /* Fullscreen background, in two layers so the ENTIRE artwork is
-     always visible (nothing cropped off) while still filling the
-     screen edge-to-edge with no dead space:
-       1) .room-bg-blur — a zoomed, blurred copy of the same image,
-          set to `cover` so it fills every corner of the stage.
-       2) .room-bg-main — the same image at `contain`, so the whole
-          picture is shown at full size, letterboxed on top of the
-          blurred fill rather than cropped.
-     JS reads .room-bg-main's true rendered box (from its natural
-     width/height vs the stage size) to anchor the cat precisely on
-     the rug / counter / bed no matter the window's aspect ratio. */
   .room-bg-layer{
     position:absolute;
     inset:0;
@@ -324,7 +323,6 @@
   .room-door.next{right:16px;}
   .room-door:hover{transform:translateY(-56%) scale(1.07);}
   .room-door:active{transform:translateY(-52%) scale(0.93);}
-  /* rotating neon ring */
   .door-ring{
     position:absolute;
     inset:-6px;
@@ -338,7 +336,6 @@
   }
   @keyframes doorSpin{ to{ transform:rotate(360deg); } }
   .room-door:hover .door-ring{opacity:0.85;filter:blur(9px);}
-  /* glass core with the destination icon */
   .door-core{
     position:relative;
     width:100%;height:100%;
@@ -359,7 +356,6 @@
   .door-face-icon{display:flex;align-items:center;justify-content:center;}
   .door-face-icon svg{width:26px;height:26px;stroke:#fff;fill:none;filter:drop-shadow(0 1px 0 rgba(0,0,0,0.14));}
   .door-face-icon svg.filled{fill:#fff;stroke:none;}
-  /* directional chevron badge */
   .door-chevron{
     position:absolute;
     bottom:-2px;
@@ -372,7 +368,6 @@
   .door-chevron svg{width:13px;height:13px;stroke:#fff;stroke-width:3;}
   .door-chevron-prev{left:-6px;}
   .door-chevron-next{right:-6px;}
-  /* floating HUD label tag */
   .door-tag{
     position:absolute;
     top:-42px;left:50%;
@@ -401,7 +396,6 @@
     border-top:5px solid rgba(64,44,34,0.92);
   }
   .room-door:hover .door-tag{opacity:1;transform:translate(-50%,0);}
-  /* level-select rail: quick jump between rooms, game world-map style */
   .room-rail{
     position:absolute;
     left:50%;bottom:18px;
@@ -434,15 +428,6 @@
   }
   @keyframes railPop{0%{transform:scale(0.6);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
   /* ---------- Cat ---------- */
-  /* Position is NOT set here as fixed percentages — that broke down
-     whenever the crop or window aspect ratio changed. Instead JS
-     (positionCat() below) measures the actual rendered box of
-     .room-bg-main and places this element's left/top/transform in
-     pixels, anchored to a fixed point *within the artwork itself*
-     (see ROOM_ANCHOR in the script). That keeps the cat glued to
-     the rug / counter / bed on any screen size. left/top/transform
-     transition smoothly when the anchor is recalculated (room
-     switch, resize). */
   .cat-stage{
     position:absolute;
     left:50%;
@@ -451,7 +436,10 @@
     transform-origin:bottom center;
     width:170px;height:210px;
     z-index:5;
-    transition:left 0.45s ease, top 0.45s ease, transform 0.45s ease;
+    transition:left 0.45s cubic-bezier(.25,.46,.45,.94), top 0.45s cubic-bezier(.25,.46,.45,.94), transform 0.45s cubic-bezier(.25,.46,.45,.94);
+  }
+  .cat-stage.moving {
+    transition:left 0.6s cubic-bezier(.34,.82,.47,1.42), top 0.6s cubic-bezier(.34,.82,.47,1.42), transform 0.6s cubic-bezier(.34,.82,.47,1.42);
   }
   .mood-halo{
     position:absolute;
@@ -478,10 +466,10 @@
     width:430px;height:368px;
     cursor:pointer;
     z-index:2;
-    /* Subtle idle sway only — a tiny rotation, no vertical bounce and
-       no scale/float, so the cat reads as sitting still and breathing
-       rather than hopping or hovering. */
     animation:catIdle 5.2s cubic-bezier(.45,.05,.55,.95) infinite;
+  }
+  .cat-wrap.moving {
+    animation:none;
   }
   @keyframes catIdle{
     0%{ transform:translateX(-50%) rotate(0deg) scale(1, 1); }
@@ -491,6 +479,20 @@
     82%{ transform:translateX(-50%) rotate(-0.3deg) scale(1, 1.004); }
     100%{ transform:translateX(-50%) rotate(0deg) scale(1, 1); }
   }
+  @keyframes catWalk{
+    0%{ transform:translateX(-50%) translateY(0) scale(1); }
+    25%{ transform:translateX(-50%) translateY(-8px) scale(0.98, 1.02); }
+    50%{ transform:translateX(-50%) translateY(0) scale(1); }
+    75%{ transform:translateX(-50%) translateY(-8px) scale(0.98, 1.02); }
+    100%{ transform:translateX(-50%) translateY(0) scale(1); }
+  }
+  @keyframes catJump{
+    0%{ transform:translateX(-50%) translateY(0) scale(1, 1); }
+    40%{ transform:translateX(-50%) translateY(-40px) scale(0.95, 1.05); }
+    100%{ transform:translateX(-50%) translateY(0) scale(1, 1); }
+  }
+  .cat-wrap.playing { animation:catJump 0.8s cubic-bezier(.34,1.56,.64,1); }
+  .cat-wrap.bouncing { animation:catJump 0.6s cubic-bezier(.34,1.56,.64,1); }
   @keyframes shadowIdle{
     0%,100%{ opacity:0.85; transform:translateX(-50%) scale(1); }
     38%{ opacity:0.8; transform:translateX(-50%) scale(0.985,1); }
@@ -508,6 +510,8 @@
     z-index:0;
     animation:shadowIdle 5.2s cubic-bezier(.45,.05,.55,.95) infinite;
   }
+  .cat-wrap.playing .cat-shadow, 
+  .cat-wrap.bouncing .cat-shadow { animation:none; opacity:0.6; }
   .cat-pose-img{
     position:absolute;
     inset:0;
@@ -529,10 +533,8 @@
   .cat-pet-frame.active{display:block;}
   .cat-play-frame{display:none;}
   .cat-play-frame.active{display:block;}
-  /* hungry idle pose - shown only when idle (not sleeping/petting/eating/playing) */
   .cat-wrap.hungry:not(.mood-sleepy):not(.petting):not(.eating):not(.playing) .cat-img{display:none;}
   .cat-wrap.hungry:not(.mood-sleepy):not(.petting):not(.eating):not(.playing) .cat-img-hungry{display:block;}
-  /* transient activity overlays always win over base/hungry/sleep pose */
   .cat-wrap.petting .cat-img,
   .cat-wrap.petting .cat-img-sleep,
   .cat-wrap.petting .cat-img-hungry{display:none;}
@@ -554,7 +556,6 @@
   .cat-wrap.mood-sleepy .cat-img{display:none;}
   .cat-wrap.mood-sleepy .cat-img-sleep{display:block;}
   .cat-wrap.mood-sleepy .cat-shadow{width:300px;animation:none;opacity:0.9;}
-  /* speech bubble */
   .bubble{
     position:absolute;
     top:6px;left:50%;
@@ -581,7 +582,6 @@
     border-right:8px solid transparent;
     border-top:8px solid #fff;
   }
-  /* particles */
   .particles{position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:7;}
   .particle{
     position:absolute;
@@ -657,7 +657,6 @@
   }
   .action-btn .icon svg.filled{fill:#fff;stroke:none;}
   .action-btn:hover .icon svg{transform:scale(1.1);}
-  /* Tooltip */
   .action-btn::after{
     content:attr(data-label);
     position:absolute;
@@ -760,8 +759,6 @@
     0%,100%{transform:scale(1);}
     50%{transform:scale(1.22);}
   }
-  /* invisible click-catcher so clicking outside the widget closes it,
-     without dimming the rest of the site like a modal/sidebar would */
   .chat-scrim{
     position:fixed;inset:0;
     background:transparent;
@@ -805,7 +802,6 @@
     overflow:hidden;
   }
   .chat-head::before{
-    /* soft string-lights trim along the very top edge */
     content:"";
     position:absolute;
     top:0;left:0;right:0;height:4px;
@@ -1039,12 +1035,6 @@
     .door-chevron{width:18px;height:18px;}
     .door-chevron svg{width:9px;height:9px;}
     .door-tag{display:none;}
-    /* Cat sizing/position is fully handled by positionCat() via the
-       .cat-stage transform scale — no fixed-pixel overrides here,
-       so mobile scales correctly instead of double-scaling. */
-    /* Bottom row is split into three independent zones so nothing
-       overlaps on narrow screens: action dock bottom-left, room
-       dots bottom-center, chat FAB bottom-right. */
     .dock{
       left:calc(12px + env(safe-area-inset-left));
       right:auto;
@@ -1067,10 +1057,6 @@
     }
     .rail-dot{width:7px;height:7px;}
     .rail-dot.active{width:16px;}
-    /* Chat FAB: shrink to a thumb-friendly size that doesn't compete
-       with the dock/room-rail for space, and pin its bottom offset
-       to a CSS var so the widget below can line up against it
-       exactly instead of guessing a fixed gap. */
     .chat-fab{
       --fab-bottom: calc(14px + env(safe-area-inset-bottom));
       bottom:var(--fab-bottom);
@@ -1079,13 +1065,6 @@
       height:69px;
     }
     .fab-badge{width:12px;height:12px;top:2px;right:8px;}
-    /* Chat widget: anchored to the FAB's own bottom offset + its
-       height + a small gap, so it always sits just above the FAB
-       with no dead space and no overlap, regardless of safe-area
-       insets on the device. Height is capped against the *visual*
-       viewport (100dvh) minus the topbar and the FAB row, so it
-       never runs off-screen top or bottom, and a min-height keeps
-       it usable on short landscape screens instead of collapsing. */
     .chat-widget{
       right:calc(8px + env(safe-area-inset-right));
       left:calc(8px + env(safe-area-inset-left));
@@ -1116,9 +1095,6 @@
     .chat-input-row button:hover{box-shadow:0 3px 0 var(--coral-deep);}
     .chat-input-row button:active{box-shadow:0 0 0 var(--coral-deep);}
   }
-  /* Short / landscape phones: the 60dvh chat height above can be too
-     tall when the viewport itself is short, squeezing the log down
-     to almost nothing. Cap by height rather than width here. */
   @media (max-width:720px) and (max-height:480px){
     .chat-widget{
       height:min(80dvh, 320px);
@@ -1240,7 +1216,7 @@
 </div>
 <script>
 (function(){
-  /* ---------------- State ---------------- */
+  /* ---- Enhanced State & Constants ---- */
   const HUNGER_THRESHOLD = 30;
   const rooms = ['living','kitchen','bedroom'];
   const roomLabels = {living:'Living Room', kitchen:'Kitchen', bedroom:'Bedroom'};
@@ -1257,30 +1233,17 @@
     kitchen: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M9.5 10V6.5a2.5 2.5 0 0 1 5 0V10"/></svg>',
     bedroom: '<svg viewBox="0 0 24 24" class="filled"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg>',
   };
-  // The full background artwork for each room. Fills the stage at
-  // 100% via object-fit:cover (see .room-bg CSS above), with
-  // per-room object-position keeping the couch/counter/bed in frame.
   const ROOM_BG = {
     living: '/Assets/LivingRoom.jfif',
     kitchen: '/Assets/Kitchen.jfif',
     bedroom: '/Assets/Bedroom.jfif',
   };
-  // Where the cat sits, as a percentage *of the artwork itself*
-  // (x/y from the image's top-left corner) — not of the screen.
-  // Because the background is shown at object-fit:contain (the
-  // whole image, uncropped), these percentages always line up with
-  // the same spot in the picture: the pet bed on the rug, the
-  // counter by the spice rack, the quilt at the foot of the bed.
-  // widthFrac is how wide the cat sprite should be as a fraction of
-  // the rendered image width — this makes the cat's on-screen size
-  // scale naturally with the artwork instead of staying a fixed
-  // pixel size that looks wrong at other window sizes.
   const ROOM_ANCHOR = {
     living:  { x: 60, y: 87, widthFrac: 0.135 },
     kitchen: { x: 36, y: 55, widthFrac: 0.135 },
     bedroom: { x: 53, y: 63, widthFrac: 0.14 },
   };
-  const CAT_BASE_WIDTH = 170; // matches .cat-stage width in CSS
+  const CAT_BASE_WIDTH = 170;
   const els = {
     stage: document.getElementById('stage'),
     roomBgBlur: document.getElementById('roomBgBlur'),
@@ -1341,13 +1304,17 @@
       {icon:ICON.nap, label: 'Nap', run: toggleSleep, fill:'--dusk', deep:'--dusk-deep'},
     ]
   };
-  /* ---------------- Rendering ---------------- */
+  /* ---- Room Rendering with Transition ---- */
   function renderRoom(){
     const room = rooms[roomIndex];
     cancelPetAnimation();
     cancelEatAnimation();
     cancelPlayAnimation();
-    els.stage.className = 'stage room-' + room;
+    
+    // Trigger transition animation
+    els.stage.classList.add('room-transitioning');
+    setTimeout(()=> els.stage.classList.remove('room-transitioning'), 500);
+    
     els.roomBgBlur.src = ROOM_BG[room];
     els.roomBgMain.src = ROOM_BG[room];
     els.roomName.textContent = roomLabels[room];
@@ -1361,16 +1328,10 @@
     renderRail();
     positionCat();
   }
-  /* ---------------- Cat anchoring ----------------
-     Measures the actual rendered box of the (object-fit:contain)
-     background image within the stage, then converts the room's
-     image-relative anchor point (ROOM_ANCHOR) into real pixels so
-     the cat sits exactly on the rug/counter/bed no matter the
-     window size or aspect ratio. Re-run on room change, image load,
-     and window resize. */
+  /* ---- Cat positioning with smooth transitions ---- */
   function positionCat(){
     const img = els.roomBgMain;
-    if (!img.naturalWidth || !img.naturalHeight) return; // wait for load
+    if (!img.naturalWidth || !img.naturalHeight) return;
     const anchor = ROOM_ANCHOR[rooms[roomIndex]];
     const containerW = els.stage.clientWidth;
     const containerH = els.stage.clientHeight;
@@ -1401,9 +1362,7 @@
     resizeRAF = requestAnimationFrame(positionCat);
   });
   els.roomBgMain.addEventListener('load', positionCat);
-  /* ---------------- Ambient dust motes ----------------
-     Purely decorative floating light specks for a cozy, relaxing
-     feel. Independent of the cat/room-anchoring system above. */
+  /* ---- Ambient motes ---- */
   const motesEl = document.getElementById('motes');
   function spawnMote(){
     if (!motesEl) return;
@@ -1476,16 +1435,16 @@
     renderStats();
     renderMood();
   }
-  /* ---------------- Bubble (over the cat) ---------------- */
+  /* ---- Bubble ---- */
   let bubbleTimer = null;
-  let chatHistory = []; // [{role:'user'|'assistant', content:'...'}] — sent to cat-chat.php for context
+  let chatHistory = [];
   function say(text){
     els.bubble.textContent = text;
     els.bubble.classList.add('show');
     clearTimeout(bubbleTimer);
     bubbleTimer = setTimeout(()=> els.bubble.classList.remove('show'), 2600);
   }
-  /* ---------------- Particles ---------------- */
+  /* ---- Particles ---- */
   function spawnParticle(emoji){
     const span = document.createElement('span');
     span.className = 'particle';
@@ -1494,7 +1453,7 @@
     els.particles.appendChild(span);
     setTimeout(()=> span.remove(), 1400);
   }
-  /* ---------------- Actions ---------------- */
+  /* ---- Enhanced Actions with Movement ---- */
   function feedCat(){
     if (state.sleeping) { say("Zzz... too sleepy to eat."); return; }
     state.hunger = clamp(state.hunger + 25);
@@ -1523,7 +1482,6 @@
     state.happy = clamp(state.happy + 18);
     state.energy = clamp(state.energy - 12);
     renderAll();
-    bounceCat();
     playPlayAnimation();
     spawnParticle('✨');
     const line = pick(["Wheee!", "Again, again!", "This is fun!"]);
@@ -1540,6 +1498,7 @@
     playPetAnimation();
     logAction('💕 You petted Whiskers', line);
   }
+  /* ---- Animation handling with movement ---- */
   let petAnimTimer = null;
   function cancelPetAnimation(){
     clearTimeout(petAnimTimer);
@@ -1593,6 +1552,10 @@
     cancelPetAnimation();
     cancelEatAnimation();
     els.catWrap.classList.add('playing');
+    
+    // Add movement during play
+    els.catStage.classList.add('moving');
+    
     const sequence = [0, 1, 0, 1];
     let step = 0;
     function showStep(){
@@ -1602,6 +1565,7 @@
         playAnimTimer = setTimeout(()=>{ step++; showStep(); }, 320);
       } else {
         els.catWrap.classList.remove('playing');
+        els.catStage.classList.remove('moving');
       }
     }
     showStep();
@@ -1622,13 +1586,8 @@
     }
     renderMood();
   }
-  function bounceCat(){
-    els.catWrap.style.animation = 'none';
-    void els.catWrap.offsetWidth;
-    els.catWrap.style.animation = '';
-  }
   function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-  /* ---------------- Stat decay loop ---------------- */
+  /* ---- Stat decay loop ---- */
   setInterval(()=>{
     if (state.sleeping){
       state.energy = clamp(state.energy + 6);
@@ -1644,7 +1603,7 @@
     }
     renderAll();
   }, 4000);
-  /* ---------------- Room navigation ---------------- */
+  /* ---- Room navigation ---- */
   document.getElementById('prevRoom').addEventListener('click', ()=>{
     roomIndex = (roomIndex - 1 + rooms.length) % rooms.length;
     renderRoom();
@@ -1654,7 +1613,7 @@
     renderRoom();
   });
   els.catWrap.addEventListener('click', petCat);
-  /* ---------------- Chat widget ---------------- */
+  /* ---- Chat widget ---- */
   function openChat(){
     els.chatPanel.classList.add('open');
     els.chatScrim.classList.add('open');
@@ -1698,8 +1657,6 @@
     els.chatLog.scrollTop = els.chatLog.scrollHeight;
     return row;
   }
-  // Logs an in-game action (feed/play/pet/nap) into the chat as a small
-  // centered system bubble, followed by Whiskers' reaction as a cat bubble.
   function logAction(actionText, reactionText){
     addMessage(actionText, 'system');
     if (reactionText) addMessage(reactionText, 'cat');
@@ -1707,15 +1664,6 @@
       els.fabBadge.style.display = 'block';
     }
   }
-  /*
-   * getCatReply(message)
-   * -------------------------------------------------------------
-   * Calls cat-chat.php, which proxies the message to Claude (see that
-   * file for the backend). Sends along the cat's live stats + room so
-   * replies react to the current game state, plus a short rolling
-   * history for conversational context. Falls back to canned local
-   * lines if the request fails, so chat never goes silent.
-   */
   async function getCatReply(message){
     if (state.sleeping) return pick(["Zzz... five more minutes...", "*rolls over, still asleep*"]);
     const payload = {
@@ -1771,7 +1719,7 @@
   els.chatInput.addEventListener('keydown', e=>{
     if (e.key === 'Enter') sendChat();
   });
-  /* ---------------- Init ---------------- */
+  /* ---- Init ---- */
   renderRoom();
   renderAll();
   positionCat();
