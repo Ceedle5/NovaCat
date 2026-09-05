@@ -7,13 +7,13 @@
 <link rel="icon" href="/Assets/MessageBubble.png" type="image/png">
 <link rel="apple-touch-icon" href="/Assets/MessageBubble.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#2f2a3d;
-    --ink-soft:#7a7086;
+    --ink:#3a2f2a;
+    --ink-soft:#8a7a6e;
     --paper:#fff8ef;
-    --paper-glass:rgba(255,248,239,0.66);
+    --paper-glass:rgba(255,248,236,0.6);
     --paper-glass-strong:rgba(255,248,239,0.92);
     --coral:#ff8c69;
     --coral-deep:#e2603f;
@@ -25,16 +25,18 @@
     --dusk-deep:#5b71ab;
     --blush:#ffb3c6;
     --blush-deep:#e4839c;
-    --shadow:rgba(30,22,46,0.28);
+    --shadow:rgba(66,42,24,0.24);
+    --glow-warm:rgba(255,189,89,0.35);
     --accent:var(--sage);
     --accent-deep:var(--sage-deep);
+    --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
   }
   *{box-sizing:border-box;}
   html,body{height:100%;margin:0;overflow:hidden;}
   body{
     font-family:'Nunito',sans-serif;
     color:var(--ink);
-    background:linear-gradient(160deg,#241a34,#3d2c53);
+    background:linear-gradient(160deg,#2a1e28,#4a2f30);
   }
   #app{
     position:relative;
@@ -49,7 +51,7 @@
     position:absolute;
     inset:0;
     overflow:hidden;
-    background:#1c1526; /* fallback while bg images load */
+    background:#241a1c; /* fallback while bg images load */
     transition:background 0.6s ease;
   }
   .stage.room-living{--accent:var(--sage);--accent-deep:var(--sage-deep);}
@@ -59,8 +61,8 @@
     content:"";
     position:absolute;
     border-radius:50%;
-    filter:blur(70px);
-    opacity:0.4;
+    filter:blur(85px);
+    opacity:0.3;
     background:var(--accent);
     pointer-events:none;
     z-index:1;
@@ -71,6 +73,51 @@
   @keyframes driftGlow{
     0%{transform:translate(0,0) scale(1);}
     100%{transform:translate(14px,-18px) scale(1.08);}
+  }
+  /* Warm candlelit vignette + soft paper grain laid over the whole
+     room. Sits above the background art (z-index 0/1) and below the
+     cat (.cat-stage is z-index 5, untouched), purely decorative and
+     non-interactive, so it never affects cat placement. */
+  .stage-ambience{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+  }
+  .stage-ambience::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse 120% 90% at 50% 45%, transparent 45%, rgba(40,26,20,0.28) 100%),
+      linear-gradient(180deg, rgba(255,214,160,0.10), transparent 30%, transparent 70%, rgba(30,18,14,0.22));
+  }
+  .stage-ambience::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:var(--grain);
+    background-size:120px 120px;
+    opacity:0.05;
+    mix-blend-mode:overlay;
+  }
+  .motes{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;}
+  .mote{
+    position:absolute;
+    bottom:-6%;
+    width:5px;height:5px;
+    border-radius:50%;
+    background:radial-gradient(circle, #fff6d8 0%, rgba(255,220,150,0.6) 55%, transparent 75%);
+    opacity:0;
+    filter:blur(0.2px);
+    animation:moteDrift linear infinite;
+  }
+  @keyframes moteDrift{
+    0%{transform:translate(0,0) scale(0.7);opacity:0;}
+    8%{opacity:0.85;}
+    50%{transform:translate(var(--drift,18px),-55vh) scale(1);}
+    92%{opacity:0.6;}
+    100%{transform:translate(calc(var(--drift,18px) * 1.6),-108vh) scale(0.8);opacity:0;}
   }
   /* Fullscreen background, in two layers so the ENTIRE artwork is
      always visible (nothing cropped off) while still filling the
@@ -123,10 +170,24 @@
   .topbar > *{pointer-events:auto;min-width:0;flex-shrink:1;}
   .title-pill,.stats-pill{overflow:hidden;}
   .glass{
+    position:relative;
     background:var(--paper-glass);
     backdrop-filter:blur(16px) saturate(1.3);
     -webkit-backdrop-filter:blur(16px) saturate(1.3);
-    box-shadow:0 10px 30px var(--shadow);
+    box-shadow:0 10px 26px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.55);
+    isolation:isolate;
+  }
+  .glass::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    background-image:var(--grain);
+    background-size:120px 120px;
+    opacity:0.035;
+    mix-blend-mode:multiply;
+    pointer-events:none;
+    z-index:-1;
   }
   .title-pill{
     display:flex;align-items:center;gap:9px;
@@ -207,14 +268,14 @@
     inset:-6px;
     border-radius:50%;
     background:conic-gradient(from 0deg, var(--accent), var(--gold), var(--coral), var(--accent));
-    filter:blur(5px);
-    opacity:0.5;
-    animation:doorSpin 6s linear infinite;
+    filter:blur(7px);
+    opacity:0.34;
+    animation:doorSpin 10s linear infinite;
     transition:opacity 0.25s ease, filter 0.25s ease;
     pointer-events:none;
   }
   @keyframes doorSpin{ to{ transform:rotate(360deg); } }
-  .room-door:hover .door-ring{opacity:1;filter:blur(8px);}
+  .room-door:hover .door-ring{opacity:0.85;filter:blur(9px);}
   /* glass core with the destination icon */
   .door-core{
     position:relative;
@@ -255,7 +316,7 @@
     top:-42px;left:50%;
     transform:translate(-50%,6px);
     padding:6px 14px 6px 18px;
-    background:rgba(47,42,61,0.92);
+    background:rgba(64,44,34,0.92);
     color:#fff;
     font-family:'Nunito',sans-serif;
     font-weight:800;
@@ -275,7 +336,7 @@
     width:0;height:0;
     border-left:5px solid transparent;
     border-right:5px solid transparent;
-    border-top:5px solid rgba(47,42,61,0.92);
+    border-top:5px solid rgba(64,44,34,0.92);
   }
   .room-door:hover .door-tag{opacity:1;transform:translate(-50%,0);}
   /* level-select rail: quick jump between rooms, game world-map style */
@@ -297,7 +358,7 @@
     padding:0;
     cursor:pointer;
     background:rgba(58,50,48,0.18);
-    box-shadow:inset 0 1px 2px rgba(30,22,46,0.15);
+    box-shadow:inset 0 1px 2px rgba(60,38,26,0.15);
     transition:width 0.25s cubic-bezier(.34,1.56,.64,1), border-radius 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
   .rail-dot:hover{background:rgba(58,50,48,0.32);}
@@ -378,7 +439,7 @@
     bottom:-4px;left:50%;
     transform:translateX(-50%);
     width:110px;height:16px;
-    background:rgba(30,22,46,0.2);
+    background:rgba(60,38,26,0.2);
     border-radius:50%;
     filter:blur(2px);
     opacity:0.9;
@@ -500,20 +561,20 @@
     justify-content:center;
     box-shadow:
       0 4px 0 var(--btn-deep),
-      0 8px 14px rgba(30,22,46,0.22);
+      0 8px 14px rgba(60,38,26,0.22);
     transition:transform 0.14s cubic-bezier(.34,1.56,.64,1), box-shadow 0.14s ease;
   }
   .action-btn:hover{
     transform:translateY(-3px) rotate(-4deg);
     box-shadow:
       0 7px 0 var(--btn-deep),
-      0 12px 18px rgba(30,22,46,0.26);
+      0 12px 18px rgba(60,38,26,0.26);
   }
   .action-btn:active{
     transform:translateY(3px) rotate(0deg);
     box-shadow:
       0 1px 0 var(--btn-deep),
-      0 3px 8px rgba(30,22,46,0.2);
+      0 3px 8px rgba(60,38,26,0.2);
   }
   .action-btn .icon{
     width:auto;
@@ -542,7 +603,7 @@
     left:50%;
     transform:translateX(-50%) translateY(4px);
     padding:5px 9px;
-    background:rgba(47,42,61,0.92);
+    background:rgba(64,44,34,0.92);
     color:#fff;
     border-radius:8px;
     font-family:'Nunito',sans-serif;
@@ -583,13 +644,29 @@
     transform:translateX(-50%);
     width:58%;
     height:13px;
-    background:radial-gradient(ellipse at center, rgba(30,22,46,0.3), transparent 72%);
+    background:radial-gradient(ellipse at center, rgba(60,38,26,0.3), transparent 72%);
     border-radius:50%;
     animation:fabShadowPulse 3.6s ease-in-out infinite;
   }
   @keyframes fabShadowPulse{
     0%,100%{transform:translateX(-50%) scale(1);opacity:0.6;}
     50%{transform:translateX(-50%) scale(0.82);opacity:0.38;}
+  }
+  .chat-fab::after{
+    content:"";
+    position:absolute;
+    left:50%;top:42%;
+    transform:translate(-50%,-50%);
+    width:70px;height:70px;
+    border-radius:50%;
+    background:radial-gradient(circle, var(--glow-warm), transparent 70%);
+    filter:blur(6px);
+    z-index:-1;
+    animation:fabGlow 3.6s ease-in-out infinite;
+  }
+  @keyframes fabGlow{
+    0%,100%{opacity:0.45;transform:translate(-50%,-50%) scale(0.92);}
+    50%{opacity:0.85;transform:translate(-50%,-50%) scale(1.08);}
   }
   .chat-fab img{
     width:100%;
@@ -598,6 +675,8 @@
     pointer-events:none;
     -webkit-user-drag:none;
     animation:fabFloat 3.6s ease-in-out infinite;
+    position:relative;
+    z-index:1;
   }
   @keyframes fabFloat{
     0%,100%{transform:translateY(0);}
@@ -612,7 +691,7 @@
     border-radius:50%;
     background:linear-gradient(160deg, var(--coral), var(--coral-deep));
     border:2px solid #fff;
-    box-shadow:0 2px 4px rgba(30,22,46,0.35);
+    box-shadow:0 2px 4px rgba(60,38,26,0.35);
     animation:badgePulse 1.3s ease-in-out infinite;
   }
   @keyframes badgePulse{
@@ -639,7 +718,7 @@
     background:var(--paper);
     border-radius:24px;
     border:3px solid #fff;
-    box-shadow:0 8px 0 rgba(30,22,46,0.14), 0 26px 50px var(--shadow);
+    box-shadow:0 8px 0 rgba(60,38,26,0.14), 0 26px 50px var(--shadow);
     display:flex;
     flex-direction:column;
     overflow:hidden;
@@ -657,16 +736,28 @@
   .chat-head{
     position:relative;
     display:flex;align-items:center;gap:12px;
-    padding:14px 16px;
-    background:linear-gradient(160deg, var(--coral), var(--coral-deep));
+    padding:16px 16px 14px;
+    background:linear-gradient(135deg, var(--gold) 0%, var(--coral) 55%, var(--coral-deep) 100%);
     color:#fff;
     flex:0 0 auto;
+    overflow:hidden;
+  }
+  .chat-head::before{
+    /* soft string-lights trim along the very top edge */
+    content:"";
+    position:absolute;
+    top:0;left:0;right:0;height:4px;
+    background:radial-gradient(circle, rgba(255,246,216,0.95) 1.6px, transparent 1.8px);
+    background-size:16px 4px;
+    background-position:2px 0;
+    opacity:0.85;
+    filter:drop-shadow(0 0 3px rgba(255,230,160,0.8));
   }
   .chat-head::after{
     content:"";
     position:absolute;
     left:14px;right:14px;bottom:0;
-    border-bottom:2px dashed rgba(255,255,255,0.45);
+    border-bottom:2px dotted rgba(255,255,255,0.5);
   }
   .chat-head-avatar{
     width:44px;height:44px;
@@ -676,10 +767,11 @@
   .chat-head-avatar img{width:100%;height:100%;object-fit:contain;}
   .chat-head-text{flex:1;min-width:0;}
   .chat-head-name{
-    font-family:'Fredoka',sans-serif;
-    font-weight:600;
-    font-size:1.02rem;
-    line-height:1.15;
+    font-family:'Caveat',cursive;
+    font-weight:700;
+    font-size:1.5rem;
+    line-height:1;
+    text-shadow:0 1px 0 rgba(0,0,0,0.08);
   }
   .chat-head-status{
     display:flex;align-items:center;gap:6px;
@@ -717,8 +809,9 @@
     flex-direction:column;
     gap:9px;
     background:
-      radial-gradient(circle at 18% 8%, rgba(255,189,89,0.10), transparent 40%),
-      radial-gradient(rgba(58,50,48,0.05) 1px, transparent 1.4px) 0 0/16px 16px,
+      radial-gradient(circle at 18% 8%, rgba(255,189,89,0.14), transparent 42%),
+      radial-gradient(circle at 88% 92%, rgba(143,203,157,0.08), transparent 40%),
+      radial-gradient(rgba(122,90,64,0.06) 1px, transparent 1.4px) 0 0/18px 18px,
       var(--paper);
   }
   .chat-row{display:flex;}
@@ -898,10 +991,10 @@
     }
     .action-btn{
       width:42px;height:42px;border-width:2px;
-      box-shadow:0 3px 0 var(--btn-deep), 0 6px 10px rgba(30,22,46,0.2);
+      box-shadow:0 3px 0 var(--btn-deep), 0 6px 10px rgba(60,38,26,0.2);
     }
-    .action-btn:hover{box-shadow:0 5px 0 var(--btn-deep), 0 9px 14px rgba(30,22,46,0.24);}
-    .action-btn:active{box-shadow:0 1px 0 var(--btn-deep), 0 2px 6px rgba(30,22,46,0.18);}
+    .action-btn:hover{box-shadow:0 5px 0 var(--btn-deep), 0 9px 14px rgba(60,38,26,0.24);}
+    .action-btn:active{box-shadow:0 1px 0 var(--btn-deep), 0 2px 6px rgba(60,38,26,0.18);}
     .action-btn .icon svg{width:18px;height:18px;}
     .action-btn::after{display:none;}
     .room-rail{
@@ -940,7 +1033,7 @@
       min-height:280px;
       border-radius:20px;
       border-width:2px;
-      box-shadow:0 5px 0 rgba(30,22,46,0.14), 0 18px 34px var(--shadow);
+      box-shadow:0 5px 0 rgba(60,38,26,0.14), 0 18px 34px var(--shadow);
     }
     .chat-head{padding:12px 14px;}
     .chat-head-avatar{width:38px;height:38px;}
@@ -997,6 +1090,8 @@
       <img class="room-bg-blur" id="roomBgBlur" src="/Assets/LivingRoom.jfif" alt="" aria-hidden="true">
       <img class="room-bg-main" id="roomBgMain" src="/Assets/LivingRoom.jfif" alt="">
     </div>
+    <div class="stage-ambience" aria-hidden="true"></div>
+    <div class="motes" id="motes" aria-hidden="true"></div>
     <button class="room-door prev" id="prevRoom" aria-label="Previous room">
       <span class="door-ring"></span>
       <span class="door-core"><span class="door-face-icon" id="prevIcon"></span></span>
@@ -1240,6 +1335,26 @@
     resizeRAF = requestAnimationFrame(positionCat);
   });
   els.roomBgMain.addEventListener('load', positionCat);
+  /* ---------------- Ambient dust motes ----------------
+     Purely decorative floating light specks for a cozy, relaxing
+     feel. Independent of the cat/room-anchoring system above. */
+  const motesEl = document.getElementById('motes');
+  function spawnMote(){
+    if (!motesEl) return;
+    const m = document.createElement('span');
+    m.className = 'mote';
+    const size = 3 + Math.random()*4;
+    m.style.width = size + 'px';
+    m.style.height = size + 'px';
+    m.style.left = (Math.random()*94 + 3) + '%';
+    m.style.setProperty('--drift', (Math.random()*60 - 30) + 'px');
+    const dur = 10 + Math.random()*9;
+    m.style.animationDuration = dur + 's';
+    motesEl.appendChild(m);
+    setTimeout(()=> m.remove(), dur*1000 + 200);
+  }
+  for (let i=0;i<7;i++){ setTimeout(spawnMote, i*900); }
+  setInterval(spawnMote, 1900);
   function renderRail(){
     els.roomRail.innerHTML = '';
     rooms.forEach((r, i)=>{
