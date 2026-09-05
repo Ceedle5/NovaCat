@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Shero's House</title>
+<title>Nova's House</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -622,15 +622,15 @@
       <div class="mood-halo"></div>
       <div class="cat-wrap mood-neutral" id="catWrap">
         <div class="cat-shadow"></div>
-        <img class="cat-pose-img cat-img" src="Assets/Character.png" alt="Whiskers the cat">
-        <img class="cat-pose-img cat-img-sleep" src="Assets/Sleeping.png" alt="Whiskers sleeping">
-        <img class="cat-pose-img cat-img-hungry" src="Assets/Hungry.png" alt="Whiskers is hungry">
-        <img class="cat-pose-img cat-img-eating" src="Assets/Eating.png" alt="Whiskers eating">
-        <img class="cat-pose-img cat-pet-frame" id="petFrame1" src="Assets/Pet.png" alt="Whiskers noticing pets">
-        <img class="cat-pose-img cat-pet-frame" id="petFrame2" src="Assets/pet1.png" alt="Whiskers enjoying pets">
-        <img class="cat-pose-img cat-pet-frame" id="petFrame3" src="Assets/Pet3.png" alt="Whiskers rolling over happily">
-        <img class="cat-pose-img cat-play-frame" id="playFrame1" src="Assets/Playing1.png" alt="Whiskers playing">
-        <img class="cat-pose-img cat-play-frame" id="playFrame2" src="Assets/Playing2.png" alt="Whiskers playing">
+        <img class="cat-pose-img cat-img" src="Assets/Character.png" alt="Nova the cat">
+        <img class="cat-pose-img cat-img-sleep" src="Assets/Sleeping.png" alt="Nova sleeping">
+        <img class="cat-pose-img cat-img-hungry" src="Assets/Hungry.png" alt="Nova is hungry">
+        <img class="cat-pose-img cat-img-eating" src="Assets/Eating.png" alt="Nova eating">
+        <img class="cat-pose-img cat-pet-frame" id="petFrame1" src="Assets/Pet.png" alt="Nova noticing pets">
+        <img class="cat-pose-img cat-pet-frame" id="petFrame2" src="Assets/pet1.png" alt="Nova enjoying pets">
+        <img class="cat-pose-img cat-pet-frame" id="petFrame3" src="Assets/Pet3.png" alt="Nova rolling over happily">
+        <img class="cat-pose-img cat-play-frame" id="playFrame1" src="Assets/Playing1.png" alt="Nova playing">
+        <img class="cat-pose-img cat-play-frame" id="playFrame2" src="Assets/Playing2.png" alt="Nova playing">
         <div class="bubble" id="bubble"></div>
       </div>
       <div class="particles" id="particles"></div>
@@ -638,7 +638,7 @@
   </div>
 
   <div class="topbar">
-    <div class="title-pill glass"><span class="paw"><svg viewBox="0 0 24 24"><circle cx="6.5" cy="7.5" r="2.1"/><circle cx="11.5" cy="5.3" r="2.1"/><circle cx="16.5" cy="7.5" r="2.1"/><circle cx="19.3" cy="12.2" r="1.9"/><path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z"/></svg></span> Shero's House</div>
+    <div class="title-pill glass"><span class="paw"><svg viewBox="0 0 24 24"><circle cx="6.5" cy="7.5" r="2.1"/><circle cx="11.5" cy="5.3" r="2.1"/><circle cx="16.5" cy="7.5" r="2.1"/><circle cx="19.3" cy="12.2" r="1.9"/><path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z"/></svg></span> Nova's House</div>
     <div class="room-pill glass" id="roomName">Living Room</div>
     <div class="stats-pill glass">
       <div class="stat stat-hunger">
@@ -661,7 +661,7 @@
 
   <div class="dock glass" id="dock"></div>
 
-  <button class="chat-fab" id="chatToggle" aria-label="Talk to Whiskers"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-1 4L21 20l-4.3-1a8.4 8.4 0 0 1-3.7.9 8.5 8.5 0 1 1 8-8.4Z"/></svg></button>
+  <button class="chat-fab" id="chatToggle" aria-label="Talk to Nova"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-1 4L21 20l-4.3-1a8.4 8.4 0 0 1-3.7.9 8.5 8.5 0 1 1 8-8.4Z"/></svg></button>
 
   <div class="note">Stats reset on reload &middot; native replies for now, AI hookup coming later</div>
 
@@ -670,12 +670,12 @@
 <div class="drawer-backdrop" id="drawerBackdrop"></div>
 <div class="chat-drawer" id="chatPanel">
   <div class="chat-head">
-    <span>Talk to Whiskers</span>
+    <span>Talk to Nova</span>
     <button class="chat-close" id="chatClose" aria-label="Close chat"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
   </div>
   <div class="chat-log" id="chatLog"></div>
   <div class="chat-input-row">
-    <input type="text" id="chatInput" placeholder="Say something to Whiskers&hellip;" maxlength="120">
+    <input type="text" id="chatInput" placeholder="Say something to Nova&hellip;" maxlength="120">
     <button id="chatSend" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M3 11l17-8-8 17-2-7-7-2Z"/></svg></button>
   </div>
 </div>
@@ -693,7 +693,7 @@
     happy: 80,
     energy: 80,
     sleeping: false,
-    name: 'Whiskers'
+    name: 'Nova'
   };
 
   const els = {

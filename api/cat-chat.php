@@ -140,7 +140,7 @@ if (mb_strlen($message) > 500) {
 // ===============================================================
 
 $name = (string)(
-    $state['name'] ?? 'Shero'
+    $state['name'] ?? 'Nova'
 );
 
 $room = (string)(
