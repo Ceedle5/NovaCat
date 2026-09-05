@@ -89,6 +89,16 @@
     z-index:0;
     pointer-events:none;
   }
+  /* Kitchen art has its counter/table well above the floor line —
+     shift the crop up so the counter is actually visible in frame
+     instead of getting cut off above the viewport. */
+  .stage.room-kitchen .room-bg{
+    object-position:center 22%;
+  }
+  /* Bedroom art has the bed sitting higher in frame too. */
+  .stage.room-bedroom .room-bg{
+    object-position:center 30%;
+  }
 
   /* ---------- Topbar (floating glass) ---------- */
   .topbar{
@@ -300,30 +310,43 @@
   }
 
   /* ---------- Cat ---------- */
-  /* Anchored to sit inside the pet bed drawn in LivingRoom.jfif.
-     Adjust --bed-x / --bed-y below to match your artwork's bed position:
-     --bed-x is a % across the stage width, --bed-y is px up from the bottom. */
+  /* Anchored per-room so the cat sits on the right surface (pet bed,
+     counter, bed covers) in each background. Both values are %
+     so the anchor scales correctly on any screen size:
+     --bed-x = % across the stage width, --bed-y = % up from the bottom. */
   .cat-stage{
     --bed-x:57%;
-    --bed-y:120px;
+    --bed-y:30%;
+    --cat-scale:1;
     position:absolute;
     bottom:var(--bed-y);
     left:var(--bed-x);
-    transform:translateX(-50%);
+    transform:translateX(-50%) scale(var(--cat-scale));
+    transform-origin:bottom center;
     width:170px;height:210px;
     z-index:5;
   }
 
-  /* Kitchen: cat sits up on the counter/table instead of the floor. */
-  .stage.room-kitchen .cat-stage{
-    --bed-x:64%;
-    --bed-y:270px;
+  /* Living room: sit inside the pet bed's cushion (not beside it). */
+  .stage.room-living .cat-stage{
+    --bed-x:66%;
+    --bed-y:32%;
   }
 
-  /* Bedroom: cat sits on top of the bed covers instead of beside it. */
+  /* Kitchen: cat sits up on the counter/table instead of the floor.
+     The room-bg object-position below is also shifted upward so the
+     counter is actually visible in frame before the cat lands on it. */
+  .stage.room-kitchen .cat-stage{
+    --bed-x:53%;
+    --bed-y:55%;
+    --cat-scale:0.85;
+  }
+
+  /* Bedroom: cat sits on top of the bed covers instead of on the floor. */
   .stage.room-bedroom .cat-stage{
-    --bed-x:60%;
-    --bed-y:230px;
+    --bed-x:55%;
+    --bed-y:58%;
+    --cat-scale:0.9;
   }
   .mood-halo{
     position:absolute;
@@ -830,18 +853,15 @@
     .rail-dot.active{width:16px;}
 
     .cat-stage{
-      --bed-x:57%;
-      --bed-y:90px;
+      --bed-y:26%;
       width:130px;
       height:160px;
     }
     .stage.room-kitchen .cat-stage{
-      --bed-x:64%;
-      --bed-y:200px;
+      --bed-y:50%;
     }
     .stage.room-bedroom .cat-stage{
-      --bed-x:60%;
-      --bed-y:170px;
+      --bed-y:52%;
     }
     .mood-halo{width:120px;height:120px;}
     .cat-wrap{width:175px;height:203px;}
