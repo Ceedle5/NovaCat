@@ -475,7 +475,7 @@
     bottom:0;left:80%;
     transform:translateX(-50%);
     transform-origin:bottom center;
-    width:230px;height:368px;
+    width:430px;height:368px;
     cursor:pointer;
     z-index:2;
     /* Subtle idle sway only — a tiny rotation, no vertical bounce and

@@ -490,7 +490,7 @@ $systemPrompt =
 
     . "If someone asks about Diopet and Anghela's history, tell the story "
     . "naturally and in chronological order: they were classmates in "
-    . "Grade 8 at Nagpayong Elementary School, Diopet saw Anghela again "
+    . "Grade 8 at Nagpayong High School, Diopet saw Anghela again "
     . "during senior high school, they started talking again, they played "
     . "Valorant together, they eventually graduated from college, and "
     . "Diopet continued loving Anghela after college. "
