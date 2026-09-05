@@ -352,15 +352,20 @@
     /* Subtle idle sway only — a tiny rotation, no vertical bounce and
        no scale/float, so the cat reads as sitting still and breathing
        rather than hopping or hovering. */
-    animation:catIdle 4.6s ease-in-out infinite;
+    animation:catIdle 5.2s cubic-bezier(.45,.05,.55,.95) infinite;
   }
   @keyframes catIdle{
-    0%,100%{ transform:translateX(-50%) rotate(0deg); }
-    50%{ transform:translateX(-50%) rotate(0.9deg); }
+    0%{ transform:translateX(-50%) rotate(0deg) scale(1, 1); }
+    18%{ transform:translateX(-50%) rotate(-0.7deg) scale(1.006, 0.994); }
+    38%{ transform:translateX(-50%) rotate(0.3deg) scale(0.997, 1.01); }
+    60%{ transform:translateX(-50%) rotate(1deg) scale(1.01, 0.995); }
+    82%{ transform:translateX(-50%) rotate(-0.3deg) scale(1, 1.004); }
+    100%{ transform:translateX(-50%) rotate(0deg) scale(1, 1); }
   }
   @keyframes shadowIdle{
-    0%,100%{ opacity:0.85; }
-    50%{ opacity:0.95; }
+    0%,100%{ opacity:0.85; transform:translateX(-50%) scale(1); }
+    38%{ opacity:0.8; transform:translateX(-50%) scale(0.985,1); }
+    60%{ opacity:0.95; transform:translateX(-50%) scale(1.01,1); }
   }
   .cat-shadow{
     position:absolute;
@@ -372,7 +377,7 @@
     filter:blur(2px);
     opacity:0.9;
     z-index:0;
-    animation:shadowIdle 4.6s ease-in-out infinite;
+    animation:shadowIdle 5.2s cubic-bezier(.45,.05,.55,.95) infinite;
   }
   .cat-pose-img{
     position:absolute;
@@ -975,7 +980,7 @@
   // pixel size that looks wrong at other window sizes.
   const ROOM_ANCHOR = {
     living:  { x: 60, y: 87, widthFrac: 0.135 },
-    kitchen: { x: 51, y: 46, widthFrac: 0.135 },
+    kitchen: { x: 47, y: 64, widthFrac: 0.135 },
     bedroom: { x: 53, y: 63, widthFrac: 0.14 },
   };
   const CAT_BASE_WIDTH = 170; // matches .cat-stage width in CSS
