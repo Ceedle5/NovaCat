@@ -333,20 +333,19 @@
     --bed-y:32%;
   }
 
-  /* Kitchen: cat sits up on the counter/table instead of the floor.
-     The room-bg object-position below is also shifted upward so the
-     counter is actually visible in frame before the cat lands on it. */
+  /* Kitchen: cat sits on the wooden counter next to the coffee maker,
+     not up by the wall shelf. */
   .stage.room-kitchen .cat-stage{
-    --bed-x:53%;
-    --bed-y:55%;
-    --cat-scale:0.85;
+    --bed-x:58%;
+    --bed-y:27%;
+    --cat-scale:0.8;
   }
 
-  /* Bedroom: cat sits on top of the bed covers instead of on the floor. */
+  /* Bedroom: cat sits on the bed covers/pillows, not up by the wall shelf. */
   .stage.room-bedroom .cat-stage{
-    --bed-x:55%;
-    --bed-y:58%;
-    --cat-scale:0.9;
+    --bed-x:66%;
+    --bed-y:24%;
+    --cat-scale:0.82;
   }
   .mood-halo{
     position:absolute;
@@ -858,10 +857,10 @@
       height:160px;
     }
     .stage.room-kitchen .cat-stage{
-      --bed-y:50%;
+      --bed-y:24%;
     }
     .stage.room-bedroom .cat-stage{
-      --bed-y:52%;
+      --bed-y:22%;
     }
     .mood-halo{width:120px;height:120px;}
     .cat-wrap{width:175px;height:203px;}
