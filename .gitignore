@@ -1,0 +1,10 @@
+# Environment variables
+.env
+.env.local
+
+# Composer
+vendor/
+composer.lock
+
+# Old config
+api/cat-chat-config.php
