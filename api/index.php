@@ -57,7 +57,15 @@
     background:linear-gradient(180deg,var(--room-top) 0%,var(--room-top) 62%,var(--room-floor) 62%);
     transition:background 0.6s ease;
   }
-  .stage.room-living{--room-top:#dcecd8;--room-floor:#a9d491;--accent:var(--sage);--accent-deep:var(--sage-deep);}
+  /* .stage.room-living{--room-top:#dcecd8;--room-floor:#a9d491;--accent:var(--sage);--accent-deep:var(--sage-deep);} */
+.stage.room-living{
+  background-image:url('/Assets/LivingRoom.jfif');
+  background-size:cover;
+  background-position:center bottom;
+  background-repeat:no-repeat;
+  --accent:var(--sage);
+  --accent-deep:var(--sage-deep);
+}
   .stage.room-kitchen{--room-top:#fbe7bd;--room-floor:#eec073;--accent:var(--gold);--accent-deep:var(--gold-deep);}
   .stage.room-bedroom{--room-top:#d6e0f2;--room-floor:#a9bce3;--accent:var(--dusk);--accent-deep:var(--dusk-deep);}
 
@@ -340,11 +348,19 @@
   /* ---------- Cat ---------- */
   .cat-stage{
     position:absolute;
-    bottom:130px;left:50%;
+    /* bottom:130px;left:50%; */
+ bottom:70px;              /* was 130px — lower onto the rug */
+  left:52%; 
+
     transform:translateX(-50%);
     width:320px;height:420px;
     z-index:5;
   }
+
+  /* .cat-stage{
+  bottom:70px;            
+  left:52%;             
+} */
   .mood-halo{
     position:absolute;
     left:50%;bottom:20px;
@@ -371,36 +387,20 @@
     z-index:2;
     animation:catWalk 3.2s ease-in-out infinite;
   }
-  @keyframes catWalk{
-    0%{
-      transform:translateX(-50%) translateY(0) scaleX(1);
-    }
-    15%{
-      transform:translateX(calc(-50% + 6px)) translateY(-4px) scaleX(1.02);
-    }
-    30%{
-      transform:translateX(calc(-50% + 12px)) translateY(-6px) scaleX(1.03);
-    }
-    45%{
-      transform:translateX(calc(-50% + 8px)) translateY(-3px) scaleX(1.015);
-    }
-    50%{
-      transform:translateX(-50%) translateY(0) scaleX(1);
-    }
-    65%{
-      transform:translateX(calc(-50% - 6px)) translateY(-4px) scaleX(0.98);
-    }
-    80%{
-      transform:translateX(calc(-50% - 12px)) translateY(-6px) scaleX(0.97);
-    }
-    95%{
-      transform:translateX(calc(-50% - 8px)) translateY(-3px) scaleX(0.985);
-    }
-    100%{
-      transform:translateX(-50%) translateY(0) scaleX(1);
-    }
-  }
-  .cat-shadow{
+ @keyframes catWalk{
+  0%,100%{ transform:translateX(-50%) translateY(0) scaleX(1); }
+  25%{ transform:translateX(calc(-50% + 10px)) translateY(-10px) scaleX(1.03); }
+  50%{ transform:translateX(-50%) translateY(0) scaleX(1); }
+  75%{ transform:translateX(calc(-50% - 10px)) translateY(-10px) scaleX(0.97); }
+}
+@keyframes shadowStep{
+  0%,50%,100%{ transform:translateX(-50%) scale(1); opacity:0.9; }
+  25%,75%{ transform:translateX(-50%) scale(0.82,0.7); opacity:0.6; }
+}
+.cat-shadow{
+  animation:shadowStep 3.2s ease-in-out infinite;
+}
+  /* .cat-shadow{
     position:absolute;
     bottom:-6px;left:50%;
     transform:translateX(-50%);
@@ -409,7 +409,15 @@
     border-radius:50%;
     filter:blur(2px);
     z-index:0;
-  }
+  } */
+
+    .cat-shadow{
+  width:220px;               /* was 195px — wider shadow reads as "resting on floor" */
+  height:26px;
+  bottom:-4px;
+  opacity:0.9;
+}
+
   .cat-pose-img{
     position:absolute;
     inset:0;
@@ -1223,7 +1231,7 @@
   };
 
   const propsByRoom = {
-    living: ['window','rug'],
+    living: [],
     kitchen: ['window','bowl','cabinet'],
     bedroom: ['window','bed'],
   };
