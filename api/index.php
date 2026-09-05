@@ -70,34 +70,40 @@
     0%{transform:translate(0,0) scale(1);}
     100%{transform:translate(14px,-18px) scale(1.08);}
   }
-  /* Fullscreen background: fills the stage edge-to-edge (100% width,
-     100% height, no gaps) on any screen size/aspect ratio. object-position
-     is tuned per room below so the important furniture (rug, counter,
-     bed) stays in frame instead of getting cropped off. */
-  .room-bg{
+  /* Fullscreen background, in two layers so the ENTIRE artwork is
+     always visible (nothing cropped off) while still filling the
+     screen edge-to-edge with no dead space:
+       1) .room-bg-blur — a zoomed, blurred copy of the same image,
+          set to `cover` so it fills every corner of the stage.
+       2) .room-bg-main — the same image at `contain`, so the whole
+          picture is shown at full size, letterboxed on top of the
+          blurred fill rather than cropped.
+     JS reads .room-bg-main's true rendered box (from its natural
+     width/height vs the stage size) to anchor the cat precisely on
+     the rug / counter / bed no matter the window's aspect ratio. */
+  .room-bg-layer{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .room-bg-blur{
+    position:absolute;
+    inset:-30px;
+    width:calc(100% + 60px);
+    height:calc(100% + 60px);
+    object-fit:cover;
+    filter:blur(38px) saturate(1.15) brightness(0.82);
+    transform:scale(1.08);
+  }
+  .room-bg-main{
     position:absolute;
     inset:0;
     width:100%;
     height:100%;
-    object-fit:cover;
-    object-position:center 55%;
-    z-index:0;
-    pointer-events:none;
-  }
-  /* Living room: the couch/rug/fireplace band sits in the lower two
-     thirds of the art — keep that band in frame on wide screens. */
-  .stage.room-living .room-bg{
-    object-position:center 62%;
-  }
-  /* Kitchen has its counter/table well above the floor line — shift
-     the crop up so the counter (and the cat sitting on it) is visible
-     instead of getting cut off above the viewport. */
-  .stage.room-kitchen .room-bg{
-    object-position:center 30%;
-  }
-  /* Bedroom art has the bed sitting higher in frame too. */
-  .stage.room-bedroom .room-bg{
-    object-position:center 36%;
+    object-fit:contain;
+    z-index:1;
   }
   /* ---------- Topbar (floating glass) ---------- */
   .topbar{
@@ -299,45 +305,24 @@
     box-shadow:0 0 0 3px rgba(255,255,255,0.55), 0 0 10px var(--accent);
   }
   /* ---------- Cat ---------- */
-  /* Anchored per-room so the cat sits on the right surface:
-     - living room: on the round pet bed on the rug
-     - kitchen: on the countertop
-     - bedroom: on the quilt at the foot of the bed
-     Both values are % so the anchor scales correctly on any screen
-     size: --bed-x = % across the stage width, --bed-y = % up from
-     the bottom. --cat-scale shrinks the cat on elevated/farther
-     surfaces (counter, bed) so it reads as sitting on them rather
-     than floating at full size. */
+  /* Position is NOT set here as fixed percentages — that broke down
+     whenever the crop or window aspect ratio changed. Instead JS
+     (positionCat() below) measures the actual rendered box of
+     .room-bg-main and places this element's left/top/transform in
+     pixels, anchored to a fixed point *within the artwork itself*
+     (see ROOM_ANCHOR in the script). That keeps the cat glued to
+     the rug / counter / bed on any screen size. left/top/transform
+     transition smoothly when the anchor is recalculated (room
+     switch, resize). */
   .cat-stage{
-    --bed-x:57%;
-    --bed-y:22%;
-    --cat-scale:1;
     position:absolute;
-    bottom:var(--bed-y);
-    left:var(--bed-x);
-    transform:translateX(-50%) scale(var(--cat-scale));
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-100%) scale(1);
     transform-origin:bottom center;
     width:170px;height:210px;
     z-index:5;
-  }
-  /* Living room: sit inside the pet bed's cushion on the rug. */
-  .stage.room-living .cat-stage{
-    --bed-x:63%;
-    --bed-y:15%;
-    --cat-scale:0.92;
-  }
-  /* Kitchen: cat sits on the wooden counter near the spice rack,
-     left of the coffee maker. */
-  .stage.room-kitchen .cat-stage{
-    --bed-x:41%;
-    --bed-y:35%;
-    --cat-scale:0.68;
-  }
-  /* Bedroom: cat sits on the quilt at the foot of the bed. */
-  .stage.room-bedroom .cat-stage{
-    --bed-x:60%;
-    --bed-y:37%;
-    --cat-scale:0.74;
+    transition:left 0.45s ease, top 0.45s ease, transform 0.45s ease;
   }
   .mood-halo{
     position:absolute;
@@ -829,15 +814,6 @@
       width:130px;
       height:160px;
     }
-    .stage.room-living .cat-stage{
-      --bed-y:13%;
-    }
-    .stage.room-kitchen .cat-stage{
-      --bed-y:30%;
-    }
-    .stage.room-bedroom .cat-stage{
-      --bed-y:32%;
-    }
     .mood-halo{width:120px;height:120px;}
     .cat-wrap{width:175px;height:203px;}
     .cat-shadow{width:85px;height:12px;}
@@ -882,7 +858,10 @@
 <body>
 <div id="app">
   <div class="stage room-living" id="stage">
-    <img class="room-bg" id="roomBg" src="/Assets/LivingRoom.jfif" alt="">
+    <div class="room-bg-layer">
+      <img class="room-bg-blur" id="roomBgBlur" src="/Assets/LivingRoom.jfif" alt="" aria-hidden="true">
+      <img class="room-bg-main" id="roomBgMain" src="/Assets/LivingRoom.jfif" alt="">
+    </div>
     <button class="room-door prev" id="prevRoom" aria-label="Previous room">
       <span class="door-ring"></span>
       <span class="door-core"><span class="door-face-icon" id="prevIcon"></span></span>
@@ -990,9 +969,27 @@
     kitchen: '/Assets/Kitchen.jfif',
     bedroom: '/Assets/Bedroom.jfif',
   };
+  // Where the cat sits, as a percentage *of the artwork itself*
+  // (x/y from the image's top-left corner) — not of the screen.
+  // Because the background is shown at object-fit:contain (the
+  // whole image, uncropped), these percentages always line up with
+  // the same spot in the picture: the pet bed on the rug, the
+  // counter by the spice rack, the quilt at the foot of the bed.
+  // widthFrac is how wide the cat sprite should be as a fraction of
+  // the rendered image width — this makes the cat's on-screen size
+  // scale naturally with the artwork instead of staying a fixed
+  // pixel size that looks wrong at other window sizes.
+  const ROOM_ANCHOR = {
+    living:  { x: 60, y: 87, widthFrac: 0.135 },
+    kitchen: { x: 45, y: 58, widthFrac: 0.085 },
+    bedroom: { x: 61, y: 70, widthFrac: 0.100 },
+  };
+  const CAT_BASE_WIDTH = 170; // matches .cat-stage width in CSS
   const els = {
     stage: document.getElementById('stage'),
-    roomBg: document.getElementById('roomBg'),
+    roomBgBlur: document.getElementById('roomBgBlur'),
+    roomBgMain: document.getElementById('roomBgMain'),
+    catStage: document.querySelector('.cat-stage'),
     roomName: document.getElementById('roomName'),
     prevLabel: document.getElementById('prevLabel'),
     nextLabel: document.getElementById('nextLabel'),
@@ -1055,7 +1052,8 @@
     cancelEatAnimation();
     cancelPlayAnimation();
     els.stage.className = 'stage room-' + room;
-    els.roomBg.src = ROOM_BG[room];
+    els.roomBgBlur.src = ROOM_BG[room];
+    els.roomBgMain.src = ROOM_BG[room];
     els.roomName.textContent = roomLabels[room];
     const prevRoom = rooms[(roomIndex - 1 + rooms.length) % rooms.length];
     const nextRoom = rooms[(roomIndex + 1) % rooms.length];
@@ -1065,7 +1063,48 @@
     els.nextIcon.innerHTML = ROOM_ICON[nextRoom];
     renderDock();
     renderRail();
+    positionCat();
   }
+  /* ---------------- Cat anchoring ----------------
+     Measures the actual rendered box of the (object-fit:contain)
+     background image within the stage, then converts the room's
+     image-relative anchor point (ROOM_ANCHOR) into real pixels so
+     the cat sits exactly on the rug/counter/bed no matter the
+     window size or aspect ratio. Re-run on room change, image load,
+     and window resize. */
+  function positionCat(){
+    const img = els.roomBgMain;
+    if (!img.naturalWidth || !img.naturalHeight) return; // wait for load
+    const anchor = ROOM_ANCHOR[rooms[roomIndex]];
+    const containerW = els.stage.clientWidth;
+    const containerH = els.stage.clientHeight;
+    const imgRatio = img.naturalWidth / img.naturalHeight;
+    const containerRatio = containerW / containerH;
+    let renderW, renderH, offsetX, offsetY;
+    if (imgRatio > containerRatio){
+      renderW = containerW;
+      renderH = containerW / imgRatio;
+      offsetX = 0;
+      offsetY = (containerH - renderH) / 2;
+    } else {
+      renderH = containerH;
+      renderW = containerH * imgRatio;
+      offsetY = 0;
+      offsetX = (containerW - renderW) / 2;
+    }
+    const px = offsetX + (anchor.x / 100) * renderW;
+    const py = offsetY + (anchor.y / 100) * renderH;
+    const scale = Math.max(0.35, Math.min(1.6, (anchor.widthFrac * renderW) / CAT_BASE_WIDTH));
+    els.catStage.style.left = px + 'px';
+    els.catStage.style.top = py + 'px';
+    els.catStage.style.transform = `translate(-50%, -100%) scale(${scale})`;
+  }
+  let resizeRAF = null;
+  window.addEventListener('resize', ()=>{
+    cancelAnimationFrame(resizeRAF);
+    resizeRAF = requestAnimationFrame(positionCat);
+  });
+  els.roomBgMain.addEventListener('load', positionCat);
   function renderRail(){
     els.roomRail.innerHTML = '';
     rooms.forEach((r, i)=>{
@@ -1417,6 +1456,7 @@
   /* ---------------- Init ---------------- */
   renderRoom();
   renderAll();
+  positionCat();
   addMessage("Meow! I'm " + state.name + ". Talk to me!", 'cat');
 })();
 </script>
