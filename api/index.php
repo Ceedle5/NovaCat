@@ -810,15 +810,9 @@
     .room-rail{bottom:calc(12px + env(safe-area-inset-bottom));gap:6px;padding:6px 11px;}
     .rail-dot{width:7px;height:7px;}
     .rail-dot.active{width:16px;}
-    .cat-stage{
-      width:130px;
-      height:160px;
-    }
-    .mood-halo{width:120px;height:120px;}
-    .cat-wrap{width:175px;height:203px;}
-    .cat-shadow{width:85px;height:12px;}
-    .cat-wrap.mood-sleepy{width:230px;height:190px;}
-    .cat-wrap.mood-sleepy .cat-shadow{width:175px;}
+    /* Cat sizing/position is fully handled by positionCat() via the
+       .cat-stage transform scale — no fixed-pixel overrides here,
+       so mobile scales correctly instead of double-scaling. */
     .dock{
       right:calc(18px + env(safe-area-inset-right));
       bottom:calc(90px + env(safe-area-inset-bottom)); /* clear of the chat FAB */
@@ -981,8 +975,8 @@
   // pixel size that looks wrong at other window sizes.
   const ROOM_ANCHOR = {
     living:  { x: 60, y: 87, widthFrac: 0.135 },
-    kitchen: { x: 45, y: 58, widthFrac: 0.085 },
-    bedroom: { x: 61, y: 70, widthFrac: 0.100 },
+    kitchen: { x: 51, y: 46, widthFrac: 0.135 },
+    bedroom: { x: 53, y: 63, widthFrac: 0.14 },
   };
   const CAT_BASE_WIDTH = 170; // matches .cat-stage width in CSS
   const els = {
