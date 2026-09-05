@@ -818,31 +818,48 @@
     /* Cat sizing/position is fully handled by positionCat() via the
        .cat-stage transform scale — no fixed-pixel overrides here,
        so mobile scales correctly instead of double-scaling. */
+    /* Bottom row is split into three independent zones so nothing
+       overlaps on narrow screens: action dock bottom-left, room
+       dots bottom-center, chat FAB bottom-right. */
     .dock{
-      right:calc(18px + env(safe-area-inset-right));
-      bottom:calc(90px + env(safe-area-inset-bottom)); /* clear of the chat FAB */
-      gap:8px;
+      left:calc(12px + env(safe-area-inset-left));
+      right:auto;
+      bottom:calc(16px + env(safe-area-inset-bottom));
+      gap:9px;
+      padding:6px;
+      border-radius:999px;
     }
-    .action-btn{width:38px;height:38px;}
-    .action-btn .icon svg{width:17px;height:17px;}
+    .action-btn{width:42px;height:42px;}
+    .action-btn .icon svg{width:18px;height:18px;}
     .action-btn::after{display:none;}
+    .room-rail{
+      bottom:calc(16px + env(safe-area-inset-bottom));
+      gap:6px;padding:7px 12px;
+    }
+    .rail-dot{width:7px;height:7px;}
+    .rail-dot.active{width:16px;}
     .chat-fab{
       bottom:calc(14px + env(safe-area-inset-bottom));
-      right:calc(12px + env(safe-area-inset-right));
-      width:60px;
-      height:80px;
+      right:calc(10px + env(safe-area-inset-right));
+      width:58px;
+      height:76px;
     }
     .chat-widget{
-      right:calc(10px + env(safe-area-inset-right));
-      left:calc(10px + env(safe-area-inset-left));
+      right:calc(8px + env(safe-area-inset-right));
+      left:calc(8px + env(safe-area-inset-left));
       width:auto;
       max-width:none;
-      bottom:calc(78px + env(safe-area-inset-bottom));
-      height:min(70dvh, 520px);
+      bottom:calc(96px + env(safe-area-inset-bottom));
+      height:min(66dvh, 520px);
       border-radius:20px;
     }
-    .chat-head-avatar{width:52px;height:52px;}
-    .chat-head-name{font-size:0.94rem;}
+    .chat-head{padding:13px 15px;}
+    .chat-head-avatar{width:48px;height:48px;}
+    .chat-head-name{font-size:0.92rem;}
+    .chat-head-status{font-size:0.68rem;}
+    .chat-quick-row{padding:0 12px 10px;gap:6px;}
+    .chat-quick-btn{font-size:0.72rem;padding:7px 12px;}
+    .chat-input-row{padding:10px 12px;}
   }
   @media (max-width:380px){
     .title-pill{font-size:0.82rem;padding:7px 12px 7px 9px;}
@@ -851,6 +868,10 @@
     .stat{gap:3px;}
     .stat-num{min-width:14px;}
     .room-door{width:44px;height:44px;}
+    .dock{gap:7px;padding:5px;}
+    .action-btn{width:38px;height:38px;}
+    .action-btn .icon svg{width:16px;height:16px;}
+    .chat-fab{width:50px;height:66px;}
   }
 </style>
 </head>
