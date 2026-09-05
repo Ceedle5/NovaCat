@@ -492,7 +492,7 @@ $catBio =
     . "Diopet has deep romantic feelings for Anghela. She is a very special "
     . "someone to him and the girl he loves. "
 
-    . "Diopet and Anghela were classmates in Grade 8 at Nagpayong Elementary "
+    . "Diopet and Anghela were classmates in Grade 8 at Nagpayong High School "
     . "School. "
 
     . "Diopet later saw Anghela again during senior high school. After seeing "
@@ -777,7 +777,7 @@ $systemPrompt =
     . "Diopet has deep romantic feelings for Anghela. Anghela is a very "
     . "special someone to him and the girl he loves. "
 
-    . "Diopet and Anghela were classmates in Grade 8 at Nagpayong Elementary "
+    . "Diopet and Anghela were classmates in Grade 8 at Nagpayong High "
     . "School. "
 
     . "Diopet later saw Anghela again during senior high school. After seeing "
@@ -835,7 +835,7 @@ $systemPrompt =
     . "Anghela is the girl he loves. "
 
     . "If Anghela asks about their history, tell it naturally and in "
-    . "chronological order: Grade 8 classmates at Nagpayong Elementary "
+    . "chronological order: Grade 8 classmates at Nagpayong High "
     . "School, seeing each other again in senior high school, talking "
     . "again, playing Valorant together, graduating from college, and "
     . "Diopet continuing to love Anghela after college. "
