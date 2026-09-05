@@ -23,6 +23,8 @@
     --sage-deep:#5fa877;
     --dusk:#8fa3d6;
     --dusk-deep:#5b71ab;
+    --blush:#ffb3c6;
+    --blush-deep:#e4839c;
     --shadow:rgba(30,22,46,0.28);
     --accent:var(--sage);
     --accent-deep:var(--sage-deep);
@@ -218,22 +220,22 @@
     position:relative;
     width:100%;height:100%;
     border-radius:50%;
-    background:radial-gradient(circle at 32% 26%, rgba(255,255,255,0.95), var(--paper-glass-strong) 68%);
-    backdrop-filter:blur(14px) saturate(1.4);
-    -webkit-backdrop-filter:blur(14px) saturate(1.4);
-    box-shadow:0 10px 26px var(--shadow), inset 0 0 0 2px rgba(255,255,255,0.6);
+    border:3px solid #fff;
+    background:linear-gradient(160deg, var(--accent), var(--accent-deep));
+    box-shadow:0 4px 0 var(--accent-deep), 0 10px 20px var(--shadow);
     display:flex;align-items:center;justify-content:center;
     animation:doorPulse 3.4s ease-in-out infinite;
-    transition:box-shadow 0.25s ease;
+    transition:box-shadow 0.2s ease, transform 0.15s ease;
   }
   @keyframes doorPulse{
-    0%,100%{box-shadow:0 10px 26px var(--shadow), inset 0 0 0 2px rgba(255,255,255,0.6), 0 0 0 0 rgba(255,255,255,0);}
-    50%{box-shadow:0 10px 26px var(--shadow), inset 0 0 0 2px rgba(255,255,255,0.6), 0 0 16px 2px var(--accent);}
+    0%,100%{box-shadow:0 4px 0 var(--accent-deep), 0 10px 20px var(--shadow);}
+    50%{box-shadow:0 4px 0 var(--accent-deep), 0 10px 20px var(--shadow), 0 0 0 6px rgba(255,255,255,0.28);}
   }
-  .room-door:hover .door-core{box-shadow:0 14px 30px var(--shadow), inset 0 0 0 2px rgba(255,255,255,0.85), 0 0 0 6px rgba(255,255,255,0.16);}
+  .room-door:hover .door-core{transform:translateY(-2px); box-shadow:0 6px 0 var(--accent-deep), 0 14px 24px var(--shadow);}
+  .room-door:active .door-core{transform:translateY(3px); box-shadow:0 1px 0 var(--accent-deep), 0 4px 10px var(--shadow);}
   .door-face-icon{display:flex;align-items:center;justify-content:center;}
-  .door-face-icon svg{width:28px;height:28px;stroke:var(--accent-deep);fill:none;}
-  .door-face-icon svg.filled{fill:var(--accent-deep);stroke:none;}
+  .door-face-icon svg{width:26px;height:26px;stroke:#fff;fill:none;filter:drop-shadow(0 1px 0 rgba(0,0,0,0.14));}
+  .door-face-icon svg.filled{fill:#fff;stroke:none;}
   /* directional chevron badge */
   .door-chevron{
     position:absolute;
@@ -289,21 +291,25 @@
     border-radius:999px;
   }
   .rail-dot{
-    width:9px;height:9px;
+    width:11px;height:11px;
     border-radius:50%;
-    border:none;
+    border:2px solid rgba(255,255,255,0.7);
     padding:0;
     cursor:pointer;
-    background:rgba(58,50,48,0.22);
-    transition:width 0.25s cubic-bezier(.2,1,.3,1), border-radius 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    background:rgba(58,50,48,0.18);
+    box-shadow:inset 0 1px 2px rgba(30,22,46,0.15);
+    transition:width 0.25s cubic-bezier(.34,1.56,.64,1), border-radius 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
-  .rail-dot:hover{background:rgba(58,50,48,0.4);}
+  .rail-dot:hover{background:rgba(58,50,48,0.32);}
   .rail-dot.active{
-    width:24px;
-    border-radius:6px;
+    width:28px;
+    border-radius:7px;
+    border-color:#fff;
     background:linear-gradient(90deg, var(--accent), var(--accent-deep));
-    box-shadow:0 0 0 3px rgba(255,255,255,0.55), 0 0 10px var(--accent);
+    box-shadow:0 2px 0 var(--accent-deep), 0 0 10px var(--accent);
+    animation:railPop 0.3s cubic-bezier(.34,1.56,.64,1);
   }
+  @keyframes railPop{0%{transform:scale(0.6);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
   /* ---------- Cat ---------- */
   /* Position is NOT set here as fixed percentages — that broke down
      whenever the crop or window aspect ratio changed. Instead JS
@@ -468,49 +474,47 @@
   /* ---------- Floating Action Icons (dock) ---------- */
   .dock{
     position:absolute;
-    right:180px;
-    bottom:34px;
+    right:190px;
+    bottom:36px;
     z-index:35;
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:14px;
     padding:0;
     background:transparent;
     box-shadow:none;
   }
   .action-btn{
+    --btn-fill:var(--coral);
+    --btn-deep:var(--coral-deep);
     position:relative;
-    width:44px;
-    height:44px;
+    width:50px;
+    height:50px;
     padding:0;
-    border:none;
+    border:3px solid #fff;
     border-radius:50%;
-    background:rgba(255,248,239,0.82);
-    backdrop-filter:blur(14px) saturate(1.3);
-    -webkit-backdrop-filter:blur(14px) saturate(1.3);
-    color:var(--coral-deep);
+    background:linear-gradient(160deg, var(--btn-fill), var(--btn-deep));
     cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
     box-shadow:
-      0 8px 20px rgba(30,22,46,0.18),
-      0 0 0 1px rgba(255,255,255,0.65) inset;
-    transition:
-      transform 0.18s ease,
-      background 0.18s ease,
-      color 0.18s ease,
-      box-shadow 0.18s ease;
+      0 4px 0 var(--btn-deep),
+      0 8px 14px rgba(30,22,46,0.22);
+    transition:transform 0.14s cubic-bezier(.34,1.56,.64,1), box-shadow 0.14s ease;
   }
   .action-btn:hover{
-    transform:translateY(-4px) scale(1.06);
-    background:#fff;
-    color:var(--accent-deep);
+    transform:translateY(-3px) rotate(-4deg);
     box-shadow:
-      0 12px 24px rgba(30,22,46,0.22),
-      0 0 0 1px rgba(255,255,255,0.9) inset;
+      0 7px 0 var(--btn-deep),
+      0 12px 18px rgba(30,22,46,0.26);
   }
-  .action-btn:active{transform:scale(0.92);}
+  .action-btn:active{
+    transform:translateY(3px) rotate(0deg);
+    box-shadow:
+      0 1px 0 var(--btn-deep),
+      0 3px 8px rgba(30,22,46,0.2);
+  }
   .action-btn .icon{
     width:auto;
     height:auto;
@@ -521,14 +525,15 @@
     justify-content:center;
   }
   .action-btn .icon svg{
-    width:20px;
-    height:20px;
-    stroke:currentColor;
+    width:22px;
+    height:22px;
+    stroke:#fff;
     fill:none;
+    filter:drop-shadow(0 1px 0 rgba(0,0,0,0.14));
     transition:transform 0.18s ease;
   }
-  .action-btn .icon svg.filled{fill:currentColor;stroke:none;}
-  .action-btn:hover .icon svg{transform:scale(1.08);}
+  .action-btn .icon svg.filled{fill:#fff;stroke:none;}
+  .action-btn:hover .icon svg{transform:scale(1.1);}
   /* Tooltip */
   .action-btn::after{
     content:attr(data-label);
@@ -571,15 +576,49 @@
     transition:transform 0.18s ease;
     filter:drop-shadow(0 10px 18px var(--shadow));
   }
+  .chat-fab::before{
+    content:"";
+    position:absolute;
+    bottom:10px;left:50%;
+    transform:translateX(-50%);
+    width:58%;
+    height:13px;
+    background:radial-gradient(ellipse at center, rgba(30,22,46,0.3), transparent 72%);
+    border-radius:50%;
+    animation:fabShadowPulse 3.6s ease-in-out infinite;
+  }
+  @keyframes fabShadowPulse{
+    0%,100%{transform:translateX(-50%) scale(1);opacity:0.6;}
+    50%{transform:translateX(-50%) scale(0.82);opacity:0.38;}
+  }
   .chat-fab img{
     width:100%;
     height:100%;
     object-fit:contain;
     pointer-events:none;
     -webkit-user-drag:none;
+    animation:fabFloat 3.6s ease-in-out infinite;
+  }
+  @keyframes fabFloat{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-6px);}
   }
   .chat-fab:hover{transform:scale(1.08);}
   .chat-fab:active{transform:scale(0.93);}
+  .fab-badge{
+    position:absolute;
+    top:8px;right:16px;
+    width:16px;height:16px;
+    border-radius:50%;
+    background:linear-gradient(160deg, var(--coral), var(--coral-deep));
+    border:2px solid #fff;
+    box-shadow:0 2px 4px rgba(30,22,46,0.35);
+    animation:badgePulse 1.3s ease-in-out infinite;
+  }
+  @keyframes badgePulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.22);}
+  }
   /* invisible click-catcher so clicking outside the widget closes it,
      without dimming the rest of the site like a modal/sidebar would */
   .chat-scrim{
@@ -599,7 +638,8 @@
     max-height:calc(100dvh - 148px);
     background:var(--paper);
     border-radius:24px;
-    box-shadow:0 26px 60px var(--shadow), 0 0 0 1px rgba(255,255,255,0.5) inset;
+    border:3px solid #fff;
+    box-shadow:0 8px 0 rgba(30,22,46,0.14), 0 26px 50px var(--shadow);
     display:flex;
     flex-direction:column;
     overflow:hidden;
@@ -615,11 +655,18 @@
     pointer-events:auto;
   }
   .chat-head{
+    position:relative;
     display:flex;align-items:center;gap:12px;
     padding:14px 16px;
     background:linear-gradient(160deg, var(--coral), var(--coral-deep));
     color:#fff;
     flex:0 0 auto;
+  }
+  .chat-head::after{
+    content:"";
+    position:absolute;
+    left:14px;right:14px;bottom:0;
+    border-bottom:2px dashed rgba(255,255,255,0.45);
   }
   .chat-head-avatar{
     width:44px;height:44px;
@@ -649,13 +696,15 @@
     box-shadow:0 0 0 2px rgba(255,255,255,0.3);
   }
   .chat-close{
-    border:none;background:rgba(255,255,255,0.2);color:#fff;
+    border:2px solid rgba(255,255,255,0.55);background:rgba(255,255,255,0.2);color:#fff;
     width:32px;height:32px;border-radius:50%;
     cursor:pointer;flex:0 0 auto;
     display:flex;align-items:center;justify-content:center;
-    transition:background 0.15s ease;
+    box-shadow:0 2px 0 rgba(0,0,0,0.15);
+    transition:background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
   }
-  .chat-close:hover{background:rgba(255,255,255,0.32);}
+  .chat-close:hover{background:rgba(255,255,255,0.32);transform:translateY(-1px);box-shadow:0 3px 0 rgba(0,0,0,0.15);}
+  .chat-close:active{transform:translateY(2px);box-shadow:0 0 0 rgba(0,0,0,0.15);}
   .chat-close svg{width:14px;height:14px;stroke:currentColor;}
   .chat-log{
     flex:1;
@@ -669,6 +718,7 @@
     gap:9px;
     background:
       radial-gradient(circle at 18% 8%, rgba(255,189,89,0.10), transparent 40%),
+      radial-gradient(rgba(58,50,48,0.05) 1px, transparent 1.4px) 0 0/16px 16px,
       var(--paper);
   }
   .chat-row{display:flex;}
@@ -681,7 +731,6 @@
     border-radius:17px;
     font-size:0.92rem;
     line-height:1.35;
-    box-shadow:0 3px 10px rgba(30,22,46,0.06);
     animation:msgPop 0.22s ease;
   }
   @keyframes msgPop{
@@ -690,19 +739,22 @@
   }
   .msg.cat{
     background:#fff;
-    border:1px solid #f0e6da;
-    border-bottom-left-radius:5px;
+    border:2px solid #f5e9da;
+    border-bottom-left-radius:6px;
+    box-shadow:0 3px 0 #f0e2d0;
   }
   .msg.user{
     background:linear-gradient(160deg, var(--coral), var(--coral-deep));
     color:#fff;
-    border-bottom-right-radius:5px;
-    box-shadow:0 4px 12px rgba(226,96,63,0.28);
+    border:2px solid #fff;
+    border-bottom-right-radius:6px;
+    box-shadow:0 3px 0 var(--coral-deep);
   }
   .msg.typing{
     background:#fff;
-    border:1px solid #f0e6da;
-    border-bottom-left-radius:5px;
+    border:2px solid #f5e9da;
+    border-bottom-left-radius:6px;
+    box-shadow:0 3px 0 #f0e2d0;
     display:flex;
     align-items:center;
     gap:4px;
@@ -740,10 +792,12 @@
     flex:0 0 auto;
   }
   .chat-quick-btn{
+    --chip:var(--sage);
+    --chip-deep:var(--sage-deep);
     flex:0 0 auto;
-    background:#fff;
-    border:1px solid #f0e6da;
-    color:var(--coral-deep);
+    background:linear-gradient(160deg, var(--chip), var(--chip-deep));
+    border:2px solid #fff;
+    color:#fff;
     font-family:'Nunito',sans-serif;
     font-weight:800;
     font-size:0.76rem;
@@ -751,10 +805,14 @@
     border-radius:999px;
     cursor:pointer;
     white-space:nowrap;
-    transition:background 0.15s ease, transform 0.1s ease;
+    box-shadow:0 3px 0 var(--chip-deep);
+    transition:transform 0.12s cubic-bezier(.34,1.56,.64,1), box-shadow 0.12s ease;
   }
-  .chat-quick-btn:hover{background:#fff3ea;}
-  .chat-quick-btn:active{transform:scale(0.96);}
+  .chat-quick-btn:nth-child(2){--chip:var(--gold);--chip-deep:var(--gold-deep);}
+  .chat-quick-btn:nth-child(3){--chip:var(--dusk);--chip-deep:var(--dusk-deep);}
+  .chat-quick-btn:nth-child(4){--chip:var(--coral);--chip-deep:var(--coral-deep);}
+  .chat-quick-btn:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--chip-deep);}
+  .chat-quick-btn:active{transform:translateY(3px);box-shadow:0 0 0 var(--chip-deep);}
   .chat-input-row{
     display:flex;
     align-items:center;
@@ -772,21 +830,28 @@
     font-size:0.92rem;
     outline:none;
     min-width:0;
+    background:#fffdf9;
+    box-shadow:inset 0 2px 4px rgba(58,50,48,0.07);
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
   }
-  .chat-input-row input:focus{border-color:var(--coral);}
+  .chat-input-row input:focus{
+    border-color:var(--coral);
+    box-shadow:inset 0 2px 4px rgba(58,50,48,0.07), 0 0 0 3px rgba(255,140,105,0.2);
+  }
   .chat-input-row button{
-    background:var(--coral-deep);
+    background:linear-gradient(160deg, var(--coral), var(--coral-deep));
     color:#fff;
-    border:none;
-    width:44px;height:44px;
+    border:2px solid #fff;
+    width:46px;height:46px;
     border-radius:50%;
     cursor:pointer;
     flex:0 0 auto;
     display:flex;align-items:center;justify-content:center;
-    transition:transform 0.12s ease, filter 0.12s ease;
+    box-shadow:0 3px 0 var(--coral-deep);
+    transition:transform 0.12s cubic-bezier(.34,1.56,.64,1), box-shadow 0.12s ease, filter 0.12s ease;
   }
-  .chat-input-row button:hover{filter:brightness(1.08);}
-  .chat-input-row button:active{transform:scale(0.92);}
+  .chat-input-row button:hover{filter:brightness(1.05);transform:translateY(-2px);box-shadow:0 5px 0 var(--coral-deep);}
+  .chat-input-row button:active{transform:translateY(3px);box-shadow:0 0 0 var(--coral-deep);}
   .chat-input-row button svg{width:18px;height:18px;fill:#fff;}
   /* ---------- Responsive ---------- */
   @media (max-width:720px){
@@ -812,6 +877,7 @@
     .room-door{width:50px;height:50px;}
     .room-door.prev{left:calc(10px + env(safe-area-inset-left));}
     .room-door.next{right:calc(10px + env(safe-area-inset-right));}
+    .door-core{border-width:2px;box-shadow:0 3px 0 var(--accent-deep), 0 7px 14px var(--shadow);}
     .door-face-icon svg{width:19px;height:19px;}
     .door-chevron{width:18px;height:18px;}
     .door-chevron svg{width:9px;height:9px;}
@@ -830,7 +896,12 @@
       padding:6px;
       border-radius:999px;
     }
-    .action-btn{width:42px;height:42px;}
+    .action-btn{
+      width:42px;height:42px;border-width:2px;
+      box-shadow:0 3px 0 var(--btn-deep), 0 6px 10px rgba(30,22,46,0.2);
+    }
+    .action-btn:hover{box-shadow:0 5px 0 var(--btn-deep), 0 9px 14px rgba(30,22,46,0.24);}
+    .action-btn:active{box-shadow:0 1px 0 var(--btn-deep), 0 2px 6px rgba(30,22,46,0.18);}
     .action-btn .icon svg{width:18px;height:18px;}
     .action-btn::after{display:none;}
     .room-rail{
@@ -850,6 +921,7 @@
       width:52px;
       height:69px;
     }
+    .fab-badge{width:12px;height:12px;top:2px;right:8px;}
     /* Chat widget: anchored to the FAB's own bottom offset + its
        height + a small gap, so it always sits just above the FAB
        with no dead space and no overlap, regardless of safe-area
@@ -867,18 +939,25 @@
       max-height:calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
       min-height:280px;
       border-radius:20px;
+      border-width:2px;
+      box-shadow:0 5px 0 rgba(30,22,46,0.14), 0 18px 34px var(--shadow);
     }
     .chat-head{padding:12px 14px;}
     .chat-head-avatar{width:38px;height:38px;}
     .chat-head-name{font-size:0.92rem;}
     .chat-head-status{font-size:0.68rem;}
+    .chat-close{width:30px;height:30px;}
     .chat-log{padding:12px 12px 6px;gap:7px;}
     .msg{font-size:0.88rem;padding:9px 13px;}
     .chat-quick-row{padding:0 12px 10px;gap:6px;}
-    .chat-quick-btn{font-size:0.72rem;padding:7px 12px;}
+    .chat-quick-btn{font-size:0.72rem;padding:7px 12px;box-shadow:0 2px 0 var(--chip-deep);}
+    .chat-quick-btn:hover{box-shadow:0 3px 0 var(--chip-deep);}
+    .chat-quick-btn:active{box-shadow:0 0 0 var(--chip-deep);}
     .chat-input-row{padding:9px 10px;}
     .chat-input-row input{padding:10px 15px;font-size:0.88rem;}
-    .chat-input-row button{width:40px;height:40px;}
+    .chat-input-row button{width:40px;height:40px;box-shadow:0 2px 0 var(--coral-deep);}
+    .chat-input-row button:hover{box-shadow:0 3px 0 var(--coral-deep);}
+    .chat-input-row button:active{box-shadow:0 0 0 var(--coral-deep);}
   }
   /* Short / landscape phones: the 60dvh chat height above can be too
      tall when the viewport itself is short, squeezing the log down
@@ -1090,15 +1169,15 @@
   };
   const actionsByRoom = {
     living: [
-      {icon:ICON.play, label:'Play', run: playWithCat},
-      {icon:ICON.pet, label:'Pet', run: petCat},
+      {icon:ICON.play, label:'Play', run: playWithCat, fill:'--sage', deep:'--sage-deep'},
+      {icon:ICON.pet, label:'Pet', run: petCat, fill:'--blush', deep:'--blush-deep'},
     ],
     kitchen: [
-      {icon:ICON.feed, label:'Feed', run: feedCat},
-      {icon:ICON.treat, label:'Treat', run: giveTreat},
+      {icon:ICON.feed, label:'Feed', run: feedCat, fill:'--gold', deep:'--gold-deep'},
+      {icon:ICON.treat, label:'Treat', run: giveTreat, fill:'--coral', deep:'--coral-deep'},
     ],
     bedroom: [
-      {icon:ICON.nap, label: 'Nap', run: toggleSleep},
+      {icon:ICON.nap, label: 'Nap', run: toggleSleep, fill:'--dusk', deep:'--dusk-deep'},
     ]
   };
   /* ---------------- Rendering ---------------- */
@@ -1183,6 +1262,8 @@
       btn.dataset.label = a.label;
       btn.setAttribute('aria-label', a.label);
       btn.innerHTML = `<span class="icon">${a.icon}</span>`;
+      btn.style.setProperty('--btn-fill', `var(${a.fill})`);
+      btn.style.setProperty('--btn-deep', `var(${a.deep})`);
       btn.addEventListener('click', a.run);
       els.dock.appendChild(btn);
     });
