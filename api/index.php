@@ -320,6 +320,18 @@
     width:170px;height:210px;
     z-index:5;
   }
+
+  /* Kitchen: cat sits up on the counter/table instead of the floor. */
+  .stage.room-kitchen .cat-stage{
+    --bed-x:64%;
+    --bed-y:270px;
+  }
+
+  /* Bedroom: cat sits on top of the bed covers instead of beside it. */
+  .stage.room-bedroom .cat-stage{
+    --bed-x:60%;
+    --bed-y:230px;
+  }
   .mood-halo{
     position:absolute;
     left:50%;bottom:10px;
