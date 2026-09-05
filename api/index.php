@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Nova's House</title>
 
-<!-- Favicon -->
-<!-- Favicon -->
 <link rel="icon" href="/Assets/MessageBubble.png" type="image/png">
 <link rel="apple-touch-icon" href="/Assets/MessageBubble.png">
 
@@ -30,8 +28,6 @@
     --shadow:rgba(30,22,46,0.28);
     --accent:var(--sage);
     --accent-deep:var(--sage-deep);
-    --room-top:#d9ecdf;
-    --room-floor:#a9d4b6;
   }
   *{box-sizing:border-box;}
   html,body{height:100%;margin:0;overflow:hidden;}
@@ -51,23 +47,16 @@
 
   /* ---------- Stage (full-bleed room) ---------- */
   .stage{
+    position:relative;
     position:absolute;
     inset:0;
     overflow:hidden;
-    background:linear-gradient(180deg,var(--room-top) 0%,var(--room-top) 62%,var(--room-floor) 62%);
+    background:#1c1526; /* fallback while bg images load */
     transition:background 0.6s ease;
   }
-  /* .stage.room-living{--room-top:#dcecd8;--room-floor:#a9d491;--accent:var(--sage);--accent-deep:var(--sage-deep);} */
-.stage.room-living{
-  background-image:url('/Assets/LivingRoom.jfif');
-  background-size:cover;
-  background-position:center bottom;
-  background-repeat:no-repeat;
-  --accent:var(--sage);
-  --accent-deep:var(--sage-deep);
-}
-  .stage.room-kitchen{--room-top:#fbe7bd;--room-floor:#eec073;--accent:var(--gold);--accent-deep:var(--gold-deep);}
-  .stage.room-bedroom{--room-top:#d6e0f2;--room-floor:#a9bce3;--accent:var(--dusk);--accent-deep:var(--dusk-deep);}
+  .stage.room-living{--accent:var(--sage);--accent-deep:var(--sage-deep);}
+  .stage.room-kitchen{--accent:var(--gold);--accent-deep:var(--gold-deep);}
+  .stage.room-bedroom{--accent:var(--dusk);--accent-deep:var(--dusk-deep);}
 
   .stage::before,.stage::after{
     content:"";
@@ -77,7 +66,7 @@
     opacity:0.4;
     background:var(--accent);
     pointer-events:none;
-    z-index:0;
+    z-index:1;
     animation:driftGlow 9s ease-in-out infinite alternate;
   }
   .stage::before{width:280px;height:280px;top:-70px;right:-60px;}
@@ -85,6 +74,28 @@
   @keyframes driftGlow{
     0%{transform:translate(0,0) scale(1);}
     100%{transform:translate(14px,-18px) scale(1.08);}
+  }
+
+  /* Background image layers: a blurred "cover" copy fills the frame,
+     a sharp "contain" copy on top shows the full uncropped artwork
+     so nothing is ever cut off regardless of viewport ratio. */
+  .room-bg-fill,
+  .room-bg-full{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+  .room-bg-fill{
+    object-fit:cover;
+    filter:blur(30px) brightness(0.75) saturate(1.1);
+    transform:scale(1.15); /* hides blur edge artifacts */
+  }
+  .room-bg-full{
+    object-fit:contain;
+    object-position:center bottom;
   }
 
   /* ---------- Topbar (floating glass) ---------- */
@@ -179,9 +190,8 @@
     transition:transform 0.3s cubic-bezier(.2,1,.3,1);
     overflow:visible;
   }
- .room-door.prev{ left:16px; top:50%; }        /* keep mid-height, out of the dock's way */
-.room-door.next{ right:16px; top:50%; }
-
+  .room-door.prev{left:16px;}
+  .room-door.next{right:16px;}
   .room-door:hover{transform:translateY(-56%) scale(1.07);}
   .room-door:active{transform:translateY(-52%) scale(0.93);}
 
@@ -296,63 +306,15 @@
     box-shadow:0 0 0 3px rgba(255,255,255,0.55), 0 0 10px var(--accent);
   }
 
-  /* room props */
-  .prop{position:absolute;}
-  .window{
-    width:118px;height:92px;top:118px;left:44px;
-    background:#eaf6ff;
-    border:7px solid #fff;
-    border-radius:10px;
-    box-shadow:0 6px 16px rgba(0,0,0,0.1);
-  }
-  .window::before,.window::after{content:"";position:absolute;background:#fff;}
-  .window::before{left:50%;top:0;bottom:0;width:6px;transform:translateX(-50%);}
-  .window::after{top:50%;left:0;right:0;height:6px;transform:translateY(-50%);}
-  .rug{
-    width:260px;height:72px;
-    left:50%;bottom:26px;
-    transform:translateX(-50%);
-    background:var(--accent);
-    opacity:0.5;
-    border-radius:50%;
-  }
-  .bowl{
-    width:76px;height:34px;
-    bottom:30px;left:60px;
-    background:var(--accent-deep);
-    border-radius:0 0 36px 36px;
-  }
-  .bowl::before{
-    content:"";position:absolute;top:-9px;left:4px;right:4px;height:16px;
-    background:#f3c98c;border-radius:50%;
-  }
-  .cabinet{
-    width:130px;height:112px;
-    bottom:80px;right:40px;
-    background:#fff;
-    border-radius:12px 12px 0 0;
-    border:5px solid var(--accent);
-  }
-  .bed{
-    width:210px;height:98px;
-    bottom:30px;left:50%;
-    transform:translateX(-50%);
-    background:#fff;
-    border-radius:24px;
-    box-shadow:0 6px 0 rgba(0,0,0,0.05);
-  }
-  .bed::before{
-    content:"";position:absolute;top:-24px;left:18px;right:18px;height:44px;
-    background:var(--accent);border-radius:20px 20px 0 0;
-  }
-
   /* ---------- Cat ---------- */
-
-
   .cat-stage{
-  bottom:70px;            
-  left:52%;             
-}
+    position:absolute;
+    bottom:70px;
+    left:52%;
+    transform:translateX(-50%);
+    width:320px;height:420px;
+    z-index:5;
+  }
   .mood-halo{
     position:absolute;
     left:50%;bottom:20px;
@@ -379,37 +341,28 @@
     z-index:2;
     animation:catWalk 3.2s ease-in-out infinite;
   }
- @keyframes catWalk{
-  0%,100%{ transform:translateX(-50%) translateY(0) scaleX(1); }
-  25%{ transform:translateX(calc(-50% + 10px)) translateY(-10px) scaleX(1.03); }
-  50%{ transform:translateX(-50%) translateY(0) scaleX(1); }
-  75%{ transform:translateX(calc(-50% - 10px)) translateY(-10px) scaleX(0.97); }
-}
-@keyframes shadowStep{
-  0%,50%,100%{ transform:translateX(-50%) scale(1); opacity:0.9; }
-  25%,75%{ transform:translateX(-50%) scale(0.82,0.7); opacity:0.6; }
-}
-.cat-shadow{
-  animation:shadowStep 3.2s ease-in-out infinite;
-}
-  /* .cat-shadow{
+  @keyframes catWalk{
+    0%,100%{ transform:translateX(-50%) translateY(0) scaleX(1); }
+    25%{ transform:translateX(calc(-50% + 10px)) translateY(-10px) scaleX(1.03); }
+    50%{ transform:translateX(-50%) translateY(0) scaleX(1); }
+    75%{ transform:translateX(calc(-50% - 10px)) translateY(-10px) scaleX(0.97); }
+  }
+  @keyframes shadowStep{
+    0%,50%,100%{ transform:translateX(-50%) scale(1); opacity:0.9; }
+    25%,75%{ transform:translateX(-50%) scale(0.82,0.7); opacity:0.6; }
+  }
+  .cat-shadow{
     position:absolute;
-    bottom:-6px;left:50%;
+    bottom:-4px;left:50%;
     transform:translateX(-50%);
-    width:195px;height:30px;
+    width:220px;height:26px;
     background:rgba(30,22,46,0.2);
     border-radius:50%;
     filter:blur(2px);
+    opacity:0.9;
     z-index:0;
-  } */
-
-    .cat-shadow{
-  width:220px;               /* was 195px — wider shadow reads as "resting on floor" */
-  height:26px;
-  bottom:-4px;
-  opacity:0.9;
-}
-
+    animation:shadowStep 3.2s ease-in-out infinite;
+  }
   .cat-pose-img{
     position:absolute;
     inset:0;
@@ -503,187 +456,123 @@
     100%{transform:translate(-50%,-140px) scale(1.1);opacity:0;}
   }
 
-  /* ---------- Dock (floating glass) ---------- */
- /* ---------- Floating Action Icons ---------- */
-.dock{
-  position:absolute;
-  right:180px;
-  bottom:34px;
-  z-index:35;
-
-  display:flex;
-  align-items:center;
-  gap:10px;
-
-  padding:0;
-  background:transparent;
-  box-shadow:none;
-}
-
-.action-btn{
-  position:relative;
-
-  width:44px;
-  height:44px;
-  padding:0;
-
-  border:none;
-  border-radius:50%;
-
-  background:rgba(255,248,239,0.82);
-  backdrop-filter:blur(14px) saturate(1.3);
-  -webkit-backdrop-filter:blur(14px) saturate(1.3);
-
-  color:var(--coral-deep);
-
-  cursor:pointer;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  box-shadow:
-    0 8px 20px rgba(30,22,46,0.18),
-    0 0 0 1px rgba(255,255,255,0.65) inset;
-
-  transition:
-    transform 0.18s ease,
-    background 0.18s ease,
-    color 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-.action-btn:hover{
-  transform:translateY(-4px) scale(1.06);
-  background:#fff;
-  color:var(--accent-deep);
-
-  box-shadow:
-    0 12px 24px rgba(30,22,46,0.22),
-    0 0 0 1px rgba(255,255,255,0.9) inset;
-}
-
-.action-btn:active{
-  transform:scale(0.92);
-}
-
-.action-btn .icon{
-  width:auto;
-  height:auto;
-  border-radius:0;
-
-  background:transparent;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.action-btn .icon svg{
-  width:20px;
-  height:20px;
-
-  stroke:currentColor;
-  fill:none;
-
-  transition:transform 0.18s ease;
-}
-
-.action-btn .icon svg.filled{
-  fill:currentColor;
-  stroke:none;
-}
-
-.action-btn:hover .icon svg{
-  transform:scale(1.08);
-}
-
-/* Tooltip */
-.action-btn::after{
-  content:attr(data-label);
-
-  position:absolute;
-  bottom:calc(100% + 9px);
-  left:50%;
-
-  transform:translateX(-50%) translateY(4px);
-
-  padding:5px 9px;
-
-  background:rgba(47,42,61,0.92);
-  color:#fff;
-
-  border-radius:8px;
-
-  font-family:'Nunito',sans-serif;
-  font-size:0.68rem;
-  font-weight:800;
-
-  white-space:nowrap;
-
-  opacity:0;
-  pointer-events:none;
-
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
-}
-
-.action-btn:hover::after{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
-  /* ---------- Chat FAB + floating chatbot widget ---------- */
-/* ---------- Chat FAB ---------- */
-.chat-fab{
-  position:absolute;
-  bottom:26px;
-  right:26px;
-  z-index:40;
-
-  width:150px;
-  height:200px;
-
-  border:none;
-  padding:0;
-
-  background:transparent;
-  box-shadow:none;
-
-  cursor:pointer;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  transition:transform 0.18s ease;
-  filter:drop-shadow(0 10px 18px var(--shadow));
-}
-
-.chat-fab img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-
-  pointer-events:none;
-  -webkit-user-drag:none;
-}
-
-.chat-fab:hover{
-  transform:scale(1.08);
-}
-
-.chat-fab:active{
-  transform:scale(0.93);
-}
-  /* .chat-fab .fab-badge{
+  /* ---------- Floating Action Icons (dock) ---------- */
+  .dock{
     position:absolute;
-    top:2px;right:2px;
-    width:44px;height:44px;
+    right:180px;
+    bottom:34px;
+    z-index:35;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0;
+    background:transparent;
+    box-shadow:none;
+  }
+  .action-btn{
+    position:relative;
+    width:44px;
+    height:44px;
+    padding:0;
+    border:none;
     border-radius:50%;
-    background:var(--sage);
-    border:2px solid var(--paper);
-  } */
+    background:rgba(255,248,239,0.82);
+    backdrop-filter:blur(14px) saturate(1.3);
+    -webkit-backdrop-filter:blur(14px) saturate(1.3);
+    color:var(--coral-deep);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:
+      0 8px 20px rgba(30,22,46,0.18),
+      0 0 0 1px rgba(255,255,255,0.65) inset;
+    transition:
+      transform 0.18s ease,
+      background 0.18s ease,
+      color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+  .action-btn:hover{
+    transform:translateY(-4px) scale(1.06);
+    background:#fff;
+    color:var(--accent-deep);
+    box-shadow:
+      0 12px 24px rgba(30,22,46,0.22),
+      0 0 0 1px rgba(255,255,255,0.9) inset;
+  }
+  .action-btn:active{transform:scale(0.92);}
+  .action-btn .icon{
+    width:auto;
+    height:auto;
+    border-radius:0;
+    background:transparent;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .action-btn .icon svg{
+    width:20px;
+    height:20px;
+    stroke:currentColor;
+    fill:none;
+    transition:transform 0.18s ease;
+  }
+  .action-btn .icon svg.filled{fill:currentColor;stroke:none;}
+  .action-btn:hover .icon svg{transform:scale(1.08);}
+
+  /* Tooltip */
+  .action-btn::after{
+    content:attr(data-label);
+    position:absolute;
+    bottom:calc(100% + 9px);
+    left:50%;
+    transform:translateX(-50%) translateY(4px);
+    padding:5px 9px;
+    background:rgba(47,42,61,0.92);
+    color:#fff;
+    border-radius:8px;
+    font-family:'Nunito',sans-serif;
+    font-size:0.68rem;
+    font-weight:800;
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.15s ease, transform 0.15s ease;
+  }
+  .action-btn:hover::after{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  /* ---------- Chat FAB + floating chatbot widget ---------- */
+  .chat-fab{
+    position:absolute;
+    bottom:26px;
+    right:26px;
+    z-index:40;
+    width:150px;
+    height:200px;
+    border:none;
+    padding:0;
+    background:transparent;
+    box-shadow:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform 0.18s ease;
+    filter:drop-shadow(0 10px 18px var(--shadow));
+  }
+  .chat-fab img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    pointer-events:none;
+    -webkit-user-drag:none;
+  }
+  .chat-fab:hover{transform:scale(1.08);}
+  .chat-fab:active{transform:scale(0.93);}
 
   /* invisible click-catcher so clicking outside the widget closes it,
      without dimming the rest of the site like a modal/sidebar would */
@@ -896,172 +785,64 @@
   .chat-input-row button:active{transform:scale(0.92);}
   .chat-input-row button svg{width:18px;height:18px;fill:#fff;}
 
-  .note{
-    position:absolute;
-    bottom:10px;left:16px;
-    z-index:15;
-    font-size:0.72rem;
-    color:rgba(58,50,48,0.4);
-    pointer-events:none;
-  }
-
   /* ---------- Responsive ---------- */
- @media (max-width:720px){
+  @media (max-width:720px){
+    .title-pill{
+      font-size:1rem;
+      padding:9px 16px 9px 12px;
+    }
+    .room-pill{display:none;}
+    .stats-pill{gap:12px;padding:9px 16px;}
+    .stat-track{width:44px;}
 
-  .title-pill{
-    font-size:1rem;
-    padding:9px 16px 9px 12px;
+    .room-door{width:54px;height:54px;}
+    .room-door.prev{left:12px;}
+    .room-door.next{right:12px;}
+    .door-face-icon svg{width:21px;height:21px;}
+    .door-chevron{width:20px;height:20px;}
+    .door-chevron svg{width:10px;height:10px;}
+    .door-tag{display:none;}
+
+    .room-rail{bottom:14px;gap:7px;padding:7px 12px;}
+    .rail-dot{width:7px;height:7px;}
+    .rail-dot.active{width:18px;}
+
+    .cat-stage{
+      width:250px;
+      height:330px;
+      bottom:96px;
+      left:50%;
+    }
+    .mood-halo{width:220px;height:220px;}
+    .cat-wrap{width:230px;height:305px;}
+    .cat-shadow{width:150px;height:24px;}
+    .cat-wrap.mood-sleepy{width:300px;height:248px;}
+    .cat-wrap.mood-sleepy .cat-shadow{width:230px;}
+
+    .dock{
+      right:24px;
+      bottom:96px; /* lift clear of the chat FAB */
+    }
+    .action-btn{width:38px;height:38px;}
+    .action-btn .icon svg{width:17px;height:17px;}
+    .action-btn::after{display:none;}
+
+    .chat-fab{
+      bottom:16px;
+      right:16px;
+      width:64px;
+      height:64px;
+    }
+    .chat-widget{
+      right:12px;
+      left:12px;
+      width:auto;
+      max-width:none;
+      bottom:82px;
+      height:min(66dvh, 520px);
+      border-radius:22px;
+    }
   }
-
-  .room-pill{
-    display:none;
-  }
-
-  .stats-pill{
-    gap:12px;
-    padding:9px 16px;
-  }
-
-  .stat-track{
-    width:44px;
-  }
-
-  .room-door{
-    width:54px;
-    height:54px;
-  }
-
-  .room-door.prev{
-    left:12px;
-  }
-
-  .room-door.next{
-    right:12px;
-  }
-
-  .door-face-icon svg{
-    width:21px;
-    height:21px;
-  }
-
-  .door-chevron{
-    width:20px;
-    height:20px;
-  }
-
-  .door-chevron svg{
-    width:10px;
-    height:10px;
-  }
-
-  .door-tag{
-    display:none;
-  }
-
-.room-rail{ bottom:14px; }                     /* stays bottom-center, on its own */
-
-
-  .rail-dot{
-    width:7px;
-    height:7px;
-  }
-
-  .rail-dot.active{
-    width:18px;
-  }
-
-  .cat-stage{
-    width:250px;
-    height:330px;
-    bottom:96px;
-  }
-
-  .mood-halo{
-    width:220px;
-    height:220px;
-  }
-
-  .cat-wrap{
-    width:230px;
-    height:305px;
-  }
-
-  .cat-shadow{
-    width:150px;
-    height:24px;
-  }
-
-  .cat-wrap.mood-sleepy{
-    width:300px;
-    height:248px;
-  }
-
-  .cat-wrap.mood-sleepy .cat-shadow{
-    width:230px;
-  }
-
- .dock{
-  right:24px;
-  bottom:96px;                                 /* lift clear of the chat FAB */
-}
-
-  .action-btn{
-    width:38px;
-    height:38px;
-  }
-
-  .action-btn .icon svg{
-    width:17px;
-    height:17px;
-  }
-
-  .action-btn::after{
-    display:none;
-  }
-
-.chat-fab{
-  bottom:16px;
-  right:16px;
-  width:64px;
-  height:64px;                                 /* shrink slightly so it doesn't dominate the corner */
-}
-  .chat-widget{
-    right:12px;
-    left:12px;
-    width:auto;
-    max-width:none;
-    bottom:82px;
-    height:min(66dvh, 520px);
-    border-radius:22px;
-  }
-
-  .window{
-    top:100px;
-    width:90px;
-    height:72px;
-  }
-}
-
-.stage{ position:relative; }
-.room-bg-fill,
-.room-bg-full{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:0;
-  pointer-events:none;
-}
-.room-bg-fill{
-  object-fit:cover;
-  filter:blur(30px) brightness(0.75) saturate(1.1);
-  transform:scale(1.15); /* hides blur edge artifacts */
-}
-.room-bg-full{
-  object-fit:contain;
-  object-position:center bottom;
-}
-
 </style>
 </head>
 <body>
@@ -1069,9 +850,8 @@
 <div id="app">
 
   <div class="stage room-living" id="stage">
-      <img class="room-bg-fill" id="roomBgFill" src="/Assets/LivingRoom.jfif" alt="">
-  <img class="room-bg-full" id="roomBgFull" src="/Assets/LivingRoom.jfif" alt="">
-  
+    <img class="room-bg-fill" id="roomBgFill" src="/Assets/LivingRoom.jfif" alt="">
+    <img class="room-bg-full" id="roomBgFull" src="/Assets/LivingRoom.jfif" alt="">
 
     <button class="room-door prev" id="prevRoom" aria-label="Previous room">
       <span class="door-ring"></span>
@@ -1136,7 +916,6 @@
     <span class="fab-badge" id="fabBadge" style="display:none;"></span>
   </button>
 
-
 </div>
 
 <div class="chat-scrim" id="chatScrim"></div>
@@ -1184,8 +963,18 @@
     bedroom: '<svg viewBox="0 0 24 24" class="filled"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg>',
   };
 
+  // The full background artwork for each room. A blurred "fill" copy
+  // sits behind a sharp "contain" copy so the whole picture always shows.
+  const ROOM_BG = {
+    living: '/Assets/LivingRoom.jfif',
+    kitchen: '/Assets/Kitchen.jfif',
+    bedroom: '/Assets/Bedroom.jfif',
+  };
+
   const els = {
     stage: document.getElementById('stage'),
+    roomBgFill: document.getElementById('roomBgFill'),
+    roomBgFull: document.getElementById('roomBgFull'),
     roomName: document.getElementById('roomName'),
     prevLabel: document.getElementById('prevLabel'),
     nextLabel: document.getElementById('nextLabel'),
@@ -1220,19 +1009,6 @@
       document.getElementById('playFrame1'),
       document.getElementById('playFrame2'),
     ],
-    props: {
-      window: document.getElementById('prop-window'),
-      rug: document.getElementById('prop-rug'),
-      bowl: document.getElementById('prop-bowl'),
-      cabinet: document.getElementById('prop-cabinet'),
-      bed: document.getElementById('prop-bed'),
-    }
-  };
-
-  const propsByRoom = {
-    living: [],
-    kitchen: ['window','bowl','cabinet'],
-    bedroom: ['window','bed'],
   };
 
   const ICON = {
@@ -1256,20 +1032,18 @@
       {icon:ICON.nap, label: 'Nap', run: toggleSleep},
     ]
   };
-const ROOM_BG = {
-  living: '/Assets/LivingRoom.jfif',
-  kitchen: '/Assets/Kitchen.jfif',
-  bedroom: '/Assets/Bedroom.jfif',
-};
-function renderRoom(){
-  const room = rooms[roomIndex];
-  document.getElementById('roomBgFill').src = ROOM_BG[room];
-  document.getElementById('roomBgFull').src = ROOM_BG[room];
+
+  /* ---------------- Rendering ---------------- */
+  function renderRoom(){
     const room = rooms[roomIndex];
+
     cancelPetAnimation();
     cancelEatAnimation();
     cancelPlayAnimation();
+
     els.stage.className = 'stage room-' + room;
+    els.roomBgFill.src = ROOM_BG[room];
+    els.roomBgFull.src = ROOM_BG[room];
     els.roomName.textContent = roomLabels[room];
 
     const prevRoom = rooms[(roomIndex - 1 + rooms.length) % rooms.length];
@@ -1278,10 +1052,6 @@ function renderRoom(){
     els.nextLabel.textContent = roomLabels[nextRoom];
     els.prevIcon.innerHTML = ROOM_ICON[prevRoom];
     els.nextIcon.innerHTML = ROOM_ICON[nextRoom];
-
-    Object.entries(els.props).forEach(([key, node])=>{
-      node.style.display = propsByRoom[room].includes(key) ? 'block' : 'none';
-    });
 
     renderDock();
     renderRail();
@@ -1301,28 +1071,21 @@ function renderRoom(){
     });
   }
 
-function renderDock(){
-  const room = rooms[roomIndex];
-  els.dock.innerHTML = '';
+  function renderDock(){
+    const room = rooms[roomIndex];
+    els.dock.innerHTML = '';
 
-  actionsByRoom[room].forEach(a=>{
-    const btn = document.createElement('button');
+    actionsByRoom[room].forEach(a=>{
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.dataset.label = a.label;
+      btn.setAttribute('aria-label', a.label);
+      btn.innerHTML = `<span class="icon">${a.icon}</span>`;
+      btn.addEventListener('click', a.run);
+      els.dock.appendChild(btn);
+    });
+  }
 
-    btn.className = 'action-btn';
-    btn.dataset.label = a.label;
-    btn.setAttribute('aria-label', a.label);
-
-    btn.innerHTML = `
-      <span class="icon">
-        ${a.icon}
-      </span>
-    `;
-
-    btn.addEventListener('click', a.run);
-
-    els.dock.appendChild(btn);
-  });
-}
   function clamp(n){ return Math.max(0, Math.min(100, n)); }
 
   function renderStats(){
@@ -1637,8 +1400,8 @@ function renderDock(){
     };
 
     try{
-const res = await fetch('/api/cat-chat.php', {
-  method: 'POST',
+      const res = await fetch('/api/cat-chat.php', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
