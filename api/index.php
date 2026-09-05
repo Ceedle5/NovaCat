@@ -980,7 +980,7 @@
   // pixel size that looks wrong at other window sizes.
   const ROOM_ANCHOR = {
     living:  { x: 60, y: 87, widthFrac: 0.135 },
-    kitchen: { x: 47, y: 64, widthFrac: 0.135 },
+    kitchen: { x: 36, y: 55, widthFrac: 0.135 },
     bedroom: { x: 53, y: 63, widthFrac: 0.14 },
   };
   const CAT_BASE_WIDTH = 170; // matches .cat-stage width in CSS
