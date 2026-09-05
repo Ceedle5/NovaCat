@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Shiro's House</title>
+<title>Nova's House</title>
 
 <!-- Favicon -->
 <!-- Favicon -->
@@ -1076,7 +1076,7 @@
   </div>
 
   <div class="topbar">
-    <div class="title-pill glass"><span class="paw"><svg viewBox="0 0 24 24"><circle cx="6.5" cy="7.5" r="2.1"/><circle cx="11.5" cy="5.3" r="2.1"/><circle cx="16.5" cy="7.5" r="2.1"/><circle cx="19.3" cy="12.2" r="1.9"/><path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z"/></svg></span> Shiro's House</div>
+    <div class="title-pill glass"><span class="paw"><svg viewBox="0 0 24 24"><circle cx="6.5" cy="7.5" r="2.1"/><circle cx="11.5" cy="5.3" r="2.1"/><circle cx="16.5" cy="7.5" r="2.1"/><circle cx="19.3" cy="12.2" r="1.9"/><path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z"/></svg></span> Nova's House</div>
     <div class="room-pill glass" id="roomName">Living Room</div>
     <div class="stats-pill glass">
       <div class="stat stat-hunger">
