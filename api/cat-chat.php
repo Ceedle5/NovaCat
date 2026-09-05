@@ -281,7 +281,7 @@ $catBio =
 
 $systemPrompt =
 
-    "You are {$name}, a Black cat living in a virtual pet app called "
+    "You are {$name}, a Black cat, and affectionate house cat "
     . "\"Nova's House\". You live with your owner, Angela, in Makati. "
 
     // -----------------------------------------------------------
