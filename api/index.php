@@ -190,20 +190,29 @@
     z-index:-1;
   }
   .title-pill{
-    display:flex;align-items:center;gap:9px;
-    padding:11px 20px 11px 15px;
+    display:flex;align-items:center;gap:10px;
+    padding:8px 20px 8px 8px;
     border-radius:999px;
     font-family:'Fredoka',sans-serif;
     font-weight:600;
-    font-size:1.15rem;
+    font-size:1.1rem;
     color:var(--coral-deep);
     white-space:nowrap;
+    letter-spacing:0.01em;
   }
-  .title-pill .paw{display:flex;align-items:center;justify-content:center;}
-  .title-pill .paw svg{width:20px;height:20px;fill:currentColor;}
+  .title-pill .paw{
+    display:flex;align-items:center;justify-content:center;
+    width:32px;height:32px;
+    border-radius:50%;
+    background:linear-gradient(155deg, var(--gold), var(--coral));
+    box-shadow:0 2px 0 var(--coral-deep), inset 0 1px 1px rgba(255,255,255,0.5);
+    flex-shrink:0;
+  }
+  .title-pill .paw svg{width:16px;height:16px;fill:#fff;}
   .room-pill{
     align-self:center;
-    padding:9px 22px;
+    display:flex;align-items:center;gap:9px;
+    padding:9px 22px 9px 18px;
     border-radius:999px;
     font-family:'Fredoka',sans-serif;
     font-weight:600;
@@ -212,34 +221,87 @@
     letter-spacing:0.02em;
     transition:color 0.4s ease;
   }
+  .room-pill::before{
+    content:"";
+    width:7px;height:7px;
+    border-radius:50%;
+    flex-shrink:0;
+    background:var(--gold-deep);
+    box-shadow:0 0 0 3px rgba(255,189,89,0.28);
+    animation:statusPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes statusPulse{
+    0%,100%{box-shadow:0 0 0 3px rgba(255,189,89,0.28);}
+    50%{box-shadow:0 0 0 5px rgba(255,189,89,0.12);}
+  }
   .stats-pill{
     display:flex;
     align-items:center;
-    gap:18px;
-    padding:11px 22px;
+    gap:2px;
+    padding:9px 20px;
     border-radius:999px;
   }
-  .stat{display:flex;align-items:center;gap:8px;}
-  .stat-icon{display:flex;align-items:center;justify-content:center;line-height:1;}
-  .stat-icon svg{width:17px;height:17px;display:block;stroke:currentColor;}
-  .stat-hunger .stat-icon{color:#e6883a;}
-  .stat-happy .stat-icon{color:#e2603f;}
-  .stat-energy .stat-icon{color:#5b7fc4;fill:currentColor;}
+  .stat{
+    display:flex;align-items:center;gap:8px;
+    padding:0 12px;
+    position:relative;
+  }
+  .stat + .stat::before{
+    content:"";
+    position:absolute;
+    left:-1px;top:50%;
+    transform:translateY(-50%);
+    width:1px;height:20px;
+    background:linear-gradient(180deg, transparent, rgba(122,90,64,0.2), transparent);
+  }
+  .stat-icon{
+    display:flex;align-items:center;justify-content:center;
+    width:25px;height:25px;
+    border-radius:50%;
+    flex-shrink:0;
+    transition:transform 0.2s ease;
+  }
+  .stat-icon svg{width:14px;height:14px;display:block;stroke:currentColor;}
+  .stat-hunger .stat-icon{color:#c9711f;background:rgba(230,136,58,0.16);}
+  .stat-happy .stat-icon{color:#c94a2c;background:rgba(226,96,63,0.16);}
+  .stat-energy .stat-icon{color:#4a68ab;fill:currentColor;background:rgba(91,127,196,0.16);}
   .stat-track{
-    width:66px;height:9px;
-    border-radius:6px;
-    background:rgba(58,50,48,0.12);
+    width:58px;height:8px;
+    border-radius:999px;
+    background:rgba(122,90,64,0.14);
+    box-shadow:inset 0 1px 2px rgba(58,42,28,0.2);
     overflow:hidden;
+    position:relative;
   }
   .stat-fill{
     height:100%;
-    border-radius:6px;
+    border-radius:999px;
+    position:relative;
+    overflow:hidden;
     transition:width 0.5s ease, background 0.5s ease;
   }
-  .fill-hunger{background:linear-gradient(90deg,#f0ab5e,#e6883a);}
-  .fill-happy{background:linear-gradient(90deg,#ff9d7d,#e2603f);}
-  .fill-energy{background:linear-gradient(90deg,#a2c2ea,#6f95cf);}
-  .stat-num{font-size:0.78rem;font-weight:800;color:var(--ink-soft);min-width:20px;text-align:right;}
+  .stat-fill::after{
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(100deg, transparent 25%, rgba(255,255,255,0.65) 45%, transparent 65%);
+    background-size:220% 100%;
+    animation:statSheen 3.4s ease-in-out infinite;
+  }
+  @keyframes statSheen{
+    0%{background-position:170% 0;}
+    55%,100%{background-position:-70% 0;}
+  }
+  .fill-hunger{background:linear-gradient(90deg,#f0ab5e,#e6883a);box-shadow:0 0 8px rgba(230,136,58,0.45);}
+  .fill-happy{background:linear-gradient(90deg,#ff9d7d,#e2603f);box-shadow:0 0 8px rgba(226,96,63,0.45);}
+  .fill-energy{background:linear-gradient(90deg,#a2c2ea,#6f95cf);box-shadow:0 0 8px rgba(91,127,196,0.45);}
+  .stat-num{
+    font-family:'Fredoka',sans-serif;
+    font-variant-numeric:tabular-nums;
+    font-size:0.82rem;font-weight:600;min-width:22px;text-align:right;
+  }
+  .stat-hunger .stat-num{color:#c9711f;}
+  .stat-happy .stat-num{color:#c94a2c;}
+  .stat-energy .stat-num{color:#4a68ab;}
   /* ---------- Doors: portal nodes ---------- */
   .room-door{
     position:absolute;
@@ -954,19 +1016,21 @@
     }
     .title-pill{
       font-size:0.92rem;
-      padding:8px 14px 8px 10px;
-      gap:6px;
+      padding:6px 14px 6px 6px;
+      gap:8px;
     }
-    .title-pill .paw svg{width:16px;height:16px;}
+    .title-pill .paw{width:26px;height:26px;}
+    .title-pill .paw svg{width:13px;height:13px;}
     .room-pill{display:none;}
     .stats-pill{
-      gap:8px;
-      padding:8px 12px;
+      gap:0;
+      padding:7px 10px;
     }
-    .stat{gap:5px;}
-    .stat-track{width:34px;height:7px;}
+    .stat{gap:5px;padding:0 7px;}
+    .stat-icon{width:20px;height:20px;}
+    .stat-track{width:32px;height:6px;}
     .stat-num{font-size:0.68rem;min-width:16px;}
-    .stat-icon svg{width:14px;height:14px;}
+    .stat-icon svg{width:11px;height:11px;}
     .room-door{width:50px;height:50px;}
     .room-door.prev{left:calc(10px + env(safe-area-inset-left));}
     .room-door.next{right:calc(10px + env(safe-area-inset-right));}
@@ -1066,10 +1130,12 @@
     .chat-quick-row{display:none;}
   }
   @media (max-width:380px){
-    .title-pill{font-size:0.82rem;padding:7px 12px 7px 9px;}
-    .stats-pill{gap:6px;padding:7px 9px;}
-    .stat-track{width:26px;}
-    .stat{gap:3px;}
+    .title-pill{font-size:0.82rem;padding:5px 10px 5px 5px;}
+    .title-pill .paw{width:23px;height:23px;}
+    .stats-pill{gap:0;padding:6px 7px;}
+    .stat{gap:3px;padding:0 5px;}
+    .stat-icon{width:18px;height:18px;}
+    .stat-track{width:24px;}
     .stat-num{min-width:14px;}
     .room-door{width:44px;height:44px;}
     .dock{gap:7px;padding:5px;}
