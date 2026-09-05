@@ -346,21 +346,12 @@
   }
 
   /* ---------- Cat ---------- */
+
+
   .cat-stage{
-    position:absolute;
-    /* bottom:130px;left:50%; */
- bottom:70px;              /* was 130px — lower onto the rug */
-  left:52%; 
-
-    transform:translateX(-50%);
-    width:320px;height:420px;
-    z-index:5;
-  }
-
-  /* .cat-stage{
   bottom:70px;            
   left:52%;             
-} */
+}
   .mood-halo{
     position:absolute;
     left:50%;bottom:20px;
