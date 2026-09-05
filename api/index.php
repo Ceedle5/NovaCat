@@ -472,10 +472,10 @@
   }
   .cat-wrap{
     position:absolute;
-    bottom:0;left:50%;
+    bottom:0;left:80%;
     transform:translateX(-50%);
     transform-origin:bottom center;
-    width:230px;height:268px;
+    width:230px;height:368px;
     cursor:pointer;
     z-index:2;
     /* Subtle idle sway only — a tiny rotation, no vertical bounce and
