@@ -76,26 +76,18 @@
     100%{transform:translate(14px,-18px) scale(1.08);}
   }
 
-  /* Background image layers: a blurred "cover" copy fills the frame,
-     a sharp "contain" copy on top shows the full uncropped artwork
-     so nothing is ever cut off regardless of viewport ratio. */
-  .room-bg-fill,
-  .room-bg-full{
+  /* Fullscreen background: cover fills the entire stage edge-to-edge
+     on any screen size/aspect ratio. Some cropping at the edges is
+     expected — that's the trade-off for a true fullscreen look. */
+  .room-bg{
     position:absolute;
     inset:0;
     width:100%;
     height:100%;
+    object-fit:cover;
+    object-position:center bottom;
     z-index:0;
     pointer-events:none;
-  }
-  .room-bg-fill{
-    object-fit:cover;
-    filter:blur(30px) brightness(0.75) saturate(1.1);
-    transform:scale(1.15); /* hides blur edge artifacts */
-  }
-  .room-bg-full{
-    object-fit:contain;
-    object-position:center bottom;
   }
 
   /* ---------- Topbar (floating glass) ---------- */
@@ -111,7 +103,8 @@
     padding:18px 22px;
     pointer-events:none;
   }
-  .topbar > *{pointer-events:auto;}
+  .topbar > *{pointer-events:auto;min-width:0;flex-shrink:1;}
+  .title-pill,.stats-pill{overflow:hidden;}
   .glass{
     background:var(--paper-glass);
     backdrop-filter:blur(16px) saturate(1.3);
@@ -804,31 +797,51 @@
 
   /* ---------- Responsive ---------- */
   @media (max-width:720px){
-    .title-pill{
-      font-size:1rem;
-      padding:9px 16px 9px 12px;
+    .topbar{
+      padding:calc(12px + env(safe-area-inset-top)) 12px 0;
+      gap:8px;
     }
+    .title-pill{
+      font-size:0.92rem;
+      padding:8px 14px 8px 10px;
+      gap:6px;
+    }
+    .title-pill .paw svg{width:16px;height:16px;}
     .room-pill{display:none;}
-    .stats-pill{gap:12px;padding:9px 16px;}
-    .stat-track{width:44px;}
+    .stats-pill{
+      gap:8px;
+      padding:8px 12px;
+    }
+    .stat{gap:5px;}
+    .stat-track{width:34px;height:7px;}
+    .stat-num{font-size:0.68rem;min-width:16px;}
+    .stat-icon svg{width:14px;height:14px;}
 
-    .room-door{width:54px;height:54px;}
-    .room-door.prev{left:12px;}
-    .room-door.next{right:12px;}
-    .door-face-icon svg{width:21px;height:21px;}
-    .door-chevron{width:20px;height:20px;}
-    .door-chevron svg{width:10px;height:10px;}
+    .room-door{width:50px;height:50px;}
+    .room-door.prev{left:calc(10px + env(safe-area-inset-left));}
+    .room-door.next{right:calc(10px + env(safe-area-inset-right));}
+    .door-face-icon svg{width:19px;height:19px;}
+    .door-chevron{width:18px;height:18px;}
+    .door-chevron svg{width:9px;height:9px;}
     .door-tag{display:none;}
 
-    .room-rail{bottom:14px;gap:7px;padding:7px 12px;}
+    .room-rail{bottom:calc(12px + env(safe-area-inset-bottom));gap:6px;padding:6px 11px;}
     .rail-dot{width:7px;height:7px;}
-    .rail-dot.active{width:18px;}
+    .rail-dot.active{width:16px;}
 
     .cat-stage{
       --bed-x:57%;
       --bed-y:90px;
       width:130px;
       height:160px;
+    }
+    .stage.room-kitchen .cat-stage{
+      --bed-x:64%;
+      --bed-y:200px;
+    }
+    .stage.room-bedroom .cat-stage{
+      --bed-x:60%;
+      --bed-y:170px;
     }
     .mood-halo{width:120px;height:120px;}
     .cat-wrap{width:175px;height:203px;}
@@ -837,28 +850,40 @@
     .cat-wrap.mood-sleepy .cat-shadow{width:175px;}
 
     .dock{
-      right:24px;
-      bottom:96px; /* lift clear of the chat FAB */
+      right:calc(18px + env(safe-area-inset-right));
+      bottom:calc(90px + env(safe-area-inset-bottom)); /* clear of the chat FAB */
+      gap:8px;
     }
     .action-btn{width:38px;height:38px;}
     .action-btn .icon svg{width:17px;height:17px;}
     .action-btn::after{display:none;}
 
     .chat-fab{
-      bottom:16px;
-      right:16px;
-      width:64px;
-      height:64px;
+      bottom:calc(14px + env(safe-area-inset-bottom));
+      right:calc(12px + env(safe-area-inset-right));
+      width:60px;
+      height:80px;
     }
     .chat-widget{
-      right:12px;
-      left:12px;
+      right:calc(10px + env(safe-area-inset-right));
+      left:calc(10px + env(safe-area-inset-left));
       width:auto;
       max-width:none;
-      bottom:82px;
-      height:min(66dvh, 520px);
-      border-radius:22px;
+      bottom:calc(78px + env(safe-area-inset-bottom));
+      height:min(70dvh, 520px);
+      border-radius:20px;
     }
+    .chat-head-avatar{width:52px;height:52px;}
+    .chat-head-name{font-size:0.94rem;}
+  }
+
+  @media (max-width:380px){
+    .title-pill{font-size:0.82rem;padding:7px 12px 7px 9px;}
+    .stats-pill{gap:6px;padding:7px 9px;}
+    .stat-track{width:26px;}
+    .stat{gap:3px;}
+    .stat-num{min-width:14px;}
+    .room-door{width:44px;height:44px;}
   }
 </style>
 </head>
@@ -867,8 +892,7 @@
 <div id="app">
 
   <div class="stage room-living" id="stage">
-    <img class="room-bg-fill" id="roomBgFill" src="/Assets/LivingRoom.jfif" alt="">
-    <img class="room-bg-full" id="roomBgFull" src="/Assets/LivingRoom.jfif" alt="">
+    <img class="room-bg" id="roomBg" src="/Assets/LivingRoom.jfif" alt="">
 
     <button class="room-door prev" id="prevRoom" aria-label="Previous room">
       <span class="door-ring"></span>
@@ -990,8 +1014,7 @@
 
   const els = {
     stage: document.getElementById('stage'),
-    roomBgFill: document.getElementById('roomBgFill'),
-    roomBgFull: document.getElementById('roomBgFull'),
+    roomBg: document.getElementById('roomBg'),
     roomName: document.getElementById('roomName'),
     prevLabel: document.getElementById('prevLabel'),
     nextLabel: document.getElementById('nextLabel'),
@@ -1059,8 +1082,7 @@
     cancelPlayAnimation();
 
     els.stage.className = 'stage room-' + room;
-    els.roomBgFill.src = ROOM_BG[room];
-    els.roomBgFull.src = ROOM_BG[room];
+    els.roomBg.src = ROOM_BG[room];
     els.roomName.textContent = roomLabels[room];
 
     const prevRoom = rooms[(roomIndex - 1 + rooms.length) % rooms.length];
