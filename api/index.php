@@ -1112,7 +1112,7 @@
   <div class="chat-head">
     <span class="chat-head-avatar"><img src="/Assets/MessageBubble.png" alt=""></span>
     <div class="chat-head-text">
-      <div class="chat-head-name">Shiro</div>
+      <div class="chat-head-name">Nova</div>
       <div class="chat-head-status">Online</div>
     </div>
     <button class="chat-close" id="chatClose" aria-label="Close chat"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
@@ -1143,7 +1143,7 @@
     happy: 80,
     energy: 80,
     sleeping: false,
-    name: 'Shiro'
+    name: 'Nova'
   };
 
   const ROOM_ICON = {
