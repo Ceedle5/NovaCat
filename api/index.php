@@ -4,10 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Nova's House</title>
-
 <link rel="icon" href="/Assets/MessageBubble.png" type="image/png">
 <link rel="apple-touch-icon" href="/Assets/MessageBubble.png">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -36,7 +34,6 @@
     color:var(--ink);
     background:linear-gradient(160deg,#241a34,#3d2c53);
   }
-
   #app{
     position:relative;
     width:100vw;
@@ -44,7 +41,6 @@
     overflow:hidden;
     background:var(--paper);
   }
-
   /* ---------- Stage (full-bleed room) ---------- */
   .stage{
     position:relative;
@@ -57,7 +53,6 @@
   .stage.room-living{--accent:var(--sage);--accent-deep:var(--sage-deep);}
   .stage.room-kitchen{--accent:var(--gold);--accent-deep:var(--gold-deep);}
   .stage.room-bedroom{--accent:var(--dusk);--accent-deep:var(--dusk-deep);}
-
   .stage::before,.stage::after{
     content:"";
     position:absolute;
@@ -75,31 +70,35 @@
     0%{transform:translate(0,0) scale(1);}
     100%{transform:translate(14px,-18px) scale(1.08);}
   }
-
-  /* Fullscreen background: cover fills the entire stage edge-to-edge
-     on any screen size/aspect ratio. Some cropping at the edges is
-     expected — that's the trade-off for a true fullscreen look. */
+  /* Fullscreen background: fills the stage edge-to-edge (100% width,
+     100% height, no gaps) on any screen size/aspect ratio. object-position
+     is tuned per room below so the important furniture (rug, counter,
+     bed) stays in frame instead of getting cropped off. */
   .room-bg{
     position:absolute;
     inset:0;
     width:100%;
     height:100%;
     object-fit:cover;
-    object-position:center bottom;
+    object-position:center 55%;
     z-index:0;
     pointer-events:none;
   }
-  /* Kitchen art has its counter/table well above the floor line —
-     shift the crop up so the counter is actually visible in frame
+  /* Living room: the couch/rug/fireplace band sits in the lower two
+     thirds of the art — keep that band in frame on wide screens. */
+  .stage.room-living .room-bg{
+    object-position:center 62%;
+  }
+  /* Kitchen has its counter/table well above the floor line — shift
+     the crop up so the counter (and the cat sitting on it) is visible
      instead of getting cut off above the viewport. */
   .stage.room-kitchen .room-bg{
-    object-position:center 22%;
+    object-position:center 30%;
   }
   /* Bedroom art has the bed sitting higher in frame too. */
   .stage.room-bedroom .room-bg{
-    object-position:center 30%;
+    object-position:center 36%;
   }
-
   /* ---------- Topbar (floating glass) ---------- */
   .topbar{
     position:absolute;
@@ -133,7 +132,6 @@
   }
   .title-pill .paw{display:flex;align-items:center;justify-content:center;}
   .title-pill .paw svg{width:20px;height:20px;fill:currentColor;}
-
   .room-pill{
     align-self:center;
     padding:9px 22px;
@@ -145,7 +143,6 @@
     letter-spacing:0.02em;
     transition:color 0.4s ease;
   }
-
   .stats-pill{
     display:flex;
     align-items:center;
@@ -174,7 +171,6 @@
   .fill-happy{background:linear-gradient(90deg,#ff9d7d,#e2603f);}
   .fill-energy{background:linear-gradient(90deg,#a2c2ea,#6f95cf);}
   .stat-num{font-size:0.78rem;font-weight:800;color:var(--ink-soft);min-width:20px;text-align:right;}
-
   /* ---------- Doors: portal nodes ---------- */
   .room-door{
     position:absolute;
@@ -197,7 +193,6 @@
   .room-door.next{right:16px;}
   .room-door:hover{transform:translateY(-56%) scale(1.07);}
   .room-door:active{transform:translateY(-52%) scale(0.93);}
-
   /* rotating neon ring */
   .door-ring{
     position:absolute;
@@ -212,7 +207,6 @@
   }
   @keyframes doorSpin{ to{ transform:rotate(360deg); } }
   .room-door:hover .door-ring{opacity:1;filter:blur(8px);}
-
   /* glass core with the destination icon */
   .door-core{
     position:relative;
@@ -231,11 +225,9 @@
     50%{box-shadow:0 10px 26px var(--shadow), inset 0 0 0 2px rgba(255,255,255,0.6), 0 0 16px 2px var(--accent);}
   }
   .room-door:hover .door-core{box-shadow:0 14px 30px var(--shadow), inset 0 0 0 2px rgba(255,255,255,0.85), 0 0 0 6px rgba(255,255,255,0.16);}
-
   .door-face-icon{display:flex;align-items:center;justify-content:center;}
   .door-face-icon svg{width:28px;height:28px;stroke:var(--accent-deep);fill:none;}
   .door-face-icon svg.filled{fill:var(--accent-deep);stroke:none;}
-
   /* directional chevron badge */
   .door-chevron{
     position:absolute;
@@ -249,7 +241,6 @@
   .door-chevron svg{width:13px;height:13px;stroke:#fff;stroke-width:3;}
   .door-chevron-prev{left:-6px;}
   .door-chevron-next{right:-6px;}
-
   /* floating HUD label tag */
   .door-tag{
     position:absolute;
@@ -279,7 +270,6 @@
     border-top:5px solid rgba(47,42,61,0.92);
   }
   .room-door:hover .door-tag{opacity:1;transform:translate(-50%,0);}
-
   /* level-select rail: quick jump between rooms, game world-map style */
   .room-rail{
     position:absolute;
@@ -308,15 +298,19 @@
     background:linear-gradient(90deg, var(--accent), var(--accent-deep));
     box-shadow:0 0 0 3px rgba(255,255,255,0.55), 0 0 10px var(--accent);
   }
-
   /* ---------- Cat ---------- */
-  /* Anchored per-room so the cat sits on the right surface (pet bed,
-     counter, bed covers) in each background. Both values are %
-     so the anchor scales correctly on any screen size:
-     --bed-x = % across the stage width, --bed-y = % up from the bottom. */
+  /* Anchored per-room so the cat sits on the right surface:
+     - living room: on the round pet bed on the rug
+     - kitchen: on the countertop
+     - bedroom: on the quilt at the foot of the bed
+     Both values are % so the anchor scales correctly on any screen
+     size: --bed-x = % across the stage width, --bed-y = % up from
+     the bottom. --cat-scale shrinks the cat on elevated/farther
+     surfaces (counter, bed) so it reads as sitting on them rather
+     than floating at full size. */
   .cat-stage{
     --bed-x:57%;
-    --bed-y:30%;
+    --bed-y:22%;
     --cat-scale:1;
     position:absolute;
     bottom:var(--bed-y);
@@ -326,26 +320,24 @@
     width:170px;height:210px;
     z-index:5;
   }
-
-  /* Living room: sit inside the pet bed's cushion (not beside it). */
+  /* Living room: sit inside the pet bed's cushion on the rug. */
   .stage.room-living .cat-stage{
-    --bed-x:66%;
-    --bed-y:32%;
+    --bed-x:63%;
+    --bed-y:15%;
+    --cat-scale:0.92;
   }
-
-  /* Kitchen: cat sits on the wooden counter next to the coffee maker,
-     not up by the wall shelf. */
+  /* Kitchen: cat sits on the wooden counter near the spice rack,
+     left of the coffee maker. */
   .stage.room-kitchen .cat-stage{
-    --bed-x:58%;
-    --bed-y:27%;
-    --cat-scale:0.8;
+    --bed-x:41%;
+    --bed-y:35%;
+    --cat-scale:0.68;
   }
-
-  /* Bedroom: cat sits on the bed covers/pillows, not up by the wall shelf. */
+  /* Bedroom: cat sits on the quilt at the foot of the bed. */
   .stage.room-bedroom .cat-stage{
-    --bed-x:66%;
-    --bed-y:24%;
-    --cat-scale:0.82;
+    --bed-x:60%;
+    --bed-y:37%;
+    --cat-scale:0.74;
   }
   .mood-halo{
     position:absolute;
@@ -368,20 +360,22 @@
     position:absolute;
     bottom:0;left:50%;
     transform:translateX(-50%);
+    transform-origin:bottom center;
     width:230px;height:268px;
     cursor:pointer;
     z-index:2;
-    animation:catWalk 3.2s ease-in-out infinite;
+    /* Subtle idle sway only — a tiny rotation, no vertical bounce and
+       no scale/float, so the cat reads as sitting still and breathing
+       rather than hopping or hovering. */
+    animation:catIdle 4.6s ease-in-out infinite;
   }
-  @keyframes catWalk{
-    0%,100%{ transform:translateX(-50%) translateY(0) scaleX(1); }
-    25%{ transform:translateX(calc(-50% + 10px)) translateY(-10px) scaleX(1.03); }
-    50%{ transform:translateX(-50%) translateY(0) scaleX(1); }
-    75%{ transform:translateX(calc(-50% - 10px)) translateY(-10px) scaleX(0.97); }
+  @keyframes catIdle{
+    0%,100%{ transform:translateX(-50%) rotate(0deg); }
+    50%{ transform:translateX(-50%) rotate(0.9deg); }
   }
-  @keyframes shadowStep{
-    0%,50%,100%{ transform:translateX(-50%) scale(1); opacity:0.9; }
-    25%,75%{ transform:translateX(-50%) scale(0.82,0.7); opacity:0.6; }
+  @keyframes shadowIdle{
+    0%,100%{ opacity:0.85; }
+    50%{ opacity:0.95; }
   }
   .cat-shadow{
     position:absolute;
@@ -393,7 +387,7 @@
     filter:blur(2px);
     opacity:0.9;
     z-index:0;
-    animation:shadowStep 3.2s ease-in-out infinite;
+    animation:shadowIdle 4.6s ease-in-out infinite;
   }
   .cat-pose-img{
     position:absolute;
@@ -416,11 +410,9 @@
   .cat-pet-frame.active{display:block;}
   .cat-play-frame{display:none;}
   .cat-play-frame.active{display:block;}
-
   /* hungry idle pose - shown only when idle (not sleeping/petting/eating/playing) */
   .cat-wrap.hungry:not(.mood-sleepy):not(.petting):not(.eating):not(.playing) .cat-img{display:none;}
   .cat-wrap.hungry:not(.mood-sleepy):not(.petting):not(.eating):not(.playing) .cat-img-hungry{display:block;}
-
   /* transient activity overlays always win over base/hungry/sleep pose */
   .cat-wrap.petting .cat-img,
   .cat-wrap.petting .cat-img-sleep,
@@ -432,20 +424,17 @@
   .cat-wrap.playing .cat-img,
   .cat-wrap.playing .cat-img-sleep,
   .cat-wrap.playing .cat-img-hungry{display:none;}
-
   .mood-happy .mood-halo{background:var(--coral);}
   .mood-neutral .mood-halo{background:var(--accent);}
   .mood-sad .mood-halo{background:#9aa0b4;opacity:0.35;animation:none;}
   .mood-sleepy .mood-halo{background:var(--dusk);animation:haloPulse 4.5s ease-in-out infinite;}
-
   .cat-wrap.mood-happy .cat-img{filter:brightness(1.05) saturate(1.12);}
   .cat-wrap.mood-neutral .cat-img{filter:none;}
   .cat-wrap.mood-sad .cat-img{filter:grayscale(0.35) brightness(0.92);transform:translateY(4px);}
   .cat-wrap.mood-sleepy{animation:none; width:390px; height:322px;}
   .cat-wrap.mood-sleepy .cat-img{display:none;}
   .cat-wrap.mood-sleepy .cat-img-sleep{display:block;}
-  .cat-wrap.mood-sleepy .cat-shadow{width:300px;}
-
+  .cat-wrap.mood-sleepy .cat-shadow{width:300px;animation:none;opacity:0.9;}
   /* speech bubble */
   .bubble{
     position:absolute;
@@ -473,7 +462,6 @@
     border-right:8px solid transparent;
     border-top:8px solid #fff;
   }
-
   /* particles */
   .particles{position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:7;}
   .particle{
@@ -487,7 +475,6 @@
     15%{opacity:1;transform:translate(-50%,-10px) scale(1);}
     100%{transform:translate(-50%,-140px) scale(1.1);opacity:0;}
   }
-
   /* ---------- Floating Action Icons (dock) ---------- */
   .dock{
     position:absolute;
@@ -552,7 +539,6 @@
   }
   .action-btn .icon svg.filled{fill:currentColor;stroke:none;}
   .action-btn:hover .icon svg{transform:scale(1.08);}
-
   /* Tooltip */
   .action-btn::after{
     content:attr(data-label);
@@ -576,7 +562,6 @@
     opacity:1;
     transform:translateX(-50%) translateY(0);
   }
-
   /* ---------- Chat FAB + floating chatbot widget ---------- */
   .chat-fab{
     position:absolute;
@@ -605,7 +590,6 @@
   }
   .chat-fab:hover{transform:scale(1.08);}
   .chat-fab:active{transform:scale(0.93);}
-
   /* invisible click-catcher so clicking outside the widget closes it,
      without dimming the rest of the site like a modal/sidebar would */
   .chat-scrim{
@@ -615,7 +599,6 @@
     z-index:44;
   }
   .chat-scrim.open{pointer-events:auto;}
-
   .chat-widget{
     position:absolute;
     bottom:104px;right:26px;
@@ -640,7 +623,6 @@
     opacity:1;
     pointer-events:auto;
   }
-
   .chat-head{
     display:flex;align-items:center;gap:12px;
     padding:16px 18px;
@@ -684,7 +666,6 @@
   }
   .chat-close:hover{background:rgba(255,255,255,0.32);}
   .chat-close svg{width:14px;height:14px;stroke:currentColor;}
-
   .chat-log{
     flex:1;
     overflow-y:auto;
@@ -700,7 +681,6 @@
   .chat-row.from-cat{justify-content:flex-start;}
   .chat-row.from-user{justify-content:flex-end;}
   .chat-row.from-system{justify-content:center;}
-
   .msg{
     max-width:78%;
     padding:10px 15px;
@@ -758,7 +738,6 @@
     text-align:center;
     box-shadow:none;
   }
-
   .chat-quick-row{
     display:flex;
     gap:8px;
@@ -782,7 +761,6 @@
   }
   .chat-quick-btn:hover{background:#fff3ea;}
   .chat-quick-btn:active{transform:scale(0.96);}
-
   .chat-input-row{
     display:flex;
     align-items:center;
@@ -816,7 +794,6 @@
   .chat-input-row button:hover{filter:brightness(1.08);}
   .chat-input-row button:active{transform:scale(0.92);}
   .chat-input-row button svg{width:18px;height:18px;fill:#fff;}
-
   /* ---------- Responsive ---------- */
   @media (max-width:720px){
     .topbar{
@@ -838,7 +815,6 @@
     .stat-track{width:34px;height:7px;}
     .stat-num{font-size:0.68rem;min-width:16px;}
     .stat-icon svg{width:14px;height:14px;}
-
     .room-door{width:50px;height:50px;}
     .room-door.prev{left:calc(10px + env(safe-area-inset-left));}
     .room-door.next{right:calc(10px + env(safe-area-inset-right));}
@@ -846,28 +822,27 @@
     .door-chevron{width:18px;height:18px;}
     .door-chevron svg{width:9px;height:9px;}
     .door-tag{display:none;}
-
     .room-rail{bottom:calc(12px + env(safe-area-inset-bottom));gap:6px;padding:6px 11px;}
     .rail-dot{width:7px;height:7px;}
     .rail-dot.active{width:16px;}
-
     .cat-stage{
-      --bed-y:26%;
       width:130px;
       height:160px;
     }
+    .stage.room-living .cat-stage{
+      --bed-y:13%;
+    }
     .stage.room-kitchen .cat-stage{
-      --bed-y:24%;
+      --bed-y:30%;
     }
     .stage.room-bedroom .cat-stage{
-      --bed-y:22%;
+      --bed-y:32%;
     }
     .mood-halo{width:120px;height:120px;}
     .cat-wrap{width:175px;height:203px;}
     .cat-shadow{width:85px;height:12px;}
     .cat-wrap.mood-sleepy{width:230px;height:190px;}
     .cat-wrap.mood-sleepy .cat-shadow{width:175px;}
-
     .dock{
       right:calc(18px + env(safe-area-inset-right));
       bottom:calc(90px + env(safe-area-inset-bottom)); /* clear of the chat FAB */
@@ -876,7 +851,6 @@
     .action-btn{width:38px;height:38px;}
     .action-btn .icon svg{width:17px;height:17px;}
     .action-btn::after{display:none;}
-
     .chat-fab{
       bottom:calc(14px + env(safe-area-inset-bottom));
       right:calc(12px + env(safe-area-inset-right));
@@ -895,7 +869,6 @@
     .chat-head-avatar{width:52px;height:52px;}
     .chat-head-name{font-size:0.94rem;}
   }
-
   @media (max-width:380px){
     .title-pill{font-size:0.82rem;padding:7px 12px 7px 9px;}
     .stats-pill{gap:6px;padding:7px 9px;}
@@ -907,12 +880,9 @@
 </style>
 </head>
 <body>
-
 <div id="app">
-
   <div class="stage room-living" id="stage">
     <img class="room-bg" id="roomBg" src="/Assets/LivingRoom.jfif" alt="">
-
     <button class="room-door prev" id="prevRoom" aria-label="Previous room">
       <span class="door-ring"></span>
       <span class="door-core"><span class="door-face-icon" id="prevIcon"></span></span>
@@ -925,9 +895,7 @@
       <span class="door-chevron door-chevron-next"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
       <span class="door-tag" id="nextLabel">Kitchen</span>
     </button>
-
     <div class="room-rail glass" id="roomRail"></div>
-
     <div class="cat-stage">
       <div class="mood-halo"></div>
       <div class="cat-wrap mood-neutral" id="catWrap">
@@ -946,7 +914,6 @@
       <div class="particles" id="particles"></div>
     </div>
   </div>
-
   <div class="topbar">
     <div class="title-pill glass"><span class="paw"><svg viewBox="0 0 24 24"><circle cx="6.5" cy="7.5" r="2.1"/><circle cx="11.5" cy="5.3" r="2.1"/><circle cx="16.5" cy="7.5" r="2.1"/><circle cx="19.3" cy="12.2" r="1.9"/><path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z"/></svg></span> Nova's House</div>
     <div class="room-pill glass" id="roomName">Living Room</div>
@@ -968,16 +935,12 @@
       </div>
     </div>
   </div>
-
   <div class="dock glass" id="dock"></div>
-
   <button class="chat-fab" id="chatToggle" aria-label="Talk to Whiskers">
     <img src="/Assets/ForMessageBubble.png" alt="">
     <span class="fab-badge" id="fabBadge" style="display:none;"></span>
   </button>
-
 </div>
-
 <div class="chat-scrim" id="chatScrim"></div>
 <div class="chat-widget" id="chatPanel" role="dialog" aria-label="Chat with Whiskers">
   <div class="chat-head">
@@ -1000,7 +963,6 @@
     <button id="chatSend" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M3 11l17-8-8 17-2-7-7-2Z"/></svg></button>
   </div>
 </div>
-
 <script>
 (function(){
   /* ---------------- State ---------------- */
@@ -1008,7 +970,6 @@
   const rooms = ['living','kitchen','bedroom'];
   const roomLabels = {living:'Living Room', kitchen:'Kitchen', bedroom:'Bedroom'};
   let roomIndex = 0;
-
   const state = {
     hunger: 80,
     happy: 80,
@@ -1016,21 +977,19 @@
     sleeping: false,
     name: 'Nova'
   };
-
   const ROOM_ICON = {
     living: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v6h16v-6"/><path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2"/><path d="M6 10V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>',
     kitchen: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M9.5 10V6.5a2.5 2.5 0 0 1 5 0V10"/></svg>',
     bedroom: '<svg viewBox="0 0 24 24" class="filled"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg>',
   };
-
-  // The full background artwork for each room. A blurred "fill" copy
-  // sits behind a sharp "contain" copy so the whole picture always shows.
+  // The full background artwork for each room. Fills the stage at
+  // 100% via object-fit:cover (see .room-bg CSS above), with
+  // per-room object-position keeping the couch/counter/bed in frame.
   const ROOM_BG = {
     living: '/Assets/LivingRoom.jfif',
     kitchen: '/Assets/Kitchen.jfif',
     bedroom: '/Assets/Bedroom.jfif',
   };
-
   const els = {
     stage: document.getElementById('stage'),
     roomBg: document.getElementById('roomBg'),
@@ -1069,7 +1028,6 @@
       document.getElementById('playFrame2'),
     ],
   };
-
   const ICON = {
     play: '<svg viewBox="0 0 24 24" class="filled"><path d="M12 2c.6 3.7 2.3 5.9 6 6.5-3.7.6-5.4 2.8-6 6.5-.6-3.7-2.3-5.9-6-6.5 3.7-.6 5.4-2.8 6-6.5Z"/><path d="M19 15c.3 1.8 1.1 2.9 3 3.2-1.9.3-2.7 1.4-3 3.2-.3-1.8-1.1-2.9-3-3.2 1.9-.3 2.7-1.4 3-3.2Z"/></svg>',
     pet: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V6a1.4 1.4 0 0 1 2.8 0v6"/><path d="M10.8 12V4.6a1.4 1.4 0 0 1 2.8 0V12"/><path d="M13.6 12V5.6a1.4 1.4 0 0 1 2.8 0V13"/><path d="M16.4 13V8.4a1.4 1.4 0 0 1 2.8 0V15c0 3.6-2.5 6.5-6.5 6.5-2.8 0-4.3-1-5.6-2.8l-2.7-4.1a1.3 1.3 0 0 1 2-1.6L8 13"/></svg>',
@@ -1077,7 +1035,6 @@
     treat: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg>',
     nap: '<svg viewBox="0 0 24 24" class="filled"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg>',
   };
-
   const actionsByRoom = {
     living: [
       {icon:ICON.play, label:'Play', run: playWithCat},
@@ -1091,30 +1048,24 @@
       {icon:ICON.nap, label: 'Nap', run: toggleSleep},
     ]
   };
-
   /* ---------------- Rendering ---------------- */
   function renderRoom(){
     const room = rooms[roomIndex];
-
     cancelPetAnimation();
     cancelEatAnimation();
     cancelPlayAnimation();
-
     els.stage.className = 'stage room-' + room;
     els.roomBg.src = ROOM_BG[room];
     els.roomName.textContent = roomLabels[room];
-
     const prevRoom = rooms[(roomIndex - 1 + rooms.length) % rooms.length];
     const nextRoom = rooms[(roomIndex + 1) % rooms.length];
     els.prevLabel.textContent = roomLabels[prevRoom];
     els.nextLabel.textContent = roomLabels[nextRoom];
     els.prevIcon.innerHTML = ROOM_ICON[prevRoom];
     els.nextIcon.innerHTML = ROOM_ICON[nextRoom];
-
     renderDock();
     renderRail();
   }
-
   function renderRail(){
     els.roomRail.innerHTML = '';
     rooms.forEach((r, i)=>{
@@ -1128,11 +1079,9 @@
       els.roomRail.appendChild(dot);
     });
   }
-
   function renderDock(){
     const room = rooms[roomIndex];
     els.dock.innerHTML = '';
-
     actionsByRoom[room].forEach(a=>{
       const btn = document.createElement('button');
       btn.className = 'action-btn';
@@ -1143,9 +1092,7 @@
       els.dock.appendChild(btn);
     });
   }
-
   function clamp(n){ return Math.max(0, Math.min(100, n)); }
-
   function renderStats(){
     els.hungerVal.textContent = Math.round(state.hunger);
     els.happyVal.textContent = Math.round(state.happy);
@@ -1154,7 +1101,6 @@
     els.happyFill.style.width = state.happy + '%';
     els.energyFill.style.width = state.energy + '%';
   }
-
   function currentMood(){
     if (state.sleeping) return 'sleepy';
     const avg = (state.hunger + state.happy + state.energy) / 3;
@@ -1162,7 +1108,6 @@
     if (avg >= 35) return 'neutral';
     return 'sad';
   }
-
   const MOOD_CLASSES = ['mood-happy','mood-neutral','mood-sad','mood-sleepy'];
   function renderMood(){
     const mood = currentMood();
@@ -1170,12 +1115,10 @@
     els.catWrap.classList.add('mood-' + mood);
     els.catWrap.classList.toggle('hungry', state.hunger < HUNGER_THRESHOLD);
   }
-
   function renderAll(){
     renderStats();
     renderMood();
   }
-
   /* ---------------- Bubble (over the cat) ---------------- */
   let bubbleTimer = null;
   let chatHistory = []; // [{role:'user'|'assistant', content:'...'}] — sent to cat-chat.php for context
@@ -1185,7 +1128,6 @@
     clearTimeout(bubbleTimer);
     bubbleTimer = setTimeout(()=> els.bubble.classList.remove('show'), 2600);
   }
-
   /* ---------------- Particles ---------------- */
   function spawnParticle(emoji){
     const span = document.createElement('span');
@@ -1195,7 +1137,6 @@
     els.particles.appendChild(span);
     setTimeout(()=> span.remove(), 1400);
   }
-
   /* ---------------- Actions ---------------- */
   function feedCat(){
     if (state.sleeping) { say("Zzz... too sleepy to eat."); return; }
@@ -1208,7 +1149,6 @@
     say(line);
     logAction('🍗 You fed Whiskers', line);
   }
-
   function giveTreat(){
     if (state.sleeping) { say("Zzz..."); return; }
     state.hunger = clamp(state.hunger + 10);
@@ -1220,7 +1160,6 @@
     say(line);
     logAction('🥛 You gave a treat', line);
   }
-
   function playWithCat(){
     if (state.sleeping) { say("Let me sleep a bit more..."); return; }
     if (state.energy < 10){ say("Too tired to play right now."); return; }
@@ -1234,7 +1173,6 @@
     say(line);
     logAction('✨ You played together', line);
   }
-
   function petCat(){
     if (state.sleeping) { say("Purrrr... (still sleeping)"); return; }
     state.happy = clamp(state.happy + 8);
@@ -1245,7 +1183,6 @@
     playPetAnimation();
     logAction('💕 You petted Whiskers', line);
   }
-
   let petAnimTimer = null;
   function cancelPetAnimation(){
     clearTimeout(petAnimTimer);
@@ -1257,14 +1194,12 @@
     cancelEatAnimation();
     cancelPlayAnimation();
     els.catWrap.classList.add('petting');
-
     const sequence = [
       { frame: 0, hold: 280 },
       { frame: 1, hold: 650 },
       { frame: 2, hold: 750 },
     ];
     let step = 0;
-
     function showStep(){
       els.petFrames.forEach(f => f.classList.remove('active'));
       if (step < sequence.length){
@@ -1276,7 +1211,6 @@
     }
     showStep();
   }
-
   let eatAnimTimer = null;
   function cancelEatAnimation(){
     clearTimeout(eatAnimTimer);
@@ -1291,7 +1225,6 @@
       els.catWrap.classList.remove('eating');
     }, 900);
   }
-
   let playAnimTimer = null;
   function cancelPlayAnimation(){
     clearTimeout(playAnimTimer);
@@ -1303,10 +1236,8 @@
     cancelPetAnimation();
     cancelEatAnimation();
     els.catWrap.classList.add('playing');
-
     const sequence = [0, 1, 0, 1];
     let step = 0;
-
     function showStep(){
       els.playFrames.forEach(f => f.classList.remove('active'));
       if (step < sequence.length){
@@ -1318,7 +1249,6 @@
     }
     showStep();
   }
-
   function toggleSleep(){
     state.sleeping = !state.sleeping;
     if (state.sleeping){
@@ -1335,15 +1265,12 @@
     }
     renderMood();
   }
-
   function bounceCat(){
     els.catWrap.style.animation = 'none';
     void els.catWrap.offsetWidth;
     els.catWrap.style.animation = '';
   }
-
   function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-
   /* ---------------- Stat decay loop ---------------- */
   setInterval(()=>{
     if (state.sleeping){
@@ -1360,7 +1287,6 @@
     }
     renderAll();
   }, 4000);
-
   /* ---------------- Room navigation ---------------- */
   document.getElementById('prevRoom').addEventListener('click', ()=>{
     roomIndex = (roomIndex - 1 + rooms.length) % rooms.length;
@@ -1370,9 +1296,7 @@
     roomIndex = (roomIndex + 1) % rooms.length;
     renderRoom();
   });
-
   els.catWrap.addEventListener('click', petCat);
-
   /* ---------------- Chat widget ---------------- */
   function openChat(){
     els.chatPanel.classList.add('open');
@@ -1389,14 +1313,12 @@
   });
   els.chatClose.addEventListener('click', closeChat);
   els.chatScrim.addEventListener('click', closeChat);
-
   els.chatQuickRow.addEventListener('click', (e)=>{
     const btn = e.target.closest('.chat-quick-btn');
     if (!btn) return;
     els.chatInput.value = btn.dataset.quick;
     sendChat();
   });
-
   function addMessage(text, from){
     const row = document.createElement('div');
     row.className = 'chat-row from-' + from;
@@ -1408,7 +1330,6 @@
     els.chatLog.scrollTop = els.chatLog.scrollHeight;
     return bubble;
   }
-
   function addTyping(){
     const row = document.createElement('div');
     row.className = 'chat-row from-cat';
@@ -1420,7 +1341,6 @@
     els.chatLog.scrollTop = els.chatLog.scrollHeight;
     return row;
   }
-
   // Logs an in-game action (feed/play/pet/nap) into the chat as a small
   // centered system bubble, followed by Whiskers' reaction as a cat bubble.
   function logAction(actionText, reactionText){
@@ -1430,7 +1350,6 @@
       els.fabBadge.style.display = 'block';
     }
   }
-
   /*
    * getCatReply(message)
    * -------------------------------------------------------------
@@ -1442,7 +1361,6 @@
    */
   async function getCatReply(message){
     if (state.sleeping) return pick(["Zzz... five more minutes...", "*rolls over, still asleep*"]);
-
     const payload = {
       message,
       history: chatHistory,
@@ -1456,7 +1374,6 @@
         sleeping: state.sleeping,
       }
     };
-
     try{
       const res = await fetch('/api/cat-chat.php', {
         method: 'POST',
@@ -1475,7 +1392,6 @@
       ]);
     }
   }
-
   async function sendChat(){
     const text = els.chatInput.value.trim();
     if (!text) return;
@@ -1483,32 +1399,26 @@
     els.chatInput.value = '';
     state.happy = clamp(state.happy + 3);
     renderStats();
-
     const typingRow = addTyping();
-
     const reply = await getCatReply(text);
     chatHistory.push({ role: 'user', content: text });
     chatHistory.push({ role: 'assistant', content: reply });
     if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
-
     setTimeout(()=>{
       typingRow.remove();
       addMessage(reply, 'cat');
       say(reply);
     }, 500 + Math.random()*400);
   }
-
   els.chatSend.addEventListener('click', sendChat);
   els.chatInput.addEventListener('keydown', e=>{
     if (e.key === 'Enter') sendChat();
   });
-
   /* ---------------- Init ---------------- */
   renderRoom();
   renderAll();
   addMessage("Meow! I'm " + state.name + ". Talk to me!", 'cat');
 })();
 </script>
-
 </body>
 </html>
