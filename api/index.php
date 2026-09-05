@@ -558,8 +558,8 @@
     bottom:26px;
     right:26px;
     z-index:40;
-    width:150px;
-    height:200px;
+    width:92px;
+    height:122px;
     border:none;
     padding:0;
     background:transparent;
@@ -591,13 +591,14 @@
   .chat-scrim.open{pointer-events:auto;}
   .chat-widget{
     position:absolute;
-    bottom:104px;right:26px;
+    bottom:118px;right:24px;
     z-index:45;
-    width:368px;
+    width:340px;
     max-width:calc(100vw - 32px);
-    height:min(560px, calc(100dvh - 150px));
+    height:min(64dvh, 500px);
+    max-height:calc(100dvh - 148px);
     background:var(--paper);
-    border-radius:26px;
+    border-radius:24px;
     box-shadow:0 26px 60px var(--shadow), 0 0 0 1px rgba(255,255,255,0.5) inset;
     display:flex;
     flex-direction:column;
@@ -615,13 +616,13 @@
   }
   .chat-head{
     display:flex;align-items:center;gap:12px;
-    padding:16px 18px;
+    padding:14px 16px;
     background:linear-gradient(160deg, var(--coral), var(--coral-deep));
     color:#fff;
     flex:0 0 auto;
   }
   .chat-head-avatar{
-    width:68px;height:68px;
+    width:44px;height:44px;
     display:flex;align-items:center;justify-content:center;
     flex:0 0 auto;
   }
@@ -658,7 +659,10 @@
   .chat-close svg{width:14px;height:14px;stroke:currentColor;}
   .chat-log{
     flex:1;
+    min-height:0;
     overflow-y:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
     padding:16px 16px 8px;
     display:flex;
     flex-direction:column;
@@ -812,9 +816,6 @@
     .door-chevron{width:18px;height:18px;}
     .door-chevron svg{width:9px;height:9px;}
     .door-tag{display:none;}
-    .room-rail{bottom:calc(12px + env(safe-area-inset-bottom));gap:6px;padding:6px 11px;}
-    .rail-dot{width:7px;height:7px;}
-    .rail-dot.active{width:16px;}
     /* Cat sizing/position is fully handled by positionCat() via the
        .cat-stage transform scale — no fixed-pixel overrides here,
        so mobile scales correctly instead of double-scaling. */
@@ -838,28 +839,59 @@
     }
     .rail-dot{width:7px;height:7px;}
     .rail-dot.active{width:16px;}
+    /* Chat FAB: shrink to a thumb-friendly size that doesn't compete
+       with the dock/room-rail for space, and pin its bottom offset
+       to a CSS var so the widget below can line up against it
+       exactly instead of guessing a fixed gap. */
     .chat-fab{
-      bottom:calc(14px + env(safe-area-inset-bottom));
+      --fab-bottom: calc(14px + env(safe-area-inset-bottom));
+      bottom:var(--fab-bottom);
       right:calc(10px + env(safe-area-inset-right));
-      width:58px;
-      height:76px;
+      width:52px;
+      height:69px;
     }
+    /* Chat widget: anchored to the FAB's own bottom offset + its
+       height + a small gap, so it always sits just above the FAB
+       with no dead space and no overlap, regardless of safe-area
+       insets on the device. Height is capped against the *visual*
+       viewport (100dvh) minus the topbar and the FAB row, so it
+       never runs off-screen top or bottom, and a min-height keeps
+       it usable on short landscape screens instead of collapsing. */
     .chat-widget{
       right:calc(8px + env(safe-area-inset-right));
       left:calc(8px + env(safe-area-inset-left));
       width:auto;
       max-width:none;
-      bottom:calc(96px + env(safe-area-inset-bottom));
-      height:min(66dvh, 520px);
+      bottom:calc(14px + env(safe-area-inset-bottom) + 69px + 10px);
+      height:min(60dvh, 480px);
+      max-height:calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      min-height:280px;
       border-radius:20px;
     }
-    .chat-head{padding:13px 15px;}
-    .chat-head-avatar{width:48px;height:48px;}
+    .chat-head{padding:12px 14px;}
+    .chat-head-avatar{width:38px;height:38px;}
     .chat-head-name{font-size:0.92rem;}
     .chat-head-status{font-size:0.68rem;}
+    .chat-log{padding:12px 12px 6px;gap:7px;}
+    .msg{font-size:0.88rem;padding:9px 13px;}
     .chat-quick-row{padding:0 12px 10px;gap:6px;}
     .chat-quick-btn{font-size:0.72rem;padding:7px 12px;}
-    .chat-input-row{padding:10px 12px;}
+    .chat-input-row{padding:9px 10px;}
+    .chat-input-row input{padding:10px 15px;font-size:0.88rem;}
+    .chat-input-row button{width:40px;height:40px;}
+  }
+  /* Short / landscape phones: the 60dvh chat height above can be too
+     tall when the viewport itself is short, squeezing the log down
+     to almost nothing. Cap by height rather than width here. */
+  @media (max-width:720px) and (max-height:480px){
+    .chat-widget{
+      height:min(80dvh, 320px);
+      min-height:200px;
+      bottom:calc(10px + env(safe-area-inset-bottom) + 60px + 8px);
+    }
+    .chat-fab{width:44px;height:58px;}
+    .chat-log{padding:10px 12px 4px;}
+    .chat-quick-row{display:none;}
   }
   @media (max-width:380px){
     .title-pill{font-size:0.82rem;padding:7px 12px 7px 9px;}
@@ -871,7 +903,11 @@
     .dock{gap:7px;padding:5px;}
     .action-btn{width:38px;height:38px;}
     .action-btn .icon svg{width:16px;height:16px;}
-    .chat-fab{width:50px;height:66px;}
+    .chat-fab{width:46px;height:61px;}
+    .chat-widget{
+      bottom:calc(14px + env(safe-area-inset-bottom) + 61px + 10px);
+      min-height:240px;
+    }
   }
 </style>
 </head>
