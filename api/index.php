@@ -307,21 +307,26 @@
   }
 
   /* ---------- Cat ---------- */
+  /* Anchored to sit inside the pet bed drawn in LivingRoom.jfif.
+     Adjust --bed-x / --bed-y below to match your artwork's bed position:
+     --bed-x is a % across the stage width, --bed-y is px up from the bottom. */
   .cat-stage{
+    --bed-x:57%;
+    --bed-y:120px;
     position:absolute;
-    bottom:70px;
-    left:52%;
+    bottom:var(--bed-y);
+    left:var(--bed-x);
     transform:translateX(-50%);
-    width:320px;height:420px;
+    width:170px;height:210px;
     z-index:5;
   }
   .mood-halo{
     position:absolute;
-    left:50%;bottom:20px;
+    left:50%;bottom:10px;
     transform:translateX(-50%);
-    width:300px;height:300px;
+    width:160px;height:160px;
     border-radius:50%;
-    filter:blur(44px);
+    filter:blur(30px);
     opacity:0.55;
     background:var(--accent);
     transition:background 0.6s ease;
@@ -336,7 +341,7 @@
     position:absolute;
     bottom:0;left:50%;
     transform:translateX(-50%);
-    width:600px;height:698px;
+    width:230px;height:268px;
     cursor:pointer;
     z-index:2;
     animation:catWalk 3.2s ease-in-out infinite;
@@ -355,7 +360,7 @@
     position:absolute;
     bottom:-4px;left:50%;
     transform:translateX(-50%);
-    width:220px;height:26px;
+    width:110px;height:16px;
     background:rgba(30,22,46,0.2);
     border-radius:50%;
     filter:blur(2px);
@@ -808,16 +813,16 @@
     .rail-dot.active{width:18px;}
 
     .cat-stage{
-      width:250px;
-      height:330px;
-      bottom:96px;
-      left:50%;
+      --bed-x:57%;
+      --bed-y:90px;
+      width:130px;
+      height:160px;
     }
-    .mood-halo{width:220px;height:220px;}
-    .cat-wrap{width:230px;height:305px;}
-    .cat-shadow{width:150px;height:24px;}
-    .cat-wrap.mood-sleepy{width:300px;height:248px;}
-    .cat-wrap.mood-sleepy .cat-shadow{width:230px;}
+    .mood-halo{width:120px;height:120px;}
+    .cat-wrap{width:175px;height:203px;}
+    .cat-shadow{width:85px;height:12px;}
+    .cat-wrap.mood-sleepy{width:230px;height:190px;}
+    .cat-wrap.mood-sleepy .cat-shadow{width:175px;}
 
     .dock{
       right:24px;
