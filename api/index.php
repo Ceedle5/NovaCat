@@ -369,11 +369,36 @@
     width:600px;height:698px;
     cursor:pointer;
     z-index:2;
-    animation:bob 2.6s ease-in-out infinite;
+    animation:catWalk 3.2s ease-in-out infinite;
   }
-  @keyframes bob{
-    0%,100%{transform:translateX(-50%) translateY(0);}
-    50%{transform:translateX(-50%) translateY(-10px);}
+  @keyframes catWalk{
+    0%{
+      transform:translateX(-50%) translateY(0) scaleX(1);
+    }
+    15%{
+      transform:translateX(calc(-50% + 6px)) translateY(-4px) scaleX(1.02);
+    }
+    30%{
+      transform:translateX(calc(-50% + 12px)) translateY(-6px) scaleX(1.03);
+    }
+    45%{
+      transform:translateX(calc(-50% + 8px)) translateY(-3px) scaleX(1.015);
+    }
+    50%{
+      transform:translateX(-50%) translateY(0) scaleX(1);
+    }
+    65%{
+      transform:translateX(calc(-50% - 6px)) translateY(-4px) scaleX(0.98);
+    }
+    80%{
+      transform:translateX(calc(-50% - 12px)) translateY(-6px) scaleX(0.97);
+    }
+    95%{
+      transform:translateX(calc(-50% - 8px)) translateY(-3px) scaleX(0.985);
+    }
+    100%{
+      transform:translateX(-50%) translateY(0) scaleX(1);
+    }
   }
   .cat-shadow{
     position:absolute;

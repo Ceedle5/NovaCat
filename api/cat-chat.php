@@ -208,17 +208,6 @@ $catBio =
     . "You are a Persian cat with a white coat. ";
 
 
-// ===============================================================
-// CAT PERSONALITY
-// ===============================================================
-
-// NOTE: Because Gemini remembers the conversation via
-// previous_interaction_id, this system prompt (and the live game
-// state baked into it) is only sent again on the FIRST message of
-// a new interaction chain. Once a previous_interaction_id exists,
-// Gemini already has the earlier instructions in context, so we
-// don't need to resend the full personality block every turn -
-// only the current live stats, so it can react to freshness.
 $systemPrompt =
     "You are {$name}, a playful, affectionate house cat "
     . "living in a virtual pet app called \"Shero's House\". "
@@ -258,18 +247,6 @@ $systemPrompt =
     . "Never mention or recite the numerical values.";
 
 
-// ===============================================================
-// GEMINI INTERACTIONS API
-// ===============================================================
-//
-// Gemini's Interactions API is used instead of generateContent.
-//
-// $models is tried in order. If the first (preferred) model
-// comes back overloaded (HTTP 429/503, "high demand" style
-// errors), we retry it briefly, then fall back to the next
-// model in the list rather than failing the request outright.
-// ===============================================================
-
 $models = [
     'gemini-3.7-flash',
     'gemini-3.5-flash',
@@ -279,22 +256,6 @@ $url =
     'https://generativelanguage.googleapis.com'
     . '/v1beta/interactions';
 
-
-// ===============================================================
-// BUILD REQUEST
-// ===============================================================
-//
-// IMPORTANT:
-// We intentionally send the current message as a simple string.
-//
-// We are NOT sending:
-//     role/content arrays
-//     contents
-//     turn_list
-//
-// Conversation memory is handled by:
-//     previous_interaction_id
-// ===============================================================
 
 function buildPayload($model, $message, $systemPrompt, $previousInteractionId) {
 
@@ -306,19 +267,12 @@ function buildPayload($model, $message, $systemPrompt, $previousInteractionId) {
 
         'system_instruction' => $systemPrompt,
 
-        // A one-or-two-sentence cat chat reply doesn't need deep
-        // reasoning. Gemini 3 models "think" by default before
-        // answering (even trivial prompts can spend 100+ thought
-        // tokens), which was the real cause of our slow/timed-out
-        // requests. Dialing this down makes replies both faster
-        // and cheaper.
         'generation_config' => [
             'thinking_level' => 'low',
         ],
 
     ];
 
-    // Continue previous conversation if available.
     if ($previousInteractionId !== '') {
         $payload['previous_interaction_id'] = $previousInteractionId;
     }
@@ -326,8 +280,6 @@ function buildPayload($model, $message, $systemPrompt, $previousInteractionId) {
     return $payload;
 }
 
-// Performs one HTTP call to the Interactions API for a given model.
-// Returns ['response' => string|false, 'httpCode' => int, 'curlError' => string].
 function callGemini($url, $apiKey, $payload) {
 
     $ch = curl_init($url);
@@ -349,9 +301,6 @@ function callGemini($url, $apiKey, $payload) {
 
             'x-goog-api-key: ' . $apiKey,
 
-            // Required by the Interactions API (currently in beta) to pin
-            // a stable request/response schema. Without this header you
-            // risk breaking changes landing under you.
             'Api-Revision: 2026-05-20'
 
         ],
@@ -374,13 +323,7 @@ function callGemini($url, $apiKey, $payload) {
     ];
 }
 
-// HTTP codes / signals worth retrying or falling back on.
-// 429 = rate limited / quota, 503 = overloaded/unavailable.
-// A curl-level failure (timeout, DNS error, connection refused, etc.)
-// comes back as httpCode === 0 with no response body at all - that's
-// exactly what we hit before this fix, and it was being treated as a
-// non-retryable failure, so the code never got to try the fallback
-// model. Treat it as retryable too.
+
 function isOverloaded($httpCode, $response, $curlError) {
 
     if ($httpCode === 0 || $curlError !== '') {
@@ -391,8 +334,6 @@ function isOverloaded($httpCode, $response, $curlError) {
         return true;
     }
 
-    // Some overload errors come back as 500 with a "high demand"
-    // style message in the body, so check for that too.
     if ($httpCode >= 500 && is_string($response)) {
         $lower = strtolower($response);
         if (
@@ -408,26 +349,9 @@ function isOverloaded($httpCode, $response, $curlError) {
 }
 
 
-// ===============================================================
-// CALL GEMINI (with retry + model fallback)
-// ===============================================================
-//
-// For each model in $models (preferred first):
-//   - try up to RETRIES_PER_MODEL times, with a short delay
-//     between attempts, if the failure looks like an overload
-//   - move on to the next model if it's still overloaded
-//
-// Any non-overload failure (bad request, auth error, etc.) stops
-// immediately rather than retrying/falling back, since retrying
-// won't fix those.
-// ===============================================================
-
 const RETRIES_PER_MODEL = 1;
 const RETRY_DELAY_SECONDS = 1;
 
-// Worst case now: 2 models x 1 attempt x 10s timeout = 20s, safely
-// under PHP's default 30s max_execution_time. Raise it slightly
-// anyway as a safety margin in case a host has stricter defaults.
 set_time_limit(40);
 
 $response = false;
@@ -439,8 +363,7 @@ foreach ($models as $model) {
 
     $payload = buildPayload($model, $message, $systemPrompt, $previousInteractionId);
 
-    // Set eagerly so it's correct whether this attempt succeeds
-    // or we exhaust retries and fall through to the next model.
+ 
     $modelUsed = $model;
 
     for ($attempt = 1; $attempt <= RETRIES_PER_MODEL; $attempt++) {
@@ -453,27 +376,17 @@ foreach ($models as $model) {
 
         $overloaded = isOverloaded($httpCode, $response, $curlError);
 
-        // Success, or a non-overload failure - stop retrying.
         if (!$overloaded) {
             break 2;
         }
 
-        // Overloaded - wait briefly and retry the same model,
-        // unless this was the last attempt for this model.
         if ($attempt < RETRIES_PER_MODEL) {
             sleep(RETRY_DELAY_SECONDS);
         }
     }
 
-    // If we get here without breaking out, this model was
-    // overloaded on every attempt - loop continues to the
-    // next (fallback) model, if any.
 }
 
-
-// ===============================================================
-// CURL ERROR
-// ===============================================================
 
 if ($response === false || $curlError !== '') {
 
@@ -489,11 +402,6 @@ if ($response === false || $curlError !== '') {
 
     exit;
 }
-
-
-// ===============================================================
-// DECODE GEMINI RESPONSE
-// ===============================================================
 
 $data = json_decode(
     $response,
@@ -515,11 +423,6 @@ if (!is_array($data)) {
     exit;
 }
 
-
-// ===============================================================
-// GEMINI ERROR
-// ===============================================================
-
 if ($httpCode >= 400) {
 
     http_response_code($httpCode);
@@ -539,15 +442,9 @@ if ($httpCode >= 400) {
     exit;
 }
 
-// ===============================================================
-// EXTRACT MODEL RESPONSE
-// ===============================================================
-
 $reply = '';
 
 
-// The current Interactions API returns
-// generated content inside `steps`.
 
 if (
     isset($data['steps']) &&
@@ -556,7 +453,6 @@ if (
 
     foreach ($data['steps'] as $step) {
 
-        // We only want model output.
         if (
             ($step['type'] ?? '') !==
             'model_output'
@@ -590,10 +486,6 @@ if (
 }
 
 
-// ===============================================================
-// EMPTY RESPONSE
-// ===============================================================
-
 $reply = trim($reply);
 
 if ($reply === '') {
@@ -613,16 +505,6 @@ if ($reply === '') {
 }
 
 
-// ===============================================================
-// RETURN RESPONSE
-// ===============================================================
-//
-// IMPORTANT:
-// We return the interaction ID so the frontend can send it
-// with the next message.
-//
-// This gives Whiskers conversation memory.
-// ===============================================================
 
 echo json_encode([
 
@@ -630,9 +512,6 @@ echo json_encode([
 
     'interaction_id' =>
         $data['id'] ?? null,
-
-    // Which model actually answered (useful for debugging fallback
-    // behavior). The frontend doesn't need to use this.
     'model_used' => $modelUsed
 
 ], JSON_UNESCAPED_UNICODE);
