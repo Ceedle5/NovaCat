@@ -179,8 +179,9 @@
     transition:transform 0.3s cubic-bezier(.2,1,.3,1);
     overflow:visible;
   }
-  .room-door.prev{left:24px;}
-  .room-door.next{right:24px;}
+ .room-door.prev{ left:16px; top:50%; }        /* keep mid-height, out of the dock's way */
+.room-door.next{ right:16px; top:50%; }
+
   .room-door:hover{transform:translateY(-56%) scale(1.07);}
   .room-door:active{transform:translateY(-52%) scale(0.93);}
 
@@ -957,11 +958,8 @@
     display:none;
   }
 
-  .room-rail{
-    bottom:12px;
-    gap:7px;
-    padding:7px 12px;
-  }
+.room-rail{ bottom:14px; }                     /* stays bottom-center, on its own */
+
 
   .rail-dot{
     width:7px;
@@ -1002,16 +1000,10 @@
     width:230px;
   }
 
-  /* Floating action icons */
-  .dock{
-    right:82px;
-    bottom:26px;
-
-    gap:7px;
-
-    max-width:none;
-    overflow:visible;
-  }
+ .dock{
+  right:24px;
+  bottom:96px;                                 /* lift clear of the chat FAB */
+}
 
   .action-btn{
     width:38px;
@@ -1027,15 +1019,12 @@
     display:none;
   }
 
-  /* Chat bubble */
-  .chat-fab{
-    width:58px;
-    height:58px;
-
-    bottom:18px;
-    right:14px;
-  }
-
+.chat-fab{
+  bottom:16px;
+  right:16px;
+  width:64px;
+  height:64px;                                 /* shrink slightly so it doesn't dominate the corner */
+}
   .chat-widget{
     right:12px;
     left:12px;
@@ -1052,6 +1041,27 @@
     height:72px;
   }
 }
+
+.stage{ position:relative; }
+.room-bg-fill,
+.room-bg-full{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+.room-bg-fill{
+  object-fit:cover;
+  filter:blur(30px) brightness(0.75) saturate(1.1);
+  transform:scale(1.15); /* hides blur edge artifacts */
+}
+.room-bg-full{
+  object-fit:contain;
+  object-position:center bottom;
+}
+
 </style>
 </head>
 <body>
@@ -1059,11 +1069,9 @@
 <div id="app">
 
   <div class="stage room-living" id="stage">
-    <div class="prop window" id="prop-window"></div>
-    <div class="prop rug" id="prop-rug"></div>
-    <div class="prop bowl" id="prop-bowl"></div>
-    <div class="prop cabinet" id="prop-cabinet"></div>
-    <div class="prop bed" id="prop-bed"></div>
+      <img class="room-bg-fill" id="roomBgFill" src="/Assets/LivingRoom.jfif" alt="">
+  <img class="room-bg-full" id="roomBgFull" src="/Assets/LivingRoom.jfif" alt="">
+  
 
     <button class="room-door prev" id="prevRoom" aria-label="Previous room">
       <span class="door-ring"></span>
@@ -1248,9 +1256,15 @@
       {icon:ICON.nap, label: 'Nap', run: toggleSleep},
     ]
   };
-
-  /* ---------------- Rendering ---------------- */
-  function renderRoom(){
+const ROOM_BG = {
+  living: '/Assets/LivingRoom.jfif',
+  kitchen: '/Assets/Kitchen.jfif',
+  bedroom: '/Assets/Bedroom.jfif',
+};
+function renderRoom(){
+  const room = rooms[roomIndex];
+  document.getElementById('roomBgFill').src = ROOM_BG[room];
+  document.getElementById('roomBgFull').src = ROOM_BG[room];
     const room = rooms[roomIndex];
     cancelPetAnimation();
     cancelEatAnimation();
