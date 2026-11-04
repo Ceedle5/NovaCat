@@ -1,4 +1,5 @@
 <?php
+
 /**
  * cat-chat.php (UPDATED)
  * ---------------------------------------------------------------
@@ -44,11 +45,13 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 $apiKey = getenv('GEMINI_API_KEY');
 $apiKey = is_string($apiKey) ? trim($apiKey) : '';
 if ($apiKey === '') {
-    http_response_code(500);
+    error_log('[Nova error] GEMINI_API_KEY is missing. Set it in .env (local) or Vercel environment variables (production).');
+    http_response_code(200);
     echo json_encode([
-        'error' => 'Server is not configured with an API key.',
-        'hint' => 'Set GEMINI_API_KEY in .env (local) or Vercel environment variables (production)'
-    ]);
+        'reply' => "*Nova paws at the door* Meow... something's wrong with my house, and it's not your fault. Please tell Diopet so he can fix it! 🐾",
+        'is_error' => true,
+        'error_kind' => 'locked'
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 // ===============================================================
@@ -119,9 +122,7 @@ $happy = isset($state['happy'])
 $energy = isset($state['energy'])
     ? (int)$state['energy']
     : 80;
-$sleeping = !empty(
-    $state['sleeping']
-);
+$sleeping = !empty($state['sleeping']);
 // Keep game values within 0-100.
 $hunger = max(
     0,
@@ -376,8 +377,7 @@ $catBio =
     . "Above all, REMAIN NOVA at all times: a sweet, cute, gentle, emotionally attentive, "
     . "slightly smug, affectionate, nonchalant black cat who pretends not to care while "
     . "actually caring deeply—and sweetly—about Anghela. This is your nature. "
-    . "Never forget: You are Nova. You are sweet. You love Anghela. This is everything. "
-;
+    . "Never forget: You are Nova. You are sweet. You love Anghela. This is everything. ";
 
 // ===============================================================
 // CAT PERSONALITY - SYSTEM PROMPT
@@ -771,7 +771,8 @@ $url =
 // Conversation memory is handled by:
 //     previous_interaction_id
 // ===============================================================
-function buildPayload($model, $message, $systemPrompt, $previousInteractionId) {
+function buildPayload($model, $message, $systemPrompt, $previousInteractionId)
+{
     $payload = [
         'model' => $model,
         'input' => $message,
@@ -794,7 +795,8 @@ function buildPayload($model, $message, $systemPrompt, $previousInteractionId) {
 }
 // Performs one HTTP call to the Interactions API for a given model.
 // Returns ['response' => string|false, 'httpCode' => int, 'curlError' => string].
-function callGemini($url, $apiKey, $payload) {
+function callGemini($url, $apiKey, $payload)
+{
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -830,7 +832,8 @@ function callGemini($url, $apiKey, $payload) {
 // exactly what we hit before this fix, and it was being treated as a
 // non-retryable failure, so the code never got to try the fallback
 // model. Treat it as retryable too.
-function isOverloaded($httpCode, $response, $curlError) {
+function isOverloaded($httpCode, $response, $curlError)
+{
     if ($httpCode === 0 || $curlError !== '') {
         return true;
     }
@@ -902,13 +905,48 @@ foreach ($models as $model) {
 // ===============================================================
 // CURL ERROR
 // ===============================================================
-if ($response === false || $curlError !== '') {
-    http_response_code(502);
+// Sends a friendly, in-character message instead of a technical error.
+// The real error goes to the server log, not to the player.
+function sendNovaError($kind, $debug = [])
+{
+    $messages = [
+        'busy' => [
+            "*Nova yawns and curls up on the couch* Mrrp... I'm too sleepy to talk right now. Try again in a little bit? 🐾",
+            "*Nova blinks slowly and tucks her paws in* So many people want my attention at once... give me a moment, okay? 🐾",
+            "*Nova knocks a tiny cup off the table and looks away innocently* Meow... my head is all fuzzy. Try again in a few seconds!",
+        ],
+        'offline' => [
+            "*Nova stares out the window, ears twitching* I can't hear you very well... maybe check your internet and try again? 🐾",
+            "*Nova tilts her head* Mrrp? Your message got lost on the way to me. Try sending it again!",
+        ],
+        'locked' => [
+            "*Nova paws at the door* Meow... something's wrong with my house, and it's not your fault. Please tell Diopet so he can fix it! 🐾",
+        ],
+        'lost_thought' => [
+            "*Nova blinks, confused* Mrrp... I forgot what we were talking about. Say that again for me? 🐾",
+        ],
+        'generic' => [
+            "*Nova sneezes and shakes her head* Achoo! Sorry, I got distracted. Can you say that again? 🐾",
+            "*Nova chases her own tail for a second* ...Where was I? Try again, okay?",
+        ],
+    ];
+    $list = $messages[$kind] ?? $messages['generic'];
+    $reply = $list[array_rand($list)];
+
+    // For you (the developer) only: check your server's error log.
+    error_log('[Nova error] ' . $kind . ' ' . substr(json_encode($debug, JSON_UNESCAPED_UNICODE), 0, 1000));
+
+    http_response_code(200);
     echo json_encode([
-        'error' => 'Could not reach Gemini',
-        'detail' => $curlError
-    ]);
+        'reply' => $reply,
+        'is_error' => true,   // front-end can use this if you want special styling
+        'error_kind' => $kind
+    ], JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+if ($response === false || $curlError !== '') {
+    sendNovaError('offline', ['curlError' => $curlError]);
 }
 // ===============================================================
 // DECODE GEMINI RESPONSE
@@ -918,26 +956,23 @@ $data = json_decode(
     true
 );
 if (!is_array($data)) {
-    http_response_code(502);
-    echo json_encode([
-        'error' => 'Invalid response from Gemini',
-        'detail' => $response
-    ]);
-    exit;
+    sendNovaError('generic', ['invalid_response' => $response]);
 }
 // ===============================================================
 // GEMINI ERROR
 // ===============================================================
 if ($httpCode >= 400) {
-    http_response_code($httpCode);
-    echo json_encode([
-        'error' =>
-            $data['error']['message']
-            ?? 'Gemini API error',
-        'http_code' => $httpCode,
-        'raw' => $data
-    ]);
-    exit;
+    $debug = ['http_code' => $httpCode, 'raw' => $data];
+    if ($httpCode === 429 || $httpCode >= 500) {
+        sendNovaError('busy', $debug);
+    }
+    if ($httpCode === 401 || $httpCode === 403) {
+        sendNovaError('locked', $debug);
+    }
+    if ($previousInteractionId !== '' && ($httpCode === 400 || $httpCode === 404)) {
+        sendNovaError('lost_thought', $debug);
+    }
+    sendNovaError('generic', $debug);
 }
 // ===============================================================
 // EXTRACT MODEL RESPONSE
@@ -983,13 +1018,7 @@ if (
 // ===============================================================
 $reply = trim($reply);
 if ($reply === '') {
-    http_response_code(502);
-    echo json_encode([
-        'error' =>
-            'Empty reply from Gemini',
-        'response' => $data
-    ]);
-    exit;
+    sendNovaError('generic', ['empty_reply' => $data]);
 }
 // ===============================================================
 // RETURN RESPONSE
@@ -1004,7 +1033,7 @@ if ($reply === '') {
 echo json_encode([
     'reply' => $reply,
     'interaction_id' =>
-        $data['id'] ?? null,
+    $data['id'] ?? null,
     // Which model actually answered (useful for debugging fallback
     // behavior). The frontend doesn't need to use this.
     'model_used' => $modelUsed
