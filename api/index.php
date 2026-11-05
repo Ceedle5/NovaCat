@@ -2057,6 +2057,331 @@
         min-height: 240px;
       }
     }
+
+    /* ================= Cozy game skin: clay HUD + cat-head buttons ================= */
+    :root {
+      --clay-light: #b4e1bf;
+      --clay-deep: #74b787;
+      --clay-shadow: #4f8f64;
+      --cream: #fff8ec;
+      /* the cat-head button shape. Edit the two stop-color values to recolor every button */
+      --cat-btn: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23b4e1bf'/><stop offset='1' stop-color='%2374b787'/></linearGradient></defs><path d='M14 47.8 L14.5 10 Q15 5 19.5 7.5 L40 23.3 A38 38 0 0 1 60 23.3 L80.5 7.5 Q85 5 85.5 10 L86 47.8 A38 38 0 1 1 14 47.8 Z' fill='url(%23g)' stroke='%23fff8ec' stroke-width='3.5' stroke-linejoin='round'/><path d='M21 16 L33 25 L21 36 Z M79 16 L67 25 L79 36 Z' fill='%23fff8ec' opacity='.35'/><ellipse cx='50' cy='38' rx='22' ry='7' fill='%23fff' opacity='.2'/></svg>");
+    }
+
+    /* ----- Pills: title, room name, stats ----- */
+    .title-pill.glass,
+    .room-pill.glass,
+    .stats-pill.glass {
+      background: linear-gradient(180deg, var(--clay-light) 0%, var(--clay-deep) 100%);
+      border: 2.5px solid var(--cream);
+      box-shadow: 0 4px 0 var(--clay-shadow), 0 10px 18px rgba(60, 38, 26, 0.28), inset 0 2px 0 rgba(255, 255, 255, 0.45);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      color: var(--cream);
+      text-shadow: 0 2px 0 rgba(63, 120, 82, 0.55);
+    }
+
+    .title-pill .paw {
+      background: linear-gradient(160deg, #fffdf6, #ecf5e8);
+      box-shadow: 0 2px 0 var(--clay-shadow), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .title-pill .paw svg {
+      fill: var(--clay-deep);
+    }
+
+    .room-pill::before {
+      display: none;
+    }
+
+    .room-pill.glass {
+      padding: 9px 24px;
+    }
+
+    .stats-pill .stat-icon {
+      background: var(--cream);
+      box-shadow: 0 2px 0 rgba(63, 120, 82, 0.45);
+    }
+
+    .stats-pill .stat-track {
+      background: rgba(52, 104, 70, 0.38);
+      box-shadow: inset 0 2px 3px rgba(30, 70, 45, 0.4);
+    }
+
+    .stats-pill .stat-num {
+      background: var(--cream);
+      padding: 1px 8px;
+      border-radius: 999px;
+      min-width: 32px;
+      text-align: center;
+      text-shadow: none;
+      box-shadow: 0 2px 0 rgba(63, 120, 82, 0.4);
+    }
+
+    .stats-pill .stat+.stat::before {
+      background: linear-gradient(180deg, transparent, rgba(255, 248, 236, 0.6), transparent);
+    }
+
+    /* ----- Room rail ----- */
+    .room-rail.glass {
+      background: rgba(255, 248, 236, 0.94);
+      border: 2.5px solid #fff;
+      box-shadow: 0 3px 0 rgba(63, 120, 82, 0.35), 0 8px 16px rgba(60, 38, 26, 0.22);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .rail-dot {
+      background: rgba(95, 168, 119, 0.25);
+      border-color: #fff;
+    }
+
+    .rail-dot:hover {
+      background: rgba(95, 168, 119, 0.45);
+    }
+
+    .rail-dot.active {
+      background: linear-gradient(90deg, var(--clay-light), var(--clay-deep));
+      box-shadow: 0 2px 0 var(--clay-shadow);
+    }
+
+    /* ----- Room doors: cat-head buttons ----- */
+    .room-door {
+      width: 86px;
+      height: 86px;
+    }
+
+    .door-core {
+      border: 0;
+      border-radius: 0;
+      background: var(--cat-btn) center/100% 100% no-repeat;
+      box-shadow: none;
+      padding-top: 20%;
+      filter: drop-shadow(0 4px 0 var(--clay-shadow)) drop-shadow(0 10px 12px rgba(60, 38, 26, 0.3));
+      animation: none;
+      transition: filter 0.2s ease, transform 0.15s ease;
+    }
+
+    .room-door:hover .door-core {
+      box-shadow: none;
+      transform: translateY(-2px);
+      filter: drop-shadow(0 6px 0 var(--clay-shadow)) drop-shadow(0 14px 14px rgba(60, 38, 26, 0.32));
+    }
+
+    .room-door:active .door-core {
+      box-shadow: none;
+      transform: translateY(3px);
+      filter: drop-shadow(0 1px 0 var(--clay-shadow)) drop-shadow(0 3px 6px rgba(60, 38, 26, 0.28));
+    }
+
+    .door-face-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .door-ring {
+      inset: -8px;
+      background: radial-gradient(circle, rgba(255, 230, 160, 0.85) 0%, transparent 68%);
+      filter: blur(8px);
+      animation: catGlow 3.4s ease-in-out infinite;
+    }
+
+    @keyframes catGlow {
+
+      0%,
+      100% {
+        opacity: 0.25;
+        transform: scale(0.94);
+      }
+
+      50% {
+        opacity: 0.6;
+        transform: scale(1.06);
+      }
+    }
+
+    .door-chevron {
+      background: linear-gradient(160deg, var(--clay-light), var(--clay-deep));
+      box-shadow: 0 3px 0 var(--clay-shadow), 0 0 0 3px var(--cream);
+    }
+
+    .door-chevron-prev {
+      left: 2px;
+      bottom: 4px;
+    }
+
+    .door-chevron-next {
+      right: 2px;
+      bottom: 4px;
+    }
+
+    /* ----- Action dock: cat-head buttons ----- */
+    .dock.glass {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .dock.glass::before {
+      display: none;
+    }
+
+    .action-btn {
+      width: 66px;
+      height: 66px;
+      padding: 20% 0 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .action-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: var(--cat-btn) center/100% 100% no-repeat;
+      filter: drop-shadow(0 4px 0 var(--clay-shadow)) drop-shadow(0 8px 10px rgba(60, 38, 26, 0.28));
+      transition: filter 0.14s ease;
+    }
+
+    .action-btn .icon {
+      position: relative;
+      z-index: 1;
+    }
+
+    .action-btn:hover,
+    .action-btn:active {
+      box-shadow: none;
+    }
+
+    .action-btn:hover::before {
+      filter: drop-shadow(0 7px 0 var(--clay-shadow)) drop-shadow(0 12px 14px rgba(60, 38, 26, 0.3));
+    }
+
+    .action-btn:active::before {
+      filter: drop-shadow(0 1px 0 var(--clay-shadow)) drop-shadow(0 3px 6px rgba(60, 38, 26, 0.25));
+    }
+
+    /* ----- Chat button: cat-head with paw + "new message" bubble ----- */
+    .chat-fab {
+      width: 96px;
+      height: 96px;
+      filter: none;
+    }
+
+    .chat-fab::before,
+    .chat-fab::after {
+      display: none;
+    }
+
+    .fab-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 20%;
+      background: var(--cat-btn) center/100% 100% no-repeat;
+      filter: drop-shadow(0 4px 0 var(--clay-shadow)) drop-shadow(0 10px 14px rgba(60, 38, 26, 0.32));
+      animation: fabFloat 3.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .fab-face svg {
+      width: 42%;
+      height: 42%;
+      fill: var(--cream);
+      filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.14));
+    }
+
+    .fab-badge {
+      top: 2px;
+      right: 0;
+      width: 30px;
+      height: 23px;
+      border-radius: 12px;
+      background: #fff;
+      border: 2px solid var(--clay-deep);
+      box-shadow: 0 2px 0 var(--clay-shadow);
+      background-image:
+        radial-gradient(circle at 26% 50%, var(--clay-shadow) 2px, transparent 2.6px),
+        radial-gradient(circle at 50% 50%, var(--clay-shadow) 2px, transparent 2.6px),
+        radial-gradient(circle at 74% 50%, var(--clay-shadow) 2px, transparent 2.6px);
+    }
+
+    .fab-badge::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 6px;
+      width: 9px;
+      height: 9px;
+      background: #fff;
+      border-right: 2px solid var(--clay-deep);
+      border-bottom: 2px solid var(--clay-deep);
+      transform: rotate(45deg);
+    }
+
+    /* ----- Phones ----- */
+    @media (max-width: 720px) {
+      .room-door {
+        width: 64px;
+        height: 64px;
+      }
+
+      .door-face-icon svg {
+        width: 21px;
+        height: 21px;
+      }
+
+      .action-btn {
+        width: 54px;
+        height: 54px;
+      }
+
+      .action-btn .icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .chat-fab {
+        width: 68px;
+        height: 68px;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        right: calc(8px + env(safe-area-inset-right));
+      }
+
+      .fab-badge {
+        width: 24px;
+        height: 19px;
+        top: 0;
+        right: -2px;
+      }
+
+      .stats-pill .stat-num {
+        padding: 0 5px;
+        min-width: 22px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .room-door {
+        width: 56px;
+        height: 56px;
+      }
+
+      .action-btn {
+        width: 48px;
+        height: 48px;
+      }
+
+      .chat-fab {
+        width: 60px;
+        height: 60px;
+      }
+    }
   </style>
 </head>
 
