@@ -243,111 +243,6 @@
       z-index: 1;
     }
 
-    /* ---------- Room warp transition ---------- */
-    .warp {
-      position: absolute;
-      inset: 0;
-      z-index: 20;
-      visibility: hidden;
-      pointer-events: none;
-      --wa: var(--sage);
-      --wb: var(--sage-deep);
-    }
-
-    .warp.active {
-      visibility: visible;
-      pointer-events: auto;
-    }
-
-    .warp-iris {
-      position: absolute;
-      inset: 0;
-      background:
-        repeating-conic-gradient(from 0deg at var(--ox, 50%) var(--oy, 50%), rgba(255, 255, 255, 0.10) 0 5deg, transparent 5deg 10deg),
-        radial-gradient(circle at var(--ox, 50%) var(--oy, 50%), var(--wa), var(--wb) 95%);
-      clip-path: circle(0% at var(--ox, 50%) var(--oy, 50%));
-      transition: clip-path 0.48s cubic-bezier(.65, 0, .35, 1);
-    }
-
-    .warp.covering .warp-iris {
-      clip-path: circle(150% at var(--ox, 50%) var(--oy, 50%));
-    }
-
-    .warp-card {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%) scale(0.5) rotate(-6deg);
-      opacity: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      text-align: center;
-      transition: transform 0.45s cubic-bezier(.34, 1.56, .64, 1), opacity 0.2s ease;
-    }
-
-    .warp.show-card .warp-card {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1) rotate(0deg);
-    }
-
-    .warp-badge {
-      position: relative;
-      width: 92px;
-      height: 92px;
-      border-radius: 50%;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.18), 0 16px 30px rgba(0, 0, 0, 0.25);
-    }
-
-    .warp-badge::before {
-      content: "";
-      position: absolute;
-      inset: -10px;
-      border-radius: 50%;
-      border: 3px dashed rgba(255, 255, 255, 0.85);
-      animation: warpSpin 6s linear infinite;
-    }
-
-    @keyframes warpSpin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .warp-badge svg {
-      width: 46px;
-      height: 46px;
-      stroke: var(--wb);
-    }
-
-    .warp-badge svg.filled {
-      fill: var(--wb);
-      stroke: none;
-    }
-
-    .warp-kicker {
-      margin-top: 8px;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-      font-size: 0.78rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .warp-name {
-      font-family: 'Fredoka', sans-serif;
-      font-weight: 700;
-      font-size: clamp(1.9rem, 6vw, 3rem);
-      color: #fff;
-      text-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
-    }
-
     /* ---------- Topbar (floating glass) ---------- */
     .topbar {
       position: absolute;
@@ -2206,14 +2101,6 @@
         </div>
         <div class="particles" id="particles"></div>
       </div>
-      <div class="warp" id="warp" aria-hidden="true">
-        <div class="warp-iris"></div>
-        <div class="warp-card">
-          <div class="warp-badge" id="warpIcon"></div>
-          <div class="warp-kicker">Now entering</div>
-          <div class="warp-name" id="warpName"></div>
-        </div>
-      </div>
     </div>
     <div class="topbar">
       <div class="title-pill glass"><span class="paw"><svg viewBox="0 0 24 24">
@@ -2337,9 +2224,6 @@
       const els = {
         stage: document.getElementById('stage'),
         roomBgMain: document.getElementById('roomBgMain'),
-        warp: document.getElementById('warp'),
-        warpIcon: document.getElementById('warpIcon'),
-        warpName: document.getElementById('warpName'),
         sideLeft: document.getElementById('sideLeft'),
         sideRight: document.getElementById('sideRight'),
         catStage: document.querySelector('.cat-stage'),
@@ -2432,8 +2316,8 @@
         cancelPlayAnimation();
 
         // Trigger transition animation
-        els.stage.classList.remove('room-living', 'room-kitchen', 'room-bedroom');
-        els.stage.classList.add('room-' + room);
+        els.stage.classList.add('room-transitioning');
+        setTimeout(() => els.stage.classList.remove('room-transitioning'), 500);
 
         els.roomBgMain.src = ROOM_BG[room];
         els.roomName.textContent = roomLabels[room];
@@ -2447,72 +2331,6 @@
         renderRail();
         positionCat();
       }
-      /* ---- Game-style room transition ---- */
-      const ROOM_THEME = {
-        living: ['--sage', '--sage-deep'],
-        kitchen: ['--gold', '--gold-deep'],
-        bedroom: ['--dusk', '--dusk-deep']
-      };
-      const sleep = ms => new Promise(r => setTimeout(r, ms));
-      const preload = src => new Promise(res => {
-        const im = new Image();
-        im.onload = im.onerror = res;
-        im.src = src;
-      });
-      let travelling = false;
-
-      async function changeRoom(newIndex, originEl) {
-        if (travelling || newIndex === roomIndex) return;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          roomIndex = newIndex;
-          renderRoom();
-          return;
-        }
-        travelling = true;
-        const room = rooms[newIndex];
-        const w = els.warp;
-
-        // The iris opens from the button that was tapped
-        let ox = 50,
-          oy = 50;
-        if (originEl) {
-          const s = els.stage.getBoundingClientRect();
-          const r = originEl.getBoundingClientRect();
-          ox = (r.left + r.width / 2 - s.left) / s.width * 100;
-          oy = (r.top + r.height / 2 - s.top) / s.height * 100;
-        }
-        w.style.setProperty('--ox', ox + '%');
-        w.style.setProperty('--oy', oy + '%');
-        w.style.setProperty('--wa', `var(${ROOM_THEME[room][0]})`);
-        w.style.setProperty('--wb', `var(${ROOM_THEME[room][1]})`);
-        els.warpIcon.innerHTML = ROOM_ICON[room];
-        els.warpName.textContent = roomLabels[room];
-
-        // 1) Iris closes over the room
-        w.classList.add('active', 'covering');
-        await sleep(480);
-
-        // 2) Title card pops in while the new room loads behind it
-        w.classList.add('show-card');
-        await Promise.all([preload(ROOM_BG[room]), sleep(750)]);
-        roomIndex = newIndex;
-        renderRoom();
-        await sleep(150);
-
-        // 3) Card leaves, iris closes toward the center, Nova hops in
-        w.style.setProperty('--ox', '50%');
-        w.style.setProperty('--oy', '55%');
-        w.classList.remove('show-card');
-        await sleep(150);
-        w.classList.remove('covering');
-        els.catWrap.classList.add('bouncing');
-        await sleep(600);
-
-        w.classList.remove('active');
-        els.catWrap.classList.remove('bouncing');
-        travelling = false;
-      }
-
       /* ---- Cat positioning with smooth transitions ---- */
       function positionCat() {
         const img = els.roomBgMain;
@@ -2611,7 +2429,10 @@
           const dot = document.createElement('button');
           dot.className = 'rail-dot' + (i === roomIndex ? ' active' : '');
           dot.setAttribute('aria-label', 'Go to ' + roomLabels[r]);
-          dot.addEventListener('click', () => changeRoom(i, dot));
+          dot.addEventListener('click', () => {
+            roomIndex = i;
+            renderRoom();
+          });
           els.roomRail.appendChild(dot);
         });
       }
@@ -2879,11 +2700,13 @@
         renderAll();
       }, 4000);
       /* ---- Room navigation ---- */
-      document.getElementById('prevRoom').addEventListener('click', (e) => {
-        changeRoom((roomIndex - 1 + rooms.length) % rooms.length, e.currentTarget);
+      document.getElementById('prevRoom').addEventListener('click', () => {
+        roomIndex = (roomIndex - 1 + rooms.length) % rooms.length;
+        renderRoom();
       });
-      document.getElementById('nextRoom').addEventListener('click', (e) => {
-        changeRoom((roomIndex + 1) % rooms.length, e.currentTarget);
+      document.getElementById('nextRoom').addEventListener('click', () => {
+        roomIndex = (roomIndex + 1) % rooms.length;
+        renderRoom();
       });
       els.catWrap.addEventListener('click', petCat);
       /* ---- Chat widget ---- */
