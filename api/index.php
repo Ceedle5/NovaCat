@@ -1307,31 +1307,9 @@
       transform: scale(0.93);
     }
 
-    .fab-badge {
-      position: absolute;
-      top: 8px;
-      right: 16px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: linear-gradient(160deg, var(--coral), var(--coral-deep));
-      border: 2px solid #fff;
-      box-shadow: 0 2px 4px rgba(60, 38, 26, 0.35);
-      animation: badgePulse 1.3s ease-in-out infinite;
-    }
+   
 
-    @keyframes badgePulse {
-
-      0%,
-      100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.22);
-      }
-    }
-
+   
     .chat-scrim {
       position: fixed;
       inset: 0;
@@ -2296,35 +2274,7 @@
       filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.14));
     }
 
-    .fab-badge {
-      top: 2px;
-      right: 0;
-      width: 30px;
-      height: 23px;
-      border-radius: 12px;
-      background: #fff;
-      border: 2px solid var(--clay-deep);
-      box-shadow: 0 2px 0 var(--clay-shadow);
-      background-image:
-        radial-gradient(circle at 26% 50%, var(--clay-shadow) 2px, transparent 2.6px),
-        radial-gradient(circle at 50% 50%, var(--clay-shadow) 2px, transparent 2.6px),
-        radial-gradient(circle at 74% 50%, var(--clay-shadow) 2px, transparent 2.6px);
-    }
-
-    .fab-badge::after {
-      content: "";
-      position: absolute;
-      bottom: -6px;
-      left: 6px;
-      width: 9px;
-      height: 9px;
-      background: #fff;
-      border-right: 2px solid var(--clay-deep);
-      border-bottom: 2px solid var(--clay-deep);
-      transform: rotate(45deg);
-    }
-
-    /* ----- Phones ----- */
+   
     @media (max-width: 720px) {
       .room-door {
         width: 64px;
