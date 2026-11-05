@@ -230,44 +230,7 @@
       filter: saturate(1.05) brightness(0.92);
     }
 
-    .room-bg-side.side-left {
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 50%;
-      object-position: right center;
-    }
 
-    .room-bg-side.side-right {
-      top: 0;
-      bottom: 0;
-      right: 0;
-      width: 50%;
-      object-position: left center;
-    }
-
-    /* Tall/portrait screens: the empty space is above and below the room */
-    @media (max-aspect-ratio:1/1) {
-      .room-bg-side.side-left {
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: auto;
-        width: 100%;
-        height: 50%;
-        object-position: center bottom;
-      }
-
-      .room-bg-side.side-right {
-        bottom: 0;
-        left: 0;
-        right: 0;
-        top: auto;
-        width: 100%;
-        height: 50%;
-        object-position: center top;
-      }
-    }
 
     .room-bg-main {
       position: absolute;
@@ -2096,8 +2059,8 @@
   <div id="app">
     <div class="stage room-living" id="stage">
       <div class="room-bg-layer">
-        <img class="room-bg-side side-left" src="/Assets/AnghelaNova.jfif" alt="" aria-hidden="true">
-        <img class="room-bg-side side-right" src="/Assets/AnghelaNova2.jfif" alt="" aria-hidden="true">
+        <img class="room-bg-side side-left" id="sideLeft" src="/Assets/AnghelaNova.jfif" alt="" aria-hidden="true">
+        <img class="room-bg-side side-right" id="sideRight" src="/Assets/AnghelaNova2.jfif" alt="" aria-hidden="true">
         <img class="room-bg-main" id="roomBgMain" src="/Assets/LivingRoom.jfif" alt="">
       </div>
       <div class="stage-ambience" aria-hidden="true"></div>
