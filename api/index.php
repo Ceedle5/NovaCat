@@ -227,7 +227,9 @@
     .room-bg-side {
       position: absolute;
       object-fit: cover;
-      filter: saturate(1.05) brightness(0.92);
+      display: block;
+      filter: blur(3px) saturate(1.05) brightness(0.92);
+      transform: scale(1.04);
     }
 
 
