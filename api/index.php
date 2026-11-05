@@ -905,11 +905,14 @@
 
     .cat-pose-img {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: bottom center;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: 0 auto;
+      width: 275px;
+      height: 368px;
+      max-width: none;
+      object-fit: fill;
       filter: none;
       transition: filter 0.3s ease, transform 0.3s ease;
       -webkit-user-drag: none;
@@ -2221,6 +2224,19 @@
         },
       };
       const CAT_BASE_WIDTH = 170;
+      /* Character asset is 864 x 1156 and displays 368px tall.
+         Every pose is drawn at this same scale so they all match. */
+      const POSE_SCALE = 368 / 1156;
+
+      function sizePose(img) {
+        if (!img.naturalWidth) return;
+        img.style.width = Math.round(img.naturalWidth * POSE_SCALE) + 'px';
+        img.style.height = Math.round(img.naturalHeight * POSE_SCALE) + 'px';
+      }
+      document.querySelectorAll('.cat-pose-img').forEach(img => {
+        if (img.complete) sizePose(img);
+        img.addEventListener('load', () => sizePose(img));
+      });
       const els = {
         stage: document.getElementById('stage'),
         roomBgMain: document.getElementById('roomBgMain'),
