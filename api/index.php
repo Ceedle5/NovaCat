@@ -799,19 +799,19 @@
       }
 
       18% {
-        transform: translateX(-50%) rotate(-0.7deg) scale(1.006, 0.994);
+        transform: translateX(-50%) rotate(-0.7deg) scale(1, 1);
       }
 
       38% {
-        transform: translateX(-50%) rotate(0.3deg) scale(0.997, 1.01);
+        transform: translateX(-50%) rotate(0.3deg) scale(1, 1);
       }
 
       60% {
-        transform: translateX(-50%) rotate(1deg) scale(1.01, 0.995);
+        transform: translateX(-50%) rotate(1deg) scale(1, 1);
       }
 
       82% {
-        transform: translateX(-50%) rotate(-0.3deg) scale(1, 1.004);
+        transform: translateX(-50%) rotate(-0.3deg) scale(1, 1);
       }
 
       100% {
@@ -847,7 +847,7 @@
       }
 
       40% {
-        transform: translateX(-50%) translateY(-40px) scale(0.95, 1.05);
+        transform: translateX(-50%) translateY(-40px) scale(1, 1);
       }
 
       100% {
@@ -2228,10 +2228,63 @@
          Every pose is drawn at this same scale so they all match. */
       const POSE_SCALE = 368 / 1156;
 
+      /* Per-pose tuning. s = size multiplier, y = lift in px (negative = lower).
+         Start at 1 / 0. If a pose looks too big, lower its s; too small, raise it. */
+      const POSE_ADJUST = {
+        '.cat-img': {
+          s: 1,
+          y: 0
+        }, // Character.png (reference)
+        '.cat-img-sleep': {
+          s: 1,
+          y: 0
+        },
+        '.cat-img-hungry': {
+          s: 1,
+          y: 0
+        },
+        '.cat-img-eating': {
+          s: 1,
+          y: 0
+        },
+        '#petFrame1': {
+          s: 1,
+          y: 0
+        },
+        '#petFrame2': {
+          s: 1,
+          y: 0
+        },
+        '#petFrame3': {
+          s: 1,
+          y: 0
+        },
+        '#playFrame1': {
+          s: 1,
+          y: 0
+        },
+        '#playFrame2': {
+          s: 1,
+          y: 0
+        }
+      };
+
       function sizePose(img) {
         if (!img.naturalWidth) return;
-        img.style.width = Math.round(img.naturalWidth * POSE_SCALE) + 'px';
-        img.style.height = Math.round(img.naturalHeight * POSE_SCALE) + 'px';
+        let adj = {
+          s: 1,
+          y: 0
+        };
+        for (const sel in POSE_ADJUST) {
+          if (img.matches(sel)) {
+            adj = POSE_ADJUST[sel];
+            break;
+          }
+        }
+        const k = POSE_SCALE * adj.s;
+        img.style.width = Math.round(img.naturalWidth * k) + 'px';
+        img.style.height = Math.round(img.naturalHeight * k) + 'px';
+        img.style.bottom = adj.y + 'px';
       }
       document.querySelectorAll('.cat-pose-img').forEach(img => {
         if (img.complete) sizePose(img);
