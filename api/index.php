@@ -1151,15 +1151,15 @@
       <div class="mood-halo"></div>
       <div class="cat-wrap mood-neutral" id="catWrap">
         <div class="cat-shadow"></div>
-        <img class="cat-pose-img cat-img" src="/Assets/Character.png" alt="Whiskers the cat">
-        <img class="cat-pose-img cat-img-sleep" src="/Assets/Sleeping.png" alt="Whiskers sleeping">
-        <img class="cat-pose-img cat-img-hungry" src="/Assets/Hungry.png" alt="Whiskers is hungry">
-        <img class="cat-pose-img cat-img-eating" src="/Assets/Eating.png" alt="Whiskers eating">
-        <img class="cat-pose-img cat-pet-frame" id="petFrame1" src="/Assets/Pet.png" alt="Whiskers noticing pets">
-        <img class="cat-pose-img cat-pet-frame" id="petFrame2" src="/Assets/pet1.png" alt="Whiskers enjoying pets">
-        <img class="cat-pose-img cat-pet-frame" id="petFrame3" src="/Assets/Pet3.png" alt="Whiskers rolling over happily">
-        <img class="cat-pose-img cat-play-frame" id="playFrame1" src="/Assets/Playing1.png" alt="Whiskers playing">
-        <img class="cat-pose-img cat-play-frame" id="playFrame2" src="/Assets/Playing2.png" alt="Whiskers playing">
+        <img class="cat-pose-img cat-img" src="/Assets/Character.png" alt="Nova the cat">
+        <img class="cat-pose-img cat-img-sleep" src="/Assets/Sleeping.png" alt="Nova sleeping">
+        <img class="cat-pose-img cat-img-hungry" src="/Assets/Hungry.png" alt="Nova is hungry">
+        <img class="cat-pose-img cat-img-eating" src="/Assets/Eating.png" alt="Nova eating">
+        <img class="cat-pose-img cat-pet-frame" id="petFrame1" src="/Assets/Pet.png" alt="Nova noticing pets">
+        <img class="cat-pose-img cat-pet-frame" id="petFrame2" src="/Assets/pet1.png" alt="Nova enjoying pets">
+        <img class="cat-pose-img cat-pet-frame" id="petFrame3" src="/Assets/Pet3.png" alt="Nova rolling over happily">
+        <img class="cat-pose-img cat-play-frame" id="playFrame1" src="/Assets/Playing1.png" alt="Nova playing">
+        <img class="cat-pose-img cat-play-frame" id="playFrame2" src="/Assets/Playing2.png" alt="Nova playing">
         <div class="bubble" id="bubble"></div>
       </div>
       <div class="particles" id="particles"></div>
@@ -1187,13 +1187,13 @@
     </div>
   </div>
   <div class="dock glass" id="dock"></div>
-  <button class="chat-fab" id="chatToggle" aria-label="Talk to Whiskers">
+  <button class="chat-fab" id="chatToggle" aria-label="Talk to Nova">
     <img src="/Assets/ForMessageBubble.png" alt="">
     <span class="fab-badge" id="fabBadge" style="display:none;"></span>
   </button>
 </div>
 <div class="chat-scrim" id="chatScrim"></div>
-<div class="chat-widget" id="chatPanel" role="dialog" aria-label="Chat with Whiskers">
+<div class="chat-widget" id="chatPanel" role="dialog" aria-label="Chat with Nova">
   <div class="chat-head">
     <span class="chat-head-avatar"><img src="/Assets/MessageBubble.png" alt=""></span>
     <div class="chat-head-text">
@@ -1210,7 +1210,7 @@
     <button class="chat-quick-btn" data-quick="I love you!">I love you!</button>
   </div>
   <div class="chat-input-row">
-    <input type="text" id="chatInput" placeholder="Say something to Whiskers&hellip;" maxlength="120">
+    <input type="text" id="chatInput" placeholder="Say something to Nova&hellip;" maxlength="120">
     <button id="chatSend" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M3 11l17-8-8 17-2-7-7-2Z"/></svg></button>
   </div>
 </div>
@@ -1463,7 +1463,7 @@
     spawnParticle('🍗');
     const line = pick(["Nom nom nom!", "Yummy!", "More please? 🐟"]);
     say(line);
-    logAction('🍗 You fed Whiskers', line);
+    logAction('🍗 You fed Nova', line);
   }
   function giveTreat(){
     if (state.sleeping) { say("Zzz..."); return; }
@@ -1496,7 +1496,7 @@
     const line = pick(["Purrrrr...", "I love that!", "😻"]);
     say(line);
     playPetAnimation();
-    logAction('💕 You petted Whiskers', line);
+    logAction('💕 You petted Nova', line);
   }
   /* ---- Animation handling with movement ---- */
   let petAnimTimer = null;
@@ -1578,11 +1578,11 @@
       cancelPlayAnimation();
       spawnParticle('💤');
       say("Goodnight...");
-      logAction('💤 Whiskers went to nap', 'Goodnight...');
+      logAction('💤 Nova went to nap', 'Goodnight...');
     } else {
       const line = pick(["I'm awake!", "Good morning!"]);
       say(line);
-      logAction('☀️ Whiskers woke up', line);
+      logAction('☀️ Nova woke up', line);
     }
     renderMood();
   }
@@ -1594,7 +1594,7 @@
       if (state.energy >= 100){
         state.sleeping = false;
         say("I'm fully rested!");
-        logAction('☀️ Whiskers woke up', "I'm fully rested!");
+        logAction('☀️ Nova woke up', "I'm fully rested!");
       }
     } else {
       state.hunger = clamp(state.hunger - 2);
