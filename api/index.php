@@ -2759,6 +2759,227 @@
         height: 6px;
       }
     }
+
+    /* ================= Wooden hanging signs + quilted stats ================= */
+    :root {
+      /* the two ropes above each sign */
+      --ropes: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 18' preserveAspectRatio='none'><path d='M0 18 L50 1 L100 18' fill='none' stroke='%23b98e55' stroke-width='2.2' stroke-linejoin='round' vector-effect='non-scaling-stroke'/><path d='M0 18 L50 1 L100 18' fill='none' stroke='%23e7c98f' stroke-width='.8' stroke-linejoin='round' stroke-dasharray='3 3' vector-effect='non-scaling-stroke'/></svg>");
+      /* leaf icon for the hunger bar */
+      --leaf: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237fb05a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M5 19C5 9 11 4 20 4C20 13 15 19 5 19Z' fill='%23dff0c8'/><path d='M5 19L13 11'/></svg>");
+    }
+
+    /* ----- Wooden signs: title + room name ----- */
+    .title-pill.glass,
+    .room-pill.glass {
+      overflow: visible;
+      border: 3px solid #8a5a2c;
+      border-radius: 10px;
+      background:
+        repeating-linear-gradient(0deg, rgba(90, 55, 25, 0.10) 0 1px, transparent 1px 5px),
+        repeating-linear-gradient(92deg, rgba(255, 230, 180, 0.10) 0 3px, transparent 3px 9px),
+        linear-gradient(180deg, #d9a566 0%, #c18a4d 55%, #a8733a 100%);
+      box-shadow: inset 0 2px 0 rgba(255, 235, 200, 0.55), inset 0 -3px 0 rgba(90, 55, 25, 0.35), 0 4px 0 #6d4620, 0 10px 14px rgba(60, 38, 26, 0.35);
+      color: #fbeccb;
+      text-shadow: 0 2px 0 rgba(80, 45, 15, 0.85), 0 3px 3px rgba(60, 35, 15, 0.4);
+    }
+
+    .title-pill.glass {
+      padding: 8px 22px 8px 14px;
+    }
+
+    /* engraved inner frame (replaces the dashed stitch on these two) */
+    .title-pill.glass::before,
+    .room-pill.glass::before {
+      inset: 4px;
+      border: 1.5px solid rgba(90, 55, 25, 0.28);
+      border-radius: 6px;
+    }
+
+    /* hanging ropes */
+    .title-pill.glass::after,
+    .room-pill.glass::after {
+      content: "";
+      position: absolute;
+      left: 16%;
+      right: 16%;
+      bottom: calc(100% + 1px);
+      height: 18px;
+      background: var(--ropes) center/100% 100% no-repeat;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .title-pill .paw {
+      background: none;
+      box-shadow: none;
+    }
+
+    .title-pill .paw svg {
+      width: 20px;
+      height: 20px;
+      fill: #6b4423;
+      filter: drop-shadow(0 1px 0 rgba(255, 230, 180, 0.55));
+    }
+
+    /* ----- Quilted stats panel ----- */
+    .stats-pill.glass {
+      border-radius: 16px;
+      padding: 8px 14px;
+      border: 3px solid #5d8f63;
+      background:
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 14px),
+        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 14px),
+        radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.22), transparent 70%),
+        linear-gradient(180deg, #86b886, #6ea374);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 0 rgba(40, 80, 50, 0.28), 0 4px 0 #4a7a52, 0 10px 14px rgba(60, 38, 26, 0.3);
+    }
+
+    .stats-pill.glass::before {
+      border: 1.5px dashed rgba(255, 248, 236, 0.55);
+    }
+
+    .stats-pill .stat+.stat::before {
+      display: none;
+    }
+
+    .stats-pill .stat-happy {
+      order: -1;
+    }
+
+    /* heart first, then leaf, then bolt */
+
+    /* icons: no circle, colored outline */
+    .stats-pill .stat-icon {
+      width: 26px;
+      height: 26px;
+      background: none;
+      box-shadow: none;
+      outline: none;
+    }
+
+    .stats-pill .stat-icon svg {
+      width: 22px;
+      height: 22px;
+      filter: drop-shadow(0 1px 0 rgba(30, 70, 45, 0.35));
+    }
+
+    .stats-pill .stat-happy .stat-icon svg {
+      fill: #ffd6c8;
+      stroke: #e2603f;
+      stroke-width: 2;
+    }
+
+    .stats-pill .stat-energy .stat-icon svg {
+      fill: #cfe0f7;
+      stroke: #5b7fc4;
+      stroke-width: 1.6;
+      stroke-linejoin: round;
+    }
+
+    .stats-pill .stat-hunger .stat-icon svg {
+      display: none;
+    }
+
+    .stats-pill .stat-hunger .stat-icon::before {
+      content: "";
+      width: 22px;
+      height: 22px;
+      background: var(--leaf) center/contain no-repeat;
+      filter: drop-shadow(0 1px 0 rgba(30, 70, 45, 0.35));
+    }
+
+    /* bars: cream pill, glossy fill, number inside */
+    .stats-pill .stat-track {
+      width: 104px;
+      height: 18px;
+      background: #fbf3e1;
+      box-shadow: inset 0 2px 3px rgba(80, 55, 30, 0.35), 0 0 0 2px rgba(50, 90, 60, 0.35);
+    }
+
+    .stats-pill .fill-hunger {
+      background: linear-gradient(180deg, #b9de7d, #7fb34a);
+    }
+
+    .stats-pill .fill-happy {
+      background: linear-gradient(180deg, #ffab8f, #f0775a);
+    }
+
+    .stats-pill .fill-energy {
+      background: linear-gradient(180deg, #a3c0f2, #5b82cf);
+    }
+
+    .stats-pill .fill-hunger,
+    .stats-pill .fill-happy,
+    .stats-pill .fill-energy {
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .stats-pill .stat-fill::after {
+      display: none;
+    }
+
+    .stats-pill .stat .stat-num {
+      position: relative;
+      z-index: 1;
+      margin-left: -38px;
+      /* slides the number back over the end of the bar */
+      min-width: 30px;
+      padding: 0 9px 0 0;
+      background: none;
+      border: 0;
+      box-shadow: none;
+      text-align: right;
+      color: #6b4a2b;
+    }
+
+    /* ----- Phones ----- */
+    @media (max-width: 720px) {
+      .title-pill.glass {
+        padding: 6px 16px 6px 10px;
+      }
+
+      .title-pill .paw svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .title-pill.glass::after,
+      .room-pill.glass::after {
+        height: calc(12px + env(safe-area-inset-top));
+      }
+
+      .stats-pill.glass {
+        padding: 7px 10px;
+      }
+
+      .stats-pill .stat {
+        gap: 5px;
+        padding: 0 6px;
+      }
+
+      .stats-pill .stat-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .stats-pill .stat-icon svg,
+      .stats-pill .stat-hunger .stat-icon::before {
+        width: 17px;
+        height: 17px;
+      }
+
+      .stats-pill .stat-track {
+        width: 58px;
+        height: 14px;
+      }
+
+      .stats-pill .stat .stat-num {
+        min-width: 22px;
+        margin-left: -27px;
+        padding-right: 6px;
+        font-size: 0.68rem;
+      }
+    }
   </style>
 </head>
 
