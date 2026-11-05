@@ -2601,6 +2601,164 @@
         height: 42px;
       }
     }
+
+
+    /* ================= Embroidered HUD ================= */
+    :root {
+      /* cat-head patch: satin-stitch fill, thread border, running stitch (replaces the earlier --cat-btn) */
+      --cat-btn: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><pattern id='s' width='3.2' height='3.2' patternUnits='userSpaceOnUse' patternTransform='rotate(35)'><rect width='3.2' height='3.2' fill='%238cc79b'/><rect width='1.2' height='3.2' fill='%236fae84' opacity='.75'/><rect x='1.6' width='.6' height='3.2' fill='%23c4e8cd' opacity='.55'/></pattern><path id='p' d='M14 47.8 L14.5 10 Q15 5 19.5 7.5 L40 23.3 A38 38 0 0 1 60 23.3 L80.5 7.5 Q85 5 85.5 10 L86 47.8 A38 38 0 1 1 14 47.8 Z'/></defs><use href='%23p' fill='url(%23s)' stroke='%23fff4dc' stroke-width='4' stroke-linejoin='round'/><use href='%23p' fill='none' stroke='%23d9c9a6' stroke-width='4' stroke-dasharray='1.1 1.3' stroke-opacity='.5' stroke-linejoin='round'/><use href='%23p' fill='none' stroke='%23fff8ec' stroke-width='1.7' stroke-dasharray='3.2 2.6' stroke-linecap='round' transform='translate(50 57) scale(.8) translate(-50 -57)'/></svg>");
+    }
+
+    /* ----- Patches: title, room name, stats ----- */
+    .title-pill.glass,
+    .room-pill.glass,
+    .stats-pill.glass {
+      background:
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.14) 0 1.5px, transparent 1.5px 3.5px),
+        linear-gradient(180deg, #9fd3ac 0%, #78b98a 100%);
+      border: 3px solid #fff4dc;
+      box-shadow: 0 0 0 1.5px #cdbd95, 0 4px 0 1.5px var(--clay-shadow), 0 10px 18px rgba(60, 38, 26, 0.28);
+      color: #fff8ec;
+      letter-spacing: 0.03em;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45), 0 2px 0 #4f8f64, 0 3px 3px rgba(30, 70, 45, 0.35);
+    }
+
+    /* dashed running stitch inside each patch */
+    .title-pill.glass::before,
+    .room-pill.glass::before,
+    .stats-pill.glass::before {
+      display: block;
+      position: absolute;
+      inset: 4px;
+      width: auto;
+      height: auto;
+      border: 2px dashed rgba(255, 248, 236, 0.85);
+      border-radius: inherit;
+      background: none;
+      box-shadow: none;
+      animation: none;
+      opacity: 1;
+      mix-blend-mode: normal;
+      z-index: -1;
+    }
+
+    /* ----- Progress bars: thread guide + satin-stitch fill ----- */
+    .stats-pill .stat-icon {
+      outline: 1.5px dashed rgba(95, 168, 119, 0.75);
+      outline-offset: -3.5px;
+    }
+
+    .stats-pill .stat-track {
+      height: 10px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255, 248, 236, 0.75) 0 3px, transparent 3px 6px) center/100% 2px no-repeat,
+        rgba(52, 104, 70, 0.34);
+      box-shadow: inset 0 2px 3px rgba(30, 70, 45, 0.4);
+    }
+
+    .stats-pill .fill-hunger,
+    .stats-pill .fill-happy,
+    .stats-pill .fill-energy {
+      box-shadow: inset 0 0 0 1px rgba(255, 248, 236, 0.5);
+    }
+
+    .stats-pill .fill-hunger {
+      background: repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.38) 0 1.5px, transparent 1.5px 4px), linear-gradient(90deg, #f0ab5e, #e6883a);
+    }
+
+    .stats-pill .fill-happy {
+      background: repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.38) 0 1.5px, transparent 1.5px 4px), linear-gradient(90deg, #ff9d7d, #e2603f);
+    }
+
+    .stats-pill .fill-energy {
+      background: repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.38) 0 1.5px, transparent 1.5px 4px), linear-gradient(90deg, #a2c2ea, #6f95cf);
+    }
+
+    /* thread knot at the tip of each bar (replaces the shiny sheen) */
+    .stats-pill .stat-fill::after {
+      inset: auto;
+      right: 0;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 65%);
+      background-size: auto;
+      animation: none;
+    }
+
+    .stats-pill .stat+.stat::before {
+      width: 0;
+      height: 22px;
+      background: none;
+      border-left: 2px dashed rgba(255, 248, 236, 0.7);
+    }
+
+    .stats-pill .stat-num {
+      border: 1.5px dashed rgba(95, 168, 119, 0.7);
+    }
+
+    /* ----- Rail ----- */
+    .room-rail.glass {
+      border: 3px solid #fff4dc;
+      box-shadow: 0 0 0 1.5px #cdbd95, 0 3px 0 1.5px rgba(63, 120, 82, 0.4), 0 8px 16px rgba(60, 38, 26, 0.22);
+    }
+
+    .room-rail.glass::before {
+      display: block;
+      position: absolute;
+      inset: 3px;
+      border: 1.5px dashed rgba(95, 168, 119, 0.6);
+      border-radius: inherit;
+      background: none;
+      opacity: 1;
+      mix-blend-mode: normal;
+      z-index: -1;
+    }
+
+    /* ----- Button icons + chevrons: raised thread ----- */
+    .door-face-icon svg,
+    .action-btn .icon svg {
+      filter: drop-shadow(0 1.5px 0 rgba(47, 105, 70, 0.75));
+    }
+
+    .door-chevron {
+      outline: 1.5px dashed rgba(255, 248, 236, 0.9);
+      outline-offset: -3px;
+    }
+
+    /* ----- Hover labels: stitched felt tags ----- */
+    .door-tag,
+    .action-btn::after {
+      background:
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.12) 0 1.5px, transparent 1.5px 3.5px),
+        linear-gradient(180deg, #b9955f, #8f6d46);
+      color: #fff8ec;
+      clip-path: none;
+      border-radius: 10px;
+      padding: 7px 14px;
+      outline: 1.5px dashed rgba(255, 244, 220, 0.85);
+      outline-offset: -3.5px;
+      text-shadow: 0 1px 0 rgba(60, 38, 22, 0.7);
+      box-shadow: 0 3px 0 #6d5133, 0 6px 8px rgba(60, 38, 26, 0.25);
+    }
+
+    .door-tag::after {
+      border-top-color: #8f6d46;
+    }
+
+    /* ----- Phones ----- */
+    @media (max-width: 720px) {
+      .stats-pill .stat-track {
+        height: 7px;
+      }
+
+      .stats-pill .stat-fill::after {
+        width: 6px;
+        height: 6px;
+      }
+    }
   </style>
 </head>
 
