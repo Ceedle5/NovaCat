@@ -2222,6 +2222,8 @@
       const els = {
         stage: document.getElementById('stage'),
         roomBgMain: document.getElementById('roomBgMain'),
+        sideLeft: document.getElementById('sideLeft'),
+        sideRight: document.getElementById('sideRight'),
         catStage: document.querySelector('.cat-stage'),
         roomName: document.getElementById('roomName'),
         prevLabel: document.getElementById('prevLabel'),
@@ -2347,6 +2349,42 @@
           renderW = containerH * imgRatio;
           offsetY = 0;
           offsetX = (containerW - renderW) / 2;
+        }
+        // Fit the side images exactly into the empty space beside/above/below the room
+        if (offsetX > 1) {
+          Object.assign(els.sideLeft.style, {
+            left: '0',
+            right: 'auto',
+            top: '0',
+            bottom: 'auto',
+            width: offsetX + 'px',
+            height: '100%'
+          });
+          Object.assign(els.sideRight.style, {
+            right: '0',
+            left: 'auto',
+            top: '0',
+            bottom: 'auto',
+            width: offsetX + 'px',
+            height: '100%'
+          });
+        } else {
+          Object.assign(els.sideLeft.style, {
+            left: '0',
+            right: 'auto',
+            top: '0',
+            bottom: 'auto',
+            width: '100%',
+            height: offsetY + 'px'
+          });
+          Object.assign(els.sideRight.style, {
+            left: '0',
+            right: 'auto',
+            bottom: '0',
+            top: 'auto',
+            width: '100%',
+            height: offsetY + 'px'
+          });
         }
         const px = offsetX + (anchor.x / 100) * renderW;
         const py = offsetY + (anchor.y / 100) * renderH;
