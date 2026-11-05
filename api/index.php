@@ -2096,8 +2096,8 @@
   <div id="app">
     <div class="stage room-living" id="stage">
       <div class="room-bg-layer">
-        <img class="room-bg-side side-left" src="/Assets/AnghelaNova.png" alt="" aria-hidden="true">
-        <img class="room-bg-side side-right" src="/Assets/AnghelaNova2.png" alt="" aria-hidden="true">
+        <img class="room-bg-side side-left" src="/Assets/AnghelaNova.jfif" alt="" aria-hidden="true">
+        <img class="room-bg-side side-right" src="/Assets/AnghelaNova2.jfif" alt="" aria-hidden="true">
         <img class="room-bg-main" id="roomBgMain" src="/Assets/LivingRoom.jfif" alt="">
       </div>
       <div class="stage-ambience" aria-hidden="true"></div>
