@@ -31,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-//     require __DIR__ . '/../vendor/autoload.php';
-//     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
-//     $dotenv->safeLoad();
-// }
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require __DIR__ . '/../vendor/autoload.php';
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->safeLoad();
+}
 
 $apiKey = getenv('GEMINI_API_KEY');
 $apiKey = is_string($apiKey) ? trim($apiKey) : '';
