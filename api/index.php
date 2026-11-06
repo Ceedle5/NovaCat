@@ -2884,7 +2884,7 @@
       content: "";
       width: 22px;
       height: 22px;
-      background: var(--leaf) center/contain no-repeat;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M11.5 12.5 L6.5 17.5' stroke='%23c9b58f' stroke-width='3.2' stroke-linecap='round'/><path d='M11.5 12.5 L6.5 17.5' stroke='%23fff4dc' stroke-width='1.6' stroke-linecap='round'/><ellipse cx='15.5' cy='8.5' rx='6' ry='5' transform='rotate(40 15.5 8.5)' fill='%23f0a860' stroke='%23b5651f' stroke-width='1.6'/><path d='M14 5.6 Q16 4.8 17.6 6.1' fill='none' stroke='%23ffffff' stroke-opacity='.6' stroke-width='1.2' stroke-linecap='round'/><circle cx='4.8' cy='17.2' r='1.9' fill='%23fff4dc' stroke='%23c9b58f' stroke-width='1.2'/><circle cx='6.9' cy='19.3' r='1.9' fill='%23fff4dc' stroke='%23c9b58f' stroke-width='1.2'/></svg>") center/contain no-repeat;
       filter: drop-shadow(0 1px 0 rgba(30, 70, 45, 0.35));
     }
 
@@ -2897,7 +2897,7 @@
     }
 
     .stats-pill .fill-hunger {
-      background: linear-gradient(180deg, #b9de7d, #7fb34a);
+      background: linear-gradient(180deg, #ffc46b, #e8923a);
     }
 
     .stats-pill .fill-happy {
