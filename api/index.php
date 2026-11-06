@@ -3780,7 +3780,8 @@
             body: JSON.stringify(payload)
           });
           const data = await res.json();
-          if (!res.ok || !data.reply) throw new Error(data.error || 'Bad response');
+          if (data.debug) console.warn('[Nova debug]', data.debug);
+          if (!data.reply) throw new Error(data.error || 'Bad response (HTTP ' + res.status + ')');
           return data.reply;
         } catch (err) {
           console.error('Cat chat error:', err);

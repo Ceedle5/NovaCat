@@ -10,8 +10,51 @@
  * The API key stays on the server and is never exposed to the browser.
  * ---------------------------------------------------------------
  */
+// ini_set('display_errors', '0');
+// error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
+// Never print PHP errors into the response (that would corrupt the JSON),
+// but DO report them: they are logged and collected for debug mode.
 ini_set('display_errors', '0');
-error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
+ini_set('log_errors', '1');
+error_reporting(E_ALL & ~E_DEPRECATED);
+
+$GLOBALS['NOVA_DEBUG'] = false; // switched on below once the env is loaded
+$NOVA_PHP_ERRORS = [];
+set_error_handler(function ($severity, $message, $file, $line) use (&$NOVA_PHP_ERRORS) {
+    if (!(error_reporting() & $severity)) {
+        return false;
+    }
+    $NOVA_PHP_ERRORS[] = [
+        'message' => $message,
+        'file' => basename($file),
+        'line' => $line,
+    ];
+    error_log("[Nova PHP] $message in " . basename($file) . ":$line");
+    return true;
+});
+// A fatal error normally gives an empty 500. Return JSON instead.
+register_shutdown_function(function () use (&$NOVA_PHP_ERRORS) {
+    $e = error_get_last();
+    $fatal = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
+    if ($e && in_array($e['type'], $fatal, true)) {
+        error_log('[Nova FATAL] ' . $e['message'] . ' in ' . basename($e['file']) . ':' . $e['line']);
+        if (!headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: application/json; charset=utf-8');
+        }
+        $out = ['error' => 'Server error'];
+        if (!empty($GLOBALS['NOVA_DEBUG'])) {
+            $out['debug'] = [
+                'fatal' => $e['message'],
+                'file' => basename($e['file']),
+                'line' => $e['line'],
+                'php_errors' => $NOVA_PHP_ERRORS,
+            ];
+        }
+        echo json_encode($out, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    }
+});
+
 header('Content-Type: application/json; charset=utf-8');
 // ---------------------------------------------------------------
 // CORS
@@ -37,16 +80,48 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     $dotenv->safeLoad();
 }
 
-$apiKey = getenv('GEMINI_API_KEY');
-$apiKey = is_string($apiKey) ? trim($apiKey) : '';
+// phpdotenv v5 fills $_ENV / $_SERVER but NOT getenv(), so check all three.
+function novaEnv($key)
+{
+    $v = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
+    return is_string($v) ? trim($v) : '';
+}
+
+// Debug mode: automatic on localhost, or when NOVA_DEBUG=1 is set.
+$GLOBALS['NOVA_DEBUG'] = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)
+    || filter_var(novaEnv('NOVA_DEBUG'), FILTER_VALIDATE_BOOLEAN);
+header('X-Nova-Debug: ' . ($GLOBALS['NOVA_DEBUG'] ? 'on' : 'off'));
+
+// Everything shown in the Network tab / console when debug is on.
+function novaDebugInfo($kind, $details = [])
+{
+    global $NOVA_PHP_ERRORS, $modelUsed, $models, $url, $previousInteractionId;
+    return [
+        'kind' => $kind,
+        'details' => $details, // HTTP code, curl error, raw Gemini response...
+        'attempts' => $GLOBALS['NOVA_ATTEMPTS'] ?? [],
+        'model_used' => $modelUsed ?? null,
+        'models_configured' => $models ?? null,
+        'endpoint' => (isset($url) && is_string($url)) ? preg_replace('/([?&]key=)[^&]+/', '$1***', $url) : null,
+        'has_previous_interaction_id' => ($previousInteractionId ?? '') !== '',
+        'php_errors' => $NOVA_PHP_ERRORS,
+        'php_version' => PHP_VERSION,
+        'curl_enabled' => function_exists('curl_init'),
+    ];
+}
+
+$apiKey = novaEnv('GEMINI_API_KEY');
 if ($apiKey === '') {
     error_log('[Nova error] GEMINI_API_KEY is missing. Set it in .env (local) or Vercel environment variables (production).');
     http_response_code(200);
     echo json_encode([
         'reply' => "*Nova paws at the door* Meow... something's wrong with my house, and it's not your fault. Please tell Diopet so he can fix it! 🐾",
         'is_error' => true,
-        'error_kind' => 'locked'
-    ], JSON_UNESCAPED_UNICODE);
+        'error_kind' => 'locked',
+    ] + ($GLOBALS['NOVA_DEBUG'] ? ['debug' => [
+        'problem' => 'GEMINI_API_KEY is empty',
+        'hint' => 'Set it in .env (local) or the Vercel environment variables, then redeploy.',
+    ]] : []), JSON_UNESCAPED_UNICODE);
     exit;
 }
 // ===============================================================
@@ -329,7 +404,7 @@ $systemPrompt =
     . "regardless of your mood. "
     . "Never mention or recite the numerical values of the game state.";
 
-    
+
 $models = [
     'gemini-3.7-flash',
     'gemini-3.5-flash',
@@ -397,13 +472,16 @@ function callGemini($url, $apiKey, $payload)
         CURLOPT_CONNECTTIMEOUT => 6,
         CURLOPT_TIMEOUT => 15
     ]);
+    $t0 = microtime(true);
     $response = curl_exec($ch);
+    $ms = (int) round((microtime(true) - $t0) * 1000);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlError = curl_error($ch);
     return [
         'response' => $response,
         'httpCode' => $httpCode,
         'curlError' => $curlError,
+        'ms' => $ms,
     ];
 }
 // HTTP codes / signals worth retrying or falling back on.
@@ -468,6 +546,13 @@ foreach ($models as $model) {
         $response = $result['response'];
         $httpCode = $result['httpCode'];
         $curlError = $result['curlError'];
+        $GLOBALS['NOVA_ATTEMPTS'][] = [
+            'model' => $model,
+            'attempt' => $attempt,
+            'http_code' => $httpCode,
+            'curl_error' => $curlError,
+            'ms' => $result['ms'],
+        ];
         $overloaded = isOverloaded($httpCode, $response, $curlError);
         // Success, or a non-overload failure - stop retrying.
         if (!$overloaded) {
@@ -517,12 +602,20 @@ function sendNovaError($kind, $debug = [])
     // For you (the developer) only: check your server's error log.
     error_log('[Nova error] ' . $kind . ' ' . substr(json_encode($debug, JSON_UNESCAPED_UNICODE), 0, 1000));
 
-    http_response_code(200);
-    echo json_encode([
+    $out = [
         'reply' => $reply,
         'is_error' => true,   // front-end can use this if you want special styling
         'error_kind' => $kind
-    ], JSON_UNESCAPED_UNICODE);
+    ];
+    $status = 200; // players always get a 200 + friendly line in production
+    if (!empty($GLOBALS['NOVA_DEBUG'])) {
+        $out['debug'] = novaDebugInfo($kind, $debug);
+        header('X-Nova-Error: ' . $kind);
+        // Real status so failures show up red in the Network tab.
+        $status = ['busy' => 503, 'offline' => 504, 'locked' => 500, 'lost_thought' => 502][$kind] ?? 502;
+    }
+    http_response_code($status);
+    echo json_encode($out, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     exit;
 }
 
@@ -618,4 +711,4 @@ echo json_encode([
     // Which model actually answered (useful for debugging fallback
     // behavior). The frontend doesn't need to use this.
     'model_used' => $modelUsed
-], JSON_UNESCAPED_UNICODE);
+] + (!empty($GLOBALS['NOVA_DEBUG']) ? ['debug' => novaDebugInfo('ok', ['http_code' => $httpCode])] : []), JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
