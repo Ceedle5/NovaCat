@@ -31,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require __DIR__ . '/../vendor/autoload.php';
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
-    $dotenv->safeLoad();
-}
+// if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+//     require __DIR__ . '/../vendor/autoload.php';
+//     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+//     $dotenv->safeLoad();
+// }
 
 $apiKey = getenv('GEMINI_API_KEY');
 $apiKey = is_string($apiKey) ? trim($apiKey) : '';
@@ -328,17 +328,8 @@ $systemPrompt =
     . "cute, affectionate reply. If Anghela seems upset, focus on her "
     . "regardless of your mood. "
     . "Never mention or recite the numerical values of the game state.";
-// ===============================================================
-// GEMINI INTERACTIONS API
-// ===============================================================
-//
-// Gemini's Interactions API is used instead of generateContent.
-//
-// $models is tried in order. If the first (preferred) model
-// comes back overloaded (HTTP 429/503, "high demand" style
-// errors), we retry it briefly, then fall back to the next
-// model in the list rather than failing the request outright.
-// ===============================================================
+
+    
 $models = [
     'gemini-3.7-flash',
     'gemini-3.5-flash',
