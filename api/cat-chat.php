@@ -408,6 +408,7 @@ $systemPrompt =
 $models = [
     'gemini-3.7-flash',
     'gemini-3.5-flash',
+    'gemini-3.5-flash-lite',
 ];
 $url =
     'https://generativelanguage.googleapis.com'
@@ -470,7 +471,7 @@ function callGemini($url, $apiKey, $payload)
             'Api-Revision: 2026-05-20'
         ],
         CURLOPT_CONNECTTIMEOUT => 6,
-        CURLOPT_TIMEOUT => 15
+        CURLOPT_TIMEOUT => 10
     ]);
     $t0 = microtime(true);
     $response = curl_exec($ch);
@@ -526,7 +527,7 @@ function isOverloaded($httpCode, $response, $curlError)
 // immediately rather than retrying/falling back, since retrying
 // won't fix those.
 // ===============================================================
-const RETRIES_PER_MODEL = 1;
+const RETRIES_PER_MODEL = 2;
 const RETRY_DELAY_SECONDS = 1;
 // Worst case now: 2 models x 1 attempt x 10s timeout = 20s, safely
 // under PHP's default 30s max_execution_time. Raise it slightly
@@ -558,8 +559,11 @@ foreach ($models as $model) {
         if (!$overloaded) {
             break 2;
         }
-        // Overloaded - wait briefly and retry the same model,
-        // unless this was the last attempt for this model.
+        // A timeout already cost the full wait, so skip to the next model.
+        // Fast 503/429 failures are cheap, so those do get retried.
+        if ($httpCode === 0) {
+            break;
+        }
         if ($attempt < RETRIES_PER_MODEL) {
             sleep(RETRY_DELAY_SECONDS);
         }
@@ -618,9 +622,10 @@ function sendNovaError($kind, $debug = [])
     echo json_encode($out, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     exit;
 }
-
 if ($response === false || $curlError !== '') {
-    sendNovaError('offline', ['curlError' => $curlError]);
+    // A timeout means Gemini was too slow, not that the player is offline.
+    $timedOut = stripos($curlError, 'timed out') !== false;
+    sendNovaError($timedOut ? 'busy' : 'offline', ['curlError' => $curlError]);
 }
 // ===============================================================
 // DECODE GEMINI RESPONSE
