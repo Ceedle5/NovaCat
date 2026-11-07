@@ -2980,10 +2980,498 @@
         font-size: 0.68rem;
       }
     }
+
+    /* ================= Cozy splash screen ================= */
+    .splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+      background:
+        var(--knit, none) 0 0/10px 12px repeat,
+        linear-gradient(90deg, transparent 0 9%, rgba(143, 190, 150, 0.5) 9% 17%, transparent 17% 83%, rgba(143, 190, 150, 0.5) 83% 91%, transparent 91%),
+        radial-gradient(ellipse at 50% 45%, #fff8ec 0%, #f6ead0 70%, #ead9b8 100%);
+      transition: opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease;
+    }
+
+    .splash::before {
+      /* stitched frame */
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border: 2.5px dashed rgba(110, 150, 115, 0.55);
+      border-radius: 26px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .splash::after {
+      /* warm vignette */
+      content: "";
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 120px rgba(120, 80, 40, 0.28);
+      pointer-events: none;
+    }
+
+    .splash.leaving {
+      opacity: 0;
+      transform: scale(1.05);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+
+    /* fairy lights + dust motes */
+    .splash-lights {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .splash-lights svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .splash-bulb {
+      position: absolute;
+      width: 12px;
+      height: 16px;
+      margin-left: -6px;
+      border-radius: 50% 50% 55% 55%;
+      background: var(--c, #ffd27a);
+      box-shadow: 0 0 10px 3px var(--c, #ffd27a), 0 0 22px 8px rgba(255, 200, 120, 0.35);
+      animation: splashTwinkle 2.4s ease-in-out infinite;
+    }
+
+    @keyframes splashTwinkle {
+
+      0%,
+      100% {
+        opacity: 0.55;
+        transform: scale(0.92);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.06);
+      }
+    }
+
+    .splash-motes {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .splash-motes .mote {
+      background: radial-gradient(circle, #ffd27a 0%, rgba(255, 190, 90, 0.55) 55%, transparent 75%);
+    }
+
+    /* content */
+    .splash-card {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(16px, 3.5vh, 28px);
+      text-align: center;
+    }
+
+    /* wooden sign */
+    .splash-sign {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 44px;
+      padding: 12px 30px 12px 20px;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 6vw, 2.2rem);
+      letter-spacing: 0.03em;
+      color: #fbeccb;
+      text-shadow: 0 2px 0 rgba(80, 45, 15, 0.85), 0 3px 3px rgba(60, 35, 15, 0.4);
+      border: 3px solid #8a5a2c;
+      border-radius: 12px;
+      background:
+        repeating-linear-gradient(0deg, rgba(90, 55, 25, 0.10) 0 1px, transparent 1px 5px),
+        repeating-linear-gradient(92deg, rgba(255, 230, 180, 0.10) 0 3px, transparent 3px 9px),
+        linear-gradient(180deg, #d9a566 0%, #c18a4d 55%, #a8733a 100%);
+      box-shadow: inset 0 2px 0 rgba(255, 235, 200, 0.55), inset 0 -3px 0 rgba(90, 55, 25, 0.35), 0 5px 0 #6d4620, 0 14px 18px rgba(60, 38, 26, 0.35);
+      transform-origin: 50% -44px;
+      animation: splashDrop 0.8s cubic-bezier(.34, 1.56, .64, 1) both, splashSway 5s ease-in-out 0.8s infinite;
+    }
+
+    .splash-sign::before {
+      /* ropes */
+      content: "";
+      position: absolute;
+      left: 16%;
+      right: 16%;
+      bottom: calc(100% + 1px);
+      height: 44px;
+      background: var(--ropes, none) center/100% 100% no-repeat;
+      pointer-events: none;
+    }
+
+    .splash-paw {
+      width: 28px;
+      height: 28px;
+      fill: #6b4423;
+      filter: drop-shadow(0 1px 0 rgba(255, 230, 180, 0.55));
+    }
+
+    @keyframes splashDrop {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px) rotate(-4deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+      }
+    }
+
+    @keyframes splashSway {
+
+      0%,
+      100% {
+        transform: rotate(-1.4deg);
+      }
+
+      50% {
+        transform: rotate(1.4deg);
+      }
+    }
+
+    /* sleeping Nova on a knitted rug */
+    .splash-cat {
+      position: relative;
+      width: min(62vw, 320px);
+      animation: splashRise 0.9s 0.15s cubic-bezier(.2, 1, .3, 1) both;
+    }
+
+    .splash-cat img {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      height: auto;
+      transform-origin: bottom center;
+      filter: drop-shadow(0 8px 10px rgba(60, 38, 26, 0.3));
+      animation: splashBreathe 4.2s ease-in-out infinite;
+    }
+
+    .splash-rug {
+      position: absolute;
+      left: 50%;
+      bottom: -14px;
+      width: 128%;
+      height: 64px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background:
+        var(--knit, none) 0 0/10px 12px repeat,
+        radial-gradient(ellipse at 50% 40%, #b4e1bf, #8cc79b 70%);
+      box-shadow: 0 0 0 4px #fff4dc, 0 0 0 6px #cdbd95, 0 10px 14px rgba(60, 38, 26, 0.3);
+    }
+
+    .splash-rug::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 2px dashed rgba(255, 248, 236, 0.85);
+      border-radius: 50%;
+    }
+
+    .splash-z {
+      position: absolute;
+      z-index: 2;
+      right: 14%;
+      top: 6%;
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #8a7a6e;
+      opacity: 0;
+      animation: splashZ 3.6s ease-in-out infinite;
+    }
+
+    .splash-z.z2 {
+      right: 6%;
+      font-size: 2.1rem;
+      animation-delay: 1.2s;
+    }
+
+    .splash-z.z3 {
+      right: 20%;
+      font-size: 1.3rem;
+      animation-delay: 2.4s;
+    }
+
+    @keyframes splashZ {
+      0% {
+        opacity: 0;
+        transform: translate(0, 10px) scale(0.7) rotate(-8deg);
+      }
+
+      25% {
+        opacity: 0.9;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(18px, -46px) scale(1.15) rotate(8deg);
+      }
+    }
+
+    @keyframes splashRise {
+      0% {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes splashBreathe {
+
+      0%,
+      100% {
+        transform: scale(1, 1);
+      }
+
+      50% {
+        transform: scale(1.012, 1.025);
+      }
+    }
+
+    /* message + progress / button */
+    .splash-msg {
+      margin: 14px 0 0;
+      min-height: 1.3em;
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+      color: #6b5a45;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .splash-action {
+      position: relative;
+      width: min(280px, 72vw);
+      height: 62px;
+    }
+
+    .splash-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 18px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      background: #fbf3e1;
+      box-shadow: inset 0 2px 3px rgba(80, 55, 30, 0.35), 0 0 0 3px #fff4dc, 0 0 0 4.5px #cdbd95, 0 4px 0 4.5px rgba(79, 143, 100, 0.5);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .splash-fill {
+      position: relative;
+      width: 0;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 999px;
+      background: repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.38) 0 1.5px, transparent 1.5px 4px), linear-gradient(180deg, #b4e1bf, #74b787);
+      box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .splash-fill::after {
+      /* thread knot */
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 11px;
+      height: 11px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 65%);
+    }
+
+    .splash.ready .splash-bar {
+      opacity: 0;
+      transform: translateY(-50%) scale(0.85);
+      pointer-events: none;
+    }
+
+    .splash-go {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 3px solid #fff4dc;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: 0.03em;
+      color: #fff8ec;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 2px 0 #4f8f64, 0 3px 3px rgba(30, 70, 45, 0.35);
+      background:
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.14) 0 1.5px, transparent 1.5px 3.5px),
+        linear-gradient(180deg, #9fd3ac, #78b98a);
+      box-shadow: 0 0 0 1.5px #cdbd95, 0 5px 0 1.5px #4f8f64, 0 12px 18px rgba(60, 38, 26, 0.3);
+      opacity: 0;
+      transform: scale(0.8);
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .splash-go::before {
+      /* running stitch */
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 2px dashed rgba(255, 248, 236, 0.85);
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .splash-go svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff8ec;
+      filter: drop-shadow(0 1px 0 rgba(47, 105, 70, 0.75));
+    }
+
+    .splash.ready .splash-go {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+      animation: splashPop 0.6s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .splash.ready .splash-go:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 0 1.5px #cdbd95, 0 8px 0 1.5px #4f8f64, 0 16px 20px rgba(60, 38, 26, 0.3);
+    }
+
+    .splash.ready .splash-go:active {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 1.5px #cdbd95, 0 1px 0 1.5px #4f8f64, 0 4px 8px rgba(60, 38, 26, 0.3);
+    }
+
+    @keyframes splashPop {
+      0% {
+        transform: scale(0.6);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* short landscape screens */
+    @media (max-height: 560px) {
+      .splash-card {
+        gap: 10px;
+      }
+
+      .splash-cat {
+        width: min(34vh, 220px);
+      }
+
+      .splash-sign {
+        font-size: 1.3rem;
+        margin-top: 36px;
+      }
+
+      .splash-rug {
+        height: 44px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .splash *,
+      .splash *::before,
+      .splash *::after {
+        animation: none !important;
+      }
+
+      .splash {
+        transition: opacity 0.2s ease;
+      }
+
+      .splash.leaving {
+        transform: none;
+        filter: none;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <div class="splash" id="splash" role="dialog" aria-modal="true" aria-label="Welcome to Nova's House">
+    <div class="splash-lights" aria-hidden="true"></div>
+    <div class="splash-motes" aria-hidden="true"></div>
+    <div class="splash-card">
+      <div class="splash-sign">
+        <svg class="splash-paw" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="6.5" cy="7.5" r="2.1" />
+          <circle cx="11.5" cy="5.3" r="2.1" />
+          <circle cx="16.5" cy="7.5" r="2.1" />
+          <circle cx="19.3" cy="12.2" r="1.9" />
+          <path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z" />
+        </svg>
+        <span>Nova's House</span>
+      </div>
+      <div class="splash-cat">
+        <span class="splash-rug" aria-hidden="true"></span>
+        <span class="splash-z" aria-hidden="true">z</span>
+        <span class="splash-z z2" aria-hidden="true">Z</span>
+        <span class="splash-z z3" aria-hidden="true">z</span>
+        <img src="/Assets/Sleeping.png" alt="Nova is sleeping">
+      </div>
+      <p class="splash-msg" id="splashMsg">Warming up the house…</p>
+      <div class="splash-action">
+        <div class="splash-bar">
+          <div class="splash-fill" id="splashFill"></div>
+        </div>
+        <button class="splash-go" id="splashGo" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="6.5" cy="7.5" r="2.1" />
+            <circle cx="11.5" cy="5.3" r="2.1" />
+            <circle cx="16.5" cy="7.5" r="2.1" />
+            <circle cx="19.3" cy="12.2" r="1.9" />
+            <path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z" />
+          </svg>
+          Wake Nova up
+        </button>
+      </div>
+    </div>
+  </div>
   <div id="app">
     <div class="stage room-living" id="stage">
       <div class="room-bg-layer">
@@ -3113,7 +3601,7 @@
       };
       let roomIndex = 0;
       const state = {
-        hunger: 500,
+        hunger: 80,
         happy: 80,
         energy: 80,
         sleeping: false,
@@ -3825,6 +4313,133 @@
       renderAll();
       positionCat();
       addMessage("Meow! I'm " + state.name + ". Talk to me!", 'cat');
+
+      /* ---- Splash screen ---- */
+      (function initSplash() {
+        const SPLASH_ONCE = false; // true = only show it the first time per browser tab session
+        const MIN_MS = 2200; // shortest time the splash stays up
+        const MAX_MS = 9000; // stop waiting for slow images after this long
+        const splash = document.getElementById('splash');
+        if (!splash) return;
+        try {
+          if (SPLASH_ONCE && sessionStorage.getItem('novaSplashSeen')) {
+            splash.remove();
+            return;
+          }
+        } catch (e) {}
+
+        const fill = document.getElementById('splashFill');
+        const msg = document.getElementById('splashMsg');
+        const go = document.getElementById('splashGo');
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* fairy lights along a gentle wire */
+        const lights = splash.querySelector('.splash-lights');
+        const wireY = x => 16 + 9 * Math.sin(x * Math.PI * 6);
+        const pts = [];
+        for (let i = 0; i <= 80; i++) {
+          const x = i / 80;
+          pts.push((x * 1000).toFixed(1) + ',' + wireY(x).toFixed(1));
+        }
+        lights.innerHTML = '<svg viewBox="0 0 1000 40" preserveAspectRatio="none"><polyline points="' + pts.join(' ') + '" fill="none" stroke="#7a5a3c" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>';
+        const bulbColors = ['#ffd27a', '#ffb3a0', '#b4e1bf', '#ffe9a8', '#f7c0d3'];
+        const BULBS = 12;
+        for (let i = 0; i < BULBS; i++) {
+          const x = (i + 0.5) / BULBS;
+          const b = document.createElement('i');
+          b.className = 'splash-bulb';
+          b.style.left = (x * 100) + '%';
+          b.style.top = (wireY(x) + 2) + 'px';
+          b.style.setProperty('--c', bulbColors[i % bulbColors.length]);
+          b.style.animationDelay = ((i * 0.37) % 2.4) + 's';
+          lights.appendChild(b);
+        }
+
+        /* floating warm dust */
+        const motes = splash.querySelector('.splash-motes');
+        for (let i = 0; i < 16; i++) {
+          const m = document.createElement('span');
+          m.className = 'mote';
+          const size = 3 + Math.random() * 5;
+          m.style.width = m.style.height = size + 'px';
+          m.style.left = (Math.random() * 94 + 3) + '%';
+          m.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+          const dur = 9 + Math.random() * 8;
+          m.style.animationDuration = dur + 's';
+          m.style.animationDelay = (-Math.random() * dur) + 's';
+          motes.appendChild(m);
+        }
+
+        /* real loading progress: every image on the page + room backgrounds + fonts */
+        const urls = new Set();
+        Array.from(document.images).forEach(im => {
+          if (im.src) urls.add(im.src);
+        });
+        Object.values(ROOM_BG).forEach(u => urls.add(new URL(u, location.href).href));
+        const total = urls.size + 1; // +1 for fonts
+        let done = 0;
+        const tick = () => {
+          done++;
+        };
+        urls.forEach(u => {
+          const im = new Image();
+          im.onload = im.onerror = tick;
+          im.src = u;
+        });
+        (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(tick, tick);
+
+        const lines = [
+          [0, 'Warming up the house…'],
+          [0.3, 'Fluffing the cushions…'],
+          [0.55, 'Lighting the fairy lights…'],
+          [0.8, 'Waking Nova up…'],
+        ];
+        const t0 = performance.now();
+        let shown = 0;
+        let lastLine = '';
+
+        function frame(now) {
+          const elapsed = now - t0;
+          const target = elapsed > MAX_MS ? 1 : Math.min(done / total, Math.min(1, elapsed / MIN_MS));
+          if (target > shown) shown = Math.min(target, shown + 0.02);
+          fill.style.width = (shown * 100) + '%';
+          let line = lines[0][1];
+          lines.forEach(l => {
+            if (shown >= l[0]) line = l[1];
+          });
+          if (line !== lastLine) {
+            msg.textContent = line;
+            lastLine = line;
+          }
+          if (shown >= 1) {
+            msg.textContent = 'Nova is waiting for you…';
+            splash.classList.add('ready');
+            go.disabled = false;
+            go.focus({
+              preventScroll: true
+            });
+            return;
+          }
+          requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+
+        function enter() {
+          if (!splash.classList.contains('ready') || splash.classList.contains('leaving')) return;
+          try {
+            if (SPLASH_ONCE) sessionStorage.setItem('novaSplashSeen', '1');
+          } catch (e) {}
+          splash.classList.add('leaving');
+          setTimeout(() => splash.remove(), reduce ? 250 : 900);
+          setTimeout(() => {
+            say('Meow! Welcome home! 🐾');
+            spawnParticle('💕');
+            els.catWrap.classList.add('bouncing');
+            setTimeout(() => els.catWrap.classList.remove('bouncing'), 700);
+          }, reduce ? 150 : 500);
+        }
+        go.addEventListener('click', enter);
+      })();
     })();
   </script>
 </body>
