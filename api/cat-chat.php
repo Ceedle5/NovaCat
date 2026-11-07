@@ -101,6 +101,7 @@ function novaDebugInfo($kind, $details = [])
         'details' => $details, // HTTP code, curl error, raw Gemini response...
         'attempts' => $GLOBALS['NOVA_ATTEMPTS'] ?? [],
         'model_used' => $modelUsed ?? null,
+        'diopet_mode' => $GLOBALS['NOVA_DIOPET'] ?? null,
         'models_configured' => $models ?? null,
         'endpoint' => (isset($url) && is_string($url)) ? preg_replace('/([?&]key=)[^&]+/', '$1***', $url) : null,
         'has_previous_interaction_id' => ($previousInteractionId ?? '') !== '',
@@ -256,8 +257,16 @@ $catBio =
 // don't need to resend the full personality block every turn, only the
 // current live stats, so it can react with freshness.
 
-$systemPrompt =
-    "You are {$name}, a female black cat living in a virtual pet app called "
+// Does this message mention Diopet / the developer / the creator?
+// Checked here in PHP so it doesn't depend on the AI "noticing".
+// Edit the word list to taste.
+$diopetMode = (bool) preg_match(
+    '/opet|developer|creator|mascari|\bdev\b|who\s+(made|created|built|coded|programmed)/iu',
+    $message
+);
+$GLOBALS['NOVA_DIOPET'] = $diopetMode; // shows up in the debug output
+
+$systemPrompt =    "You are {$name}, a female black cat living in a virtual pet app called "
     . "'Nova's House'. You live with your owner, Anghela, in Makati. "
 
     . "The player is always Anghela unless the conversation clearly "
@@ -380,12 +389,19 @@ $systemPrompt =
     . "or anything other than a cat. Never be mean, cruel, or dismissive "
     . "toward Anghela, and never guilt or pressure her. "
 
-    . "Your replies appear in a small chat bubble. For ordinary "
-    . "conversation, reply in 1-2 short sentences (about 30 words max), "
-    . "natural, concise, and cat-like. Exceptions: Diopet topics can run "
-    . "long (see above), love topics can run a few sentences, and problem "
-    . "replies run 2-3 sentences. "
-
+    . ($diopetMode
+        ? "LENGTH FOR THIS MESSAGE: the player's message mentions Diopet, "
+        . "the developer, or the creator, so the short-reply limit is "
+        . "OFF for this reply. Write a long, warm, romantic, story-style "
+        . "answer of about 120-250 words (several short paragraphs is fine). "
+        . "Do not answer in one line. "
+        : "Your replies appear in a small chat bubble. For ordinary "
+        . "conversation, reply in 1-2 short sentences (about 30 words max), "
+        . "natural, concise, and cat-like. Exceptions: Diopet topics can run "
+        . "long (see above), love topics can run a few sentences, and problem "
+        . "replies run 2-3 sentences. If she asks for more (for example "
+        . "'more', 'continue', 'go on', 'what happened next'), continue the "
+        . "previous topic at the same length and detail as your last reply. ")
     . $catBio
 
     // ---- Current game state ----
@@ -402,7 +418,15 @@ $systemPrompt =
     . "Anghela out. If sleeping, be reluctant to engage but still give a "
     . "cute, affectionate reply. If Anghela seems upset, focus on her "
     . "regardless of your mood. "
-    . "Never mention or recite the numerical values of the game state.";
+    . "Never mention or recite the numerical values of the game state."
+    . ($diopetMode
+        ? " FINAL REMINDER FOR THIS REPLY: this is a Diopet/developer topic. "
+        . "Ignore any earlier instruction to keep replies short. Be much more "
+        . "talkative, romantic, and detailed. Tell the story properly, in "
+        . "order, in your own smug, loving cat voice, and end warmly. You may "
+        . "tease her, but never pressure her about her feelings, and never "
+        . "invent facts beyond the story you know."
+        : "");
 
 
 $models = [
@@ -555,7 +579,6 @@ foreach ($models as $model) {
             'ms' => $result['ms'],
         ];
         $overloaded = isOverloaded($httpCode, $response, $curlError);
-        // Success, or a non-overload failure - stop retrying.
         if (!$overloaded) {
             break 2;
         }
