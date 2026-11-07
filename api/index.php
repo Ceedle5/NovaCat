@@ -4240,695 +4240,576 @@
         els.catStage.style.transform = `translate(-50%, -100%) scale(${scale})`;
         els.catStage.classList.add('placed');
       }
-      /* Keep Nova glued to the room picture on EVERY size change:
-         address bar, rotation, keyboard, split screen. */
-      let relayoutRAF = null;
+      let resizeRAF = null;
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(resizeRAF);
+        resizeRAF = requestAnimationFrame(positionCat);
+      });
 
-      function relayout() {
-        cancelAnimationFrame(relayoutRAF);
-        relayoutRAF = requestAnimationFrame(() => {
-          if (window.scrollX || window.scrollY) window.scrollTo(0, 0); // undo focus-scroll on mobile
-          positionCat();
+      /* ---- Ambient motes ---- */
+      const motesEl = document.getElementById('motes');
+
+      function spawnMote() {
+        if (!motesEl) return;
+        const m = document.createElement('span');
+        m.className = 'mote';
+        const size = 3 + Math.random() * 4;
+        m.style.width = size + 'px';
+        m.style.height = size + 'px';
+        m.style.left = (Math.random() * 94 + 3) + '%';
+        m.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+        const dur = 10 + Math.random() * 9;
+        m.style.animationDuration = dur + 's';
+        motesEl.appendChild(m);
+        setTimeout(() => m.remove(), dur * 1000 + 200);
+      }
+      for (let i = 0; i < 7; i++) {
+        setTimeout(spawnMote, i * 900);
+      }
+      setInterval(spawnMote, 1900);
+
+      function renderRail() {
+        els.roomRail.innerHTML = '';
+        rooms.forEach((r, i) => {
+          const dot = document.createElement('button');
+          dot.className = 'rail-dot' + (i === roomIndex ? ' active' : '');
+          dot.setAttribute('aria-label', 'Go to ' + roomLabels[r]);
+          dot.addEventListener('click', () => {
+            goToRoom(i, i > roomIndex ? 1 : -1);
+          });
+          els.roomRail.appendChild(dot);
         });
       }
-      if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(els.stage);
-      window.addEventListener('resize', relayout);
-      window.addEventListener('orientationchange', () => setTimeout(relayout, 300));
-      window.addEventListener('pageshow', relayout);
-      if (window.visualViewport) window.visualViewport.addEventListener('resize', relayout);
-      els.roomBgMain.addEventListener('load', relayout);
-      setTimeout(() => els.catStage.classList.add('placed'), 4000); // never leave Nova hidden
-    });
 
-    /* ---- Ambient motes ---- */
-    const motesEl = document.getElementById('motes');
-
-    function spawnMote() {
-      if (!motesEl) return;
-      const m = document.createElement('span');
-      m.className = 'mote';
-      const size = 3 + Math.random() * 4;
-      m.style.width = size + 'px';
-      m.style.height = size + 'px';
-      m.style.left = (Math.random() * 94 + 3) + '%';
-      m.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
-      const dur = 10 + Math.random() * 9;
-      m.style.animationDuration = dur + 's';
-      motesEl.appendChild(m);
-      setTimeout(() => m.remove(), dur * 1000 + 200);
-    }
-    for (let i = 0; i < 7; i++) {
-      setTimeout(spawnMote, i * 900);
-    }
-    setInterval(spawnMote, 1900);
-
-    function renderRail() {
-      els.roomRail.innerHTML = '';
-      rooms.forEach((r, i) => {
-        const dot = document.createElement('button');
-        dot.className = 'rail-dot' + (i === roomIndex ? ' active' : '');
-        dot.setAttribute('aria-label', 'Go to ' + roomLabels[r]);
-        dot.addEventListener('click', () => {
-          goToRoom(i, i > roomIndex ? 1 : -1);
+      function renderDock() {
+        const room = rooms[roomIndex];
+        els.dock.innerHTML = '';
+        actionsByRoom[room].forEach(a => {
+          const btn = document.createElement('button');
+          btn.className = 'action-btn';
+          btn.dataset.label = a.label;
+          btn.setAttribute('aria-label', a.label);
+          btn.innerHTML = `<span class="icon">${a.icon}</span>`;
+          btn.style.setProperty('--btn-fill', `var(${a.fill})`);
+          btn.style.setProperty('--btn-deep', `var(${a.deep})`);
+          btn.addEventListener('click', a.run);
+          els.dock.appendChild(btn);
         });
-        els.roomRail.appendChild(dot);
-      });
-    }
+      }
 
-    function renderDock() {
-      const room = rooms[roomIndex];
-      els.dock.innerHTML = '';
-      actionsByRoom[room].forEach(a => {
-        const btn = document.createElement('button');
-        btn.className = 'action-btn';
-        btn.dataset.label = a.label;
-        btn.setAttribute('aria-label', a.label);
-        btn.innerHTML = `<span class="icon">${a.icon}</span>`;
-        btn.style.setProperty('--btn-fill', `var(${a.fill})`);
-        btn.style.setProperty('--btn-deep', `var(${a.deep})`);
-        btn.addEventListener('click', a.run);
-        els.dock.appendChild(btn);
-      });
-    }
+      function clamp(n) {
+        return Math.max(0, Math.min(100, n));
+      }
 
-    function clamp(n) {
-      return Math.max(0, Math.min(100, n));
-    }
-    /* ---- Keep every pose's feet and body on the same spot ----
-       Each PNG has different transparent padding, so switching pose made the cat jump.
-       We measure the visible cat in each image and line it up with the standing pose. */
-    const AUTO_ALIGN_POSES = true; // set false to go back to plain centering
-    const REF_POSE = document.querySelector('.cat-img'); // Character.png = the reference
-    const poseImgs = Array.from(document.querySelectorAll('.cat-pose-img'));
-    const footCache = new WeakMap();
+      function renderStats() {
+        els.hungerVal.textContent = Math.round(state.hunger);
+        els.happyVal.textContent = Math.round(state.happy);
+        els.energyVal.textContent = Math.round(state.energy);
+        els.hungerFill.style.width = state.hunger + '%';
+        els.happyFill.style.width = state.happy + '%';
+        els.energyFill.style.width = state.energy + '%';
+      }
 
-    // bottom = lowest visible row, cx = centre of the visible body near the ground (natural px)
-    function footOf(img) {
-      if (footCache.has(img)) return footCache.get(img);
-      let r = {
-        bottom: img.naturalHeight,
-        cx: img.naturalWidth / 2
-      };
-      try {
-        const S = 4; // sample at 1/4 size: fast and accurate enough
-        const cw = Math.max(1, Math.round(img.naturalWidth / S));
-        const ch = Math.max(1, Math.round(img.naturalHeight / S));
-        const c = document.createElement('canvas');
-        c.width = cw;
-        c.height = ch;
-        const ctx = c.getContext('2d', {
-          willReadFrequently: true
-        });
-        ctx.drawImage(img, 0, 0, cw, ch);
-        const d = ctx.getImageData(0, 0, cw, ch).data;
-        let top = ch,
-          bottom = -1;
-        for (let y = 0; y < ch; y++) {
-          for (let x = 0; x < cw; x++) {
-            if (d[(y * cw + x) * 4 + 3] > 24) {
-              if (y < top) top = y;
-              bottom = y;
-              break;
-            }
-          }
+      function currentMood() {
+        if (state.sleeping) return 'sleepy';
+        const avg = (state.hunger + state.happy + state.energy) / 3;
+        if (avg >= 65) return 'happy';
+        if (avg >= 35) return 'neutral';
+        return 'sad';
+      }
+      const MOOD_CLASSES = ['mood-happy', 'mood-neutral', 'mood-sad', 'mood-sleepy'];
+
+      function renderMood() {
+        const mood = currentMood();
+        MOOD_CLASSES.forEach(m => els.catWrap.classList.remove(m));
+        els.catWrap.classList.add('mood-' + mood);
+        els.catWrap.classList.toggle('hungry', state.hunger < HUNGER_THRESHOLD);
+      }
+
+      function renderAll() {
+        renderStats();
+        renderMood();
+      }
+      /* ---- Bubble ---- */
+      let bubbleTimer = null;
+      let chatHistory = [];
+      let lastInteractionId = '';
+
+      function say(text) {
+        els.bubble.textContent = text;
+        els.bubble.classList.add('show');
+        clearTimeout(bubbleTimer);
+        bubbleTimer = setTimeout(() => els.bubble.classList.remove('show'), 2600);
+      }
+      /* ---- Particles ---- */
+      function spawnParticle(emoji) {
+        const span = document.createElement('span');
+        span.className = 'particle';
+        span.textContent = emoji;
+        span.style.left = (42 + Math.random() * 16) + '%';
+        els.particles.appendChild(span);
+        setTimeout(() => span.remove(), 1400);
+      }
+      /* ---- Enhanced Actions with Movement ---- */
+      function feedCat() {
+        if (state.sleeping) {
+          say("Zzz... too sleepy to eat.");
+          return;
         }
-        if (bottom >= 0) {
-          const band = Math.max(1, Math.round((bottom - top + 1) * 0.25));
-          let sum = 0,
-            n = 0;
-          for (let y = bottom - band + 1; y <= bottom; y++) {
-            for (let x = 0; x < cw; x++) {
-              if (d[(y * cw + x) * 4 + 3] > 24) {
-                sum += x;
-                n++;
-              }
-            }
-          }
-          r = {
-            bottom: (bottom + 1) * S,
-            cx: n ? (sum / n + 0.5) * S : img.naturalWidth / 2
-          };
+        state.hunger = clamp(state.hunger + 25);
+        state.happy = clamp(state.happy + 4);
+        renderAll();
+        playEatAnimation();
+        spawnParticle('🍗');
+        const line = pick(["Nom nom nom!", "Yummy!", "More please? 🐟"]);
+        say(line);
+        logAction('🍗 You fed Nova', line);
+      }
+
+      function giveTreat() {
+        if (state.sleeping) {
+          say("Zzz...");
+          return;
         }
-      } catch (e) {
-        /* canvas blocked: keep plain centering */ }
-      footCache.set(img, r);
-      return r;
-    }
-
-    function poseAdj(img) {
-      for (const sel in POSE_ADJUST) {
-        if (img.matches(sel)) return POSE_ADJUST[sel];
+        state.hunger = clamp(state.hunger + 10);
+        state.happy = clamp(state.happy + 10);
+        renderAll();
+        playEatAnimation();
+        spawnParticle('🥛');
+        const line = pick(["A treat?! Best day ever!", "Purrrr~"]);
+        say(line);
+        logAction('🥛 You gave a treat', line);
       }
-      return {
-        s: 1,
-        y: 0
-      };
-    }
 
-    function alignPose(img) {
-      const adj = poseAdj(img);
-      if (!AUTO_ALIGN_POSES || adj.auto === false) return;
-      if (!img.naturalWidth || !REF_POSE || !REF_POSE.naturalWidth) return;
-      const refAdj = poseAdj(REF_POSE);
-      const k = POSE_SCALE * adj.s;
-      const kr = POSE_SCALE * refAdj.s;
-      const f = footOf(img);
-      const rf = footOf(REF_POSE);
-      if (img !== REF_POSE) {
-        const refPad = (REF_POSE.naturalHeight - rf.bottom) * kr; // gap under the standing cat's paws
-        const pad = (img.naturalHeight - f.bottom) * k; // gap under this pose's paws
-        img.style.bottom = Math.round(refAdj.y + refPad - pad + adj.y) + 'px';
+      function playWithCat() {
+        if (state.sleeping) {
+          say("Let me sleep a bit more...");
+          return;
+        }
+        if (state.energy < 10) {
+          say("Too tired to play right now.");
+          return;
+        }
+        state.happy = clamp(state.happy + 18);
+        state.energy = clamp(state.energy - 12);
+        renderAll();
+        playPlayAnimation();
+        spawnParticle('✨');
+        const line = pick(["Wheee!", "Again, again!", "This is fun!"]);
+        say(line);
+        logAction('✨ You played together', line);
       }
-      const refOff = (rf.cx - REF_POSE.naturalWidth / 2) * kr;
-      img.style.left = '50%';
-      img.style.right = 'auto';
-      img.style.margin = '0 0 0 ' + Math.round(refOff - f.cx * k) + 'px';
-    }
 
-    function layoutPose(img) {
-      sizePose(img);
-      alignPose(img);
-    }
-    poseImgs.forEach(img => {
-      if (img.complete) layoutPose(img);
-      img.addEventListener('load', () => {
-        layoutPose(img);
-        // once the standing pose is known, re-align all the others against it
-        if (img === REF_POSE) poseImgs.forEach(p => {
-          if (p !== img) layoutPose(p);
-        });
-      });
-    });
-
-    function renderStats() {
-      els.hungerVal.textContent = Math.round(state.hunger);
-      els.happyVal.textContent = Math.round(state.happy);
-      els.energyVal.textContent = Math.round(state.energy);
-      els.hungerFill.style.width = state.hunger + '%';
-      els.happyFill.style.width = state.happy + '%';
-      els.energyFill.style.width = state.energy + '%';
-    }
-
-    function currentMood() {
-      if (state.sleeping) return 'sleepy';
-      const avg = (state.hunger + state.happy + state.energy) / 3;
-      if (avg >= 65) return 'happy';
-      if (avg >= 35) return 'neutral';
-      return 'sad';
-    }
-    const MOOD_CLASSES = ['mood-happy', 'mood-neutral', 'mood-sad', 'mood-sleepy'];
-
-    function renderMood() {
-      const mood = currentMood();
-      MOOD_CLASSES.forEach(m => els.catWrap.classList.remove(m));
-      els.catWrap.classList.add('mood-' + mood);
-      els.catWrap.classList.toggle('hungry', state.hunger < HUNGER_THRESHOLD);
-    }
-
-    function renderAll() {
-      renderStats();
-      renderMood();
-    }
-    /* ---- Bubble ---- */
-    let bubbleTimer = null;
-    let chatHistory = [];
-    let lastInteractionId = '';
-
-    function say(text) {
-      els.bubble.textContent = text;
-      els.bubble.classList.add('show');
-      clearTimeout(bubbleTimer);
-      bubbleTimer = setTimeout(() => els.bubble.classList.remove('show'), 2600);
-    }
-    /* ---- Particles ---- */
-    function spawnParticle(emoji) {
-      const span = document.createElement('span');
-      span.className = 'particle';
-      span.textContent = emoji;
-      span.style.left = (42 + Math.random() * 16) + '%';
-      els.particles.appendChild(span);
-      setTimeout(() => span.remove(), 1400);
-    }
-    /* ---- Enhanced Actions with Movement ---- */
-    function feedCat() {
-      if (state.sleeping) {
-        say("Zzz... too sleepy to eat.");
-        return;
+      function petCat() {
+        if (state.sleeping) {
+          say("Purrrr... (still sleeping)");
+          return;
+        }
+        state.happy = clamp(state.happy + 8);
+        renderAll();
+        spawnParticle('💕');
+        const line = pick(["Purrrrr...", "I love that!", "😻"]);
+        say(line);
+        playPetAnimation();
+        logAction('💕 You petted Nova', line);
       }
-      state.hunger = clamp(state.hunger + 25);
-      state.happy = clamp(state.happy + 4);
-      renderAll();
-      playEatAnimation();
-      spawnParticle('🍗');
-      const line = pick(["Nom nom nom!", "Yummy!", "More please? 🐟"]);
-      say(line);
-      logAction('🍗 You fed Nova', line);
-    }
+      /* ---- Animation handling with movement ---- */
+      let petAnimTimer = null;
 
-    function giveTreat() {
-      if (state.sleeping) {
-        say("Zzz...");
-        return;
-      }
-      state.hunger = clamp(state.hunger + 10);
-      state.happy = clamp(state.happy + 10);
-      renderAll();
-      playEatAnimation();
-      spawnParticle('🥛');
-      const line = pick(["A treat?! Best day ever!", "Purrrr~"]);
-      say(line);
-      logAction('🥛 You gave a treat', line);
-    }
-
-    function playWithCat() {
-      if (state.sleeping) {
-        say("Let me sleep a bit more...");
-        return;
-      }
-      if (state.energy < 10) {
-        say("Too tired to play right now.");
-        return;
-      }
-      state.happy = clamp(state.happy + 18);
-      state.energy = clamp(state.energy - 12);
-      renderAll();
-      playPlayAnimation();
-      spawnParticle('✨');
-      const line = pick(["Wheee!", "Again, again!", "This is fun!"]);
-      say(line);
-      logAction('✨ You played together', line);
-    }
-
-    function petCat() {
-      if (state.sleeping) {
-        say("Purrrr... (still sleeping)");
-        return;
-      }
-      state.happy = clamp(state.happy + 8);
-      renderAll();
-      spawnParticle('💕');
-      const line = pick(["Purrrrr...", "I love that!", "😻"]);
-      say(line);
-      playPetAnimation();
-      logAction('💕 You petted Nova', line);
-    }
-    /* ---- Animation handling with movement ---- */
-    let petAnimTimer = null;
-
-    function cancelPetAnimation() {
-      clearTimeout(petAnimTimer);
-      els.petFrames.forEach(f => f.classList.remove('active'));
-      els.catWrap.classList.remove('petting');
-    }
-
-    function playPetAnimation() {
-      cancelPetAnimation();
-      cancelEatAnimation();
-      cancelPlayAnimation();
-      els.catWrap.classList.add('petting');
-      const sequence = [{
-          frame: 0,
-          hold: 280
-        },
-        {
-          frame: 1,
-          hold: 650
-        },
-        {
-          frame: 2,
-          hold: 750
-        },
-      ];
-      let step = 0;
-
-      function showStep() {
+      function cancelPetAnimation() {
+        clearTimeout(petAnimTimer);
         els.petFrames.forEach(f => f.classList.remove('active'));
-        if (step < sequence.length) {
-          els.petFrames[sequence[step].frame].classList.add('active');
-          petAnimTimer = setTimeout(() => {
-            step++;
-            showStep();
-          }, sequence[step].hold);
-        } else {
-          els.catWrap.classList.remove('petting');
-        }
+        els.catWrap.classList.remove('petting');
       }
-      showStep();
-    }
-    let eatAnimTimer = null;
 
-    function cancelEatAnimation() {
-      clearTimeout(eatAnimTimer);
-      els.catWrap.classList.remove('eating');
-    }
-
-    function playEatAnimation() {
-      cancelEatAnimation();
-      cancelPetAnimation();
-      cancelPlayAnimation();
-      els.catWrap.classList.add('eating');
-      eatAnimTimer = setTimeout(() => {
-        els.catWrap.classList.remove('eating');
-      }, 900);
-    }
-    let playAnimTimer = null;
-
-    function cancelPlayAnimation() {
-      clearTimeout(playAnimTimer);
-      els.playFrames.forEach(f => f.classList.remove('active'));
-      els.catWrap.classList.remove('playing');
-    }
-
-    function playPlayAnimation() {
-      cancelPlayAnimation();
-      cancelPetAnimation();
-      cancelEatAnimation();
-      els.catWrap.classList.add('playing');
-
-      // Add movement during play
-      els.catStage.classList.add('moving');
-
-      const sequence = [0, 1, 0, 1];
-      let step = 0;
-
-      function showStep() {
-        els.playFrames.forEach(f => f.classList.remove('active'));
-        if (step < sequence.length) {
-          els.playFrames[sequence[step]].classList.add('active');
-          playAnimTimer = setTimeout(() => {
-            step++;
-            showStep();
-          }, 320);
-        } else {
-          els.catWrap.classList.remove('playing');
-          els.catStage.classList.remove('moving');
-        }
-      }
-      showStep();
-    }
-
-    function toggleSleep() {
-      state.sleeping = !state.sleeping;
-      if (state.sleeping) {
+      function playPetAnimation() {
         cancelPetAnimation();
         cancelEatAnimation();
         cancelPlayAnimation();
-        spawnParticle('💤');
-        say("Goodnight...");
-        logAction('💤 Nova went to nap', 'Goodnight...');
-      } else {
-        const line = pick(["I'm awake!", "Good morning!"]);
-        say(line);
-        logAction('☀️ Nova woke up', line);
-      }
-      renderMood();
-    }
-
-    function pick(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-    /* ---- Stat decay loop ---- */
-    setInterval(() => {
-      if (state.sleeping) {
-        state.energy = clamp(state.energy + 6);
-        if (state.energy >= 100) {
-          state.sleeping = false;
-          say("I'm fully rested!");
-          logAction('☀️ Nova woke up', "I'm fully rested!");
-        }
-      } else {
-        state.hunger = clamp(state.hunger - 2);
-        state.energy = clamp(state.energy - 1.5);
-        state.happy = clamp(state.happy - (state.hunger < 20 ? 3 : 1));
-      }
-      renderAll();
-    }, 4000);
-    /* ---- Room navigation ---- */
-    document.getElementById('prevRoom').addEventListener('click', () => {
-      goToRoom((roomIndex - 1 + rooms.length) % rooms.length, -1);
-    });
-    document.getElementById('nextRoom').addEventListener('click', () => {
-      goToRoom((roomIndex + 1) % rooms.length, 1);
-    });
-    els.catWrap.addEventListener('click', petCat);
-    /* ---- Chat widget ---- */
-    function openChat() {
-      els.chatPanel.classList.add('open');
-      els.chatScrim.classList.add('open');
-      els.fabBadge.style.display = 'none';
-      els.chatInput.focus();
-    }
-
-    function closeChat() {
-      els.chatPanel.classList.remove('open');
-      els.chatScrim.classList.remove('open');
-    }
-    els.chatToggle.addEventListener('click', () => {
-      els.chatPanel.classList.contains('open') ? closeChat() : openChat();
-    });
-    els.chatClose.addEventListener('click', closeChat);
-    els.chatScrim.addEventListener('click', closeChat);
-    els.chatQuickRow.addEventListener('click', (e) => {
-      const btn = e.target.closest('.chat-quick-btn');
-      if (!btn) return;
-      els.chatInput.value = btn.dataset.quick;
-      sendChat();
-    });
-
-    function addMessage(text, from) {
-      const row = document.createElement('div');
-      row.className = 'chat-row from-' + from;
-      const bubble = document.createElement('div');
-      bubble.className = 'msg ' + from;
-      bubble.textContent = text;
-      row.appendChild(bubble);
-      els.chatLog.appendChild(row);
-      els.chatLog.scrollTop = els.chatLog.scrollHeight;
-      return bubble;
-    }
-
-    function addTyping() {
-      const row = document.createElement('div');
-      row.className = 'chat-row from-cat';
-      const bubble = document.createElement('div');
-      bubble.className = 'msg typing';
-      bubble.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
-      row.appendChild(bubble);
-      els.chatLog.appendChild(row);
-      els.chatLog.scrollTop = els.chatLog.scrollHeight;
-      return row;
-    }
-
-    function logAction(actionText, reactionText) {
-      addMessage(actionText, 'system');
-      if (reactionText) addMessage(reactionText, 'cat');
-      if (!els.chatPanel.classList.contains('open')) {
-        els.fabBadge.style.display = 'block';
-      }
-    }
-    async function getCatReply(message) {
-      if (state.sleeping) return pick(["Zzz... five more minutes...", "*rolls over, still asleep*"]);
-      const payload = {
-        message,
-        previous_interaction_id: lastInteractionId,
-        state: {
-          name: state.name,
-          room: roomLabels[rooms[roomIndex]],
-          mood: currentMood(),
-          hunger: Math.round(state.hunger),
-          happy: Math.round(state.happy),
-          energy: Math.round(state.energy),
-          sleeping: state.sleeping,
-        }
-      };
-      try {
-        const res = await fetch('/api/cat-chat.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
+        els.catWrap.classList.add('petting');
+        const sequence = [{
+            frame: 0,
+            hold: 280
           },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (data.debug) console.warn('[Nova debug]', data.debug);
-        if (data.interaction_id) lastInteractionId = data.interaction_id;
-        if (data.error_kind === 'lost_thought') lastInteractionId = '';
-        if (!data.reply) throw new Error(data.error || 'Bad response (HTTP ' + res.status + ')');
-        return data.reply;
-      } catch (err) {
-        console.error('Cat chat error:', err);
-        return pick([
-          "Meow? (I'm having trouble finding my words right now)",
-          "Purrrr~ *connection hiccup, try again?*",
-          "*tilts head* my brain's a little foggy right now."
-        ]);
-      }
-    }
-    async function sendChat() {
-      const text = els.chatInput.value.trim();
-      if (!text) return;
-      addMessage(text, 'user');
-      els.chatInput.value = '';
-      state.happy = clamp(state.happy + 3);
-      renderStats();
-      const typingRow = addTyping();
-      const reply = await getCatReply(text);
-      chatHistory.push({
-        role: 'user',
-        content: text
-      });
-      chatHistory.push({
-        role: 'assistant',
-        content: reply
-      });
-      if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
-      setTimeout(() => {
-        typingRow.remove();
-        const msgEl = addMessage(reply, 'cat');
-        // Long story replies: short teaser over Nova, full text stays in the chat
-        say(reply.length > 110 ? reply.slice(0, 100).trim() + '…' : reply);
-        if (reply.length > 160) msgEl.scrollIntoView({
-          block: 'start',
-          behavior: 'smooth'
-        });
-      }, 500 + Math.random() * 400);
-    }
-    els.chatSend.addEventListener('click', sendChat);
-    els.chatInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') sendChat();
-    });
-    /* ---- Init ---- */
-    renderRoom();
-    renderAll();
-    positionCat();
-    addMessage("Meow! I'm " + state.name + ". Talk to me!", 'cat');
+          {
+            frame: 1,
+            hold: 650
+          },
+          {
+            frame: 2,
+            hold: 750
+          },
+        ];
+        let step = 0;
 
-    /* ---- Splash screen ---- */
-    (function initSplash() {
-      const SPLASH_ONCE = false; // true = only show it the first time per browser tab session
-      const MIN_MS = 2200; // shortest time the splash stays up
-      const MAX_MS = 9000; // stop waiting for slow images after this long
-      const splash = document.getElementById('splash');
-      if (!splash) return;
-      try {
-        if (SPLASH_ONCE && sessionStorage.getItem('novaSplashSeen')) {
-          splash.remove();
-          return;
+        function showStep() {
+          els.petFrames.forEach(f => f.classList.remove('active'));
+          if (step < sequence.length) {
+            els.petFrames[sequence[step].frame].classList.add('active');
+            petAnimTimer = setTimeout(() => {
+              step++;
+              showStep();
+            }, sequence[step].hold);
+          } else {
+            els.catWrap.classList.remove('petting');
+          }
         }
-      } catch (e) {}
-
-      const fill = document.getElementById('splashFill');
-      const msg = document.getElementById('splashMsg');
-      const go = document.getElementById('splashGo');
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      /* fairy lights along a gentle wire */
-      const lights = splash.querySelector('.splash-lights');
-      const wireY = x => 16 + 9 * Math.sin(x * Math.PI * 6);
-      const pts = [];
-      for (let i = 0; i <= 80; i++) {
-        const x = i / 80;
-        pts.push((x * 1000).toFixed(1) + ',' + wireY(x).toFixed(1));
+        showStep();
       }
-      lights.innerHTML = '<svg viewBox="0 0 1000 40" preserveAspectRatio="none"><polyline points="' + pts.join(' ') + '" fill="none" stroke="#7a5a3c" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>';
-      const bulbColors = ['#ffd27a', '#ffb3a0', '#b4e1bf', '#ffe9a8', '#f7c0d3'];
-      const BULBS = 12;
-      for (let i = 0; i < BULBS; i++) {
-        const x = (i + 0.5) / BULBS;
-        const b = document.createElement('i');
-        b.className = 'splash-bulb';
-        b.style.left = (x * 100) + '%';
-        b.style.top = (wireY(x) + 2) + 'px';
-        b.style.setProperty('--c', bulbColors[i % bulbColors.length]);
-        b.style.animationDelay = ((i * 0.37) % 2.4) + 's';
-        lights.appendChild(b);
+      let eatAnimTimer = null;
+
+      function cancelEatAnimation() {
+        clearTimeout(eatAnimTimer);
+        els.catWrap.classList.remove('eating');
       }
 
-      /* floating warm dust */
-      const motes = splash.querySelector('.splash-motes');
-      for (let i = 0; i < 16; i++) {
-        const m = document.createElement('span');
-        m.className = 'mote';
-        const size = 3 + Math.random() * 5;
-        m.style.width = m.style.height = size + 'px';
-        m.style.left = (Math.random() * 94 + 3) + '%';
-        m.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
-        const dur = 9 + Math.random() * 8;
-        m.style.animationDuration = dur + 's';
-        m.style.animationDelay = (-Math.random() * dur) + 's';
-        motes.appendChild(m);
+      function playEatAnimation() {
+        cancelEatAnimation();
+        cancelPetAnimation();
+        cancelPlayAnimation();
+        els.catWrap.classList.add('eating');
+        eatAnimTimer = setTimeout(() => {
+          els.catWrap.classList.remove('eating');
+        }, 900);
+      }
+      let playAnimTimer = null;
+
+      function cancelPlayAnimation() {
+        clearTimeout(playAnimTimer);
+        els.playFrames.forEach(f => f.classList.remove('active'));
+        els.catWrap.classList.remove('playing');
       }
 
-      /* real loading progress: every image on the page + room backgrounds + fonts */
-      const urls = new Set();
-      Array.from(document.images).forEach(im => {
-        if (im.src) urls.add(im.src);
-      });
-      Object.values(ROOM_BG).forEach(u => urls.add(new URL(u, location.href).href));
-      const total = urls.size + 1; // +1 for fonts
-      let done = 0;
-      const tick = () => {
-        done++;
-      };
-      urls.forEach(u => {
-        const im = new Image();
-        im.onload = im.onerror = tick;
-        im.src = u;
-      });
-      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(tick, tick);
+      function playPlayAnimation() {
+        cancelPlayAnimation();
+        cancelPetAnimation();
+        cancelEatAnimation();
+        els.catWrap.classList.add('playing');
 
-      const lines = [
-        [0, 'Warming up the house…'],
-        [0.3, 'Fluffing the cushions…'],
-        [0.55, 'Lighting the fairy lights…'],
-        [0.8, 'Waking Nova up…'],
-      ];
-      const t0 = performance.now();
-      let shown = 0;
-      let lastLine = '';
+        // Add movement during play
+        els.catStage.classList.add('moving');
 
-      function frame(now) {
-        const elapsed = now - t0;
-        const target = elapsed > MAX_MS ? 1 : Math.min(done / total, Math.min(1, elapsed / MIN_MS));
-        if (target > shown) shown = Math.min(target, shown + 0.02);
-        fill.style.width = (shown * 100) + '%';
-        let line = lines[0][1];
-        lines.forEach(l => {
-          if (shown >= l[0]) line = l[1];
-        });
-        if (line !== lastLine) {
-          msg.textContent = line;
-          lastLine = line;
+        const sequence = [0, 1, 0, 1];
+        let step = 0;
+
+        function showStep() {
+          els.playFrames.forEach(f => f.classList.remove('active'));
+          if (step < sequence.length) {
+            els.playFrames[sequence[step]].classList.add('active');
+            playAnimTimer = setTimeout(() => {
+              step++;
+              showStep();
+            }, 320);
+          } else {
+            els.catWrap.classList.remove('playing');
+            els.catStage.classList.remove('moving');
+          }
         }
-        if (shown >= 1) {
-          msg.textContent = 'Nova is waiting for you…';
-          splash.classList.add('ready');
-          go.disabled = false;
-          go.focus({
-            preventScroll: true
+        showStep();
+      }
+
+      function toggleSleep() {
+        state.sleeping = !state.sleeping;
+        if (state.sleeping) {
+          cancelPetAnimation();
+          cancelEatAnimation();
+          cancelPlayAnimation();
+          spawnParticle('💤');
+          say("Goodnight...");
+          logAction('💤 Nova went to nap', 'Goodnight...');
+        } else {
+          const line = pick(["I'm awake!", "Good morning!"]);
+          say(line);
+          logAction('☀️ Nova woke up', line);
+        }
+        renderMood();
+      }
+
+      function pick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+      /* ---- Stat decay loop ---- */
+      setInterval(() => {
+        if (state.sleeping) {
+          state.energy = clamp(state.energy + 6);
+          if (state.energy >= 100) {
+            state.sleeping = false;
+            say("I'm fully rested!");
+            logAction('☀️ Nova woke up', "I'm fully rested!");
+          }
+        } else {
+          state.hunger = clamp(state.hunger - 2);
+          state.energy = clamp(state.energy - 1.5);
+          state.happy = clamp(state.happy - (state.hunger < 20 ? 3 : 1));
+        }
+        renderAll();
+      }, 4000);
+      /* ---- Room navigation ---- */
+      document.getElementById('prevRoom').addEventListener('click', () => {
+        goToRoom((roomIndex - 1 + rooms.length) % rooms.length, -1);
+      });
+      document.getElementById('nextRoom').addEventListener('click', () => {
+        goToRoom((roomIndex + 1) % rooms.length, 1);
+      });
+      els.catWrap.addEventListener('click', petCat);
+      /* ---- Chat widget ---- */
+      function openChat() {
+        els.chatPanel.classList.add('open');
+        els.chatScrim.classList.add('open');
+        els.fabBadge.style.display = 'none';
+        els.chatInput.focus();
+      }
+
+      function closeChat() {
+        els.chatPanel.classList.remove('open');
+        els.chatScrim.classList.remove('open');
+      }
+      els.chatToggle.addEventListener('click', () => {
+        els.chatPanel.classList.contains('open') ? closeChat() : openChat();
+      });
+      els.chatClose.addEventListener('click', closeChat);
+      els.chatScrim.addEventListener('click', closeChat);
+      els.chatQuickRow.addEventListener('click', (e) => {
+        const btn = e.target.closest('.chat-quick-btn');
+        if (!btn) return;
+        els.chatInput.value = btn.dataset.quick;
+        sendChat();
+      });
+
+      function addMessage(text, from) {
+        const row = document.createElement('div');
+        row.className = 'chat-row from-' + from;
+        const bubble = document.createElement('div');
+        bubble.className = 'msg ' + from;
+        bubble.textContent = text;
+        row.appendChild(bubble);
+        els.chatLog.appendChild(row);
+        els.chatLog.scrollTop = els.chatLog.scrollHeight;
+        return bubble;
+      }
+
+      function addTyping() {
+        const row = document.createElement('div');
+        row.className = 'chat-row from-cat';
+        const bubble = document.createElement('div');
+        bubble.className = 'msg typing';
+        bubble.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+        row.appendChild(bubble);
+        els.chatLog.appendChild(row);
+        els.chatLog.scrollTop = els.chatLog.scrollHeight;
+        return row;
+      }
+
+      function logAction(actionText, reactionText) {
+        addMessage(actionText, 'system');
+        if (reactionText) addMessage(reactionText, 'cat');
+        if (!els.chatPanel.classList.contains('open')) {
+          els.fabBadge.style.display = 'block';
+        }
+      }
+      async function getCatReply(message) {
+        if (state.sleeping) return pick(["Zzz... five more minutes...", "*rolls over, still asleep*"]);
+        const payload = {
+          message,
+          previous_interaction_id: lastInteractionId,
+          state: {
+            name: state.name,
+            room: roomLabels[rooms[roomIndex]],
+            mood: currentMood(),
+            hunger: Math.round(state.hunger),
+            happy: Math.round(state.happy),
+            energy: Math.round(state.energy),
+            sleeping: state.sleeping,
+          }
+        };
+        try {
+          const res = await fetch('/api/cat-chat.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
           });
-          return;
+          const data = await res.json();
+          if (data.debug) console.warn('[Nova debug]', data.debug);
+          if (data.interaction_id) lastInteractionId = data.interaction_id;
+          if (data.error_kind === 'lost_thought') lastInteractionId = '';
+          if (!data.reply) throw new Error(data.error || 'Bad response (HTTP ' + res.status + ')');
+          return data.reply;
+        } catch (err) {
+          console.error('Cat chat error:', err);
+          return pick([
+            "Meow? (I'm having trouble finding my words right now)",
+            "Purrrr~ *connection hiccup, try again?*",
+            "*tilts head* my brain's a little foggy right now."
+          ]);
+        }
+      }
+      async function sendChat() {
+        const text = els.chatInput.value.trim();
+        if (!text) return;
+        addMessage(text, 'user');
+        els.chatInput.value = '';
+        state.happy = clamp(state.happy + 3);
+        renderStats();
+        const typingRow = addTyping();
+        const reply = await getCatReply(text);
+        chatHistory.push({
+          role: 'user',
+          content: text
+        });
+        chatHistory.push({
+          role: 'assistant',
+          content: reply
+        });
+        if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+        setTimeout(() => {
+          typingRow.remove();
+          const msgEl = addMessage(reply, 'cat');
+          // Long story replies: short teaser over Nova, full text stays in the chat
+          say(reply.length > 110 ? reply.slice(0, 100).trim() + '…' : reply);
+          if (reply.length > 160) msgEl.scrollIntoView({
+            block: 'start',
+            behavior: 'smooth'
+          });
+        }, 500 + Math.random() * 400);
+      }
+      els.chatSend.addEventListener('click', sendChat);
+      els.chatInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') sendChat();
+      });
+      /* ---- Init ---- */
+      renderRoom();
+      renderAll();
+      positionCat();
+      addMessage("Meow! I'm " + state.name + ". Talk to me!", 'cat');
+
+      /* ---- Splash screen ---- */
+      (function initSplash() {
+        const SPLASH_ONCE = false; // true = only show it the first time per browser tab session
+        const MIN_MS = 2200; // shortest time the splash stays up
+        const MAX_MS = 9000; // stop waiting for slow images after this long
+        const splash = document.getElementById('splash');
+        if (!splash) return;
+        try {
+          if (SPLASH_ONCE && sessionStorage.getItem('novaSplashSeen')) {
+            splash.remove();
+            return;
+          }
+        } catch (e) {}
+
+        const fill = document.getElementById('splashFill');
+        const msg = document.getElementById('splashMsg');
+        const go = document.getElementById('splashGo');
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* fairy lights along a gentle wire */
+        const lights = splash.querySelector('.splash-lights');
+        const wireY = x => 16 + 9 * Math.sin(x * Math.PI * 6);
+        const pts = [];
+        for (let i = 0; i <= 80; i++) {
+          const x = i / 80;
+          pts.push((x * 1000).toFixed(1) + ',' + wireY(x).toFixed(1));
+        }
+        lights.innerHTML = '<svg viewBox="0 0 1000 40" preserveAspectRatio="none"><polyline points="' + pts.join(' ') + '" fill="none" stroke="#7a5a3c" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>';
+        const bulbColors = ['#ffd27a', '#ffb3a0', '#b4e1bf', '#ffe9a8', '#f7c0d3'];
+        const BULBS = 12;
+        for (let i = 0; i < BULBS; i++) {
+          const x = (i + 0.5) / BULBS;
+          const b = document.createElement('i');
+          b.className = 'splash-bulb';
+          b.style.left = (x * 100) + '%';
+          b.style.top = (wireY(x) + 2) + 'px';
+          b.style.setProperty('--c', bulbColors[i % bulbColors.length]);
+          b.style.animationDelay = ((i * 0.37) % 2.4) + 's';
+          lights.appendChild(b);
+        }
+
+        /* floating warm dust */
+        const motes = splash.querySelector('.splash-motes');
+        for (let i = 0; i < 16; i++) {
+          const m = document.createElement('span');
+          m.className = 'mote';
+          const size = 3 + Math.random() * 5;
+          m.style.width = m.style.height = size + 'px';
+          m.style.left = (Math.random() * 94 + 3) + '%';
+          m.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+          const dur = 9 + Math.random() * 8;
+          m.style.animationDuration = dur + 's';
+          m.style.animationDelay = (-Math.random() * dur) + 's';
+          motes.appendChild(m);
+        }
+
+        /* real loading progress: every image on the page + room backgrounds + fonts */
+        const urls = new Set();
+        Array.from(document.images).forEach(im => {
+          if (im.src) urls.add(im.src);
+        });
+        Object.values(ROOM_BG).forEach(u => urls.add(new URL(u, location.href).href));
+        const total = urls.size + 1; // +1 for fonts
+        let done = 0;
+        const tick = () => {
+          done++;
+        };
+        urls.forEach(u => {
+          const im = new Image();
+          im.onload = im.onerror = tick;
+          im.src = u;
+        });
+        (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(tick, tick);
+
+        const lines = [
+          [0, 'Warming up the house…'],
+          [0.3, 'Fluffing the cushions…'],
+          [0.55, 'Lighting the fairy lights…'],
+          [0.8, 'Waking Nova up…'],
+        ];
+        const t0 = performance.now();
+        let shown = 0;
+        let lastLine = '';
+
+        function frame(now) {
+          const elapsed = now - t0;
+          const target = elapsed > MAX_MS ? 1 : Math.min(done / total, Math.min(1, elapsed / MIN_MS));
+          if (target > shown) shown = Math.min(target, shown + 0.02);
+          fill.style.width = (shown * 100) + '%';
+          let line = lines[0][1];
+          lines.forEach(l => {
+            if (shown >= l[0]) line = l[1];
+          });
+          if (line !== lastLine) {
+            msg.textContent = line;
+            lastLine = line;
+          }
+          if (shown >= 1) {
+            msg.textContent = 'Nova is waiting for you…';
+            splash.classList.add('ready');
+            go.disabled = false;
+            go.focus({
+              preventScroll: true
+            });
+            return;
+          }
+          requestAnimationFrame(frame);
         }
         requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
 
-      function enter() {
-        if (!splash.classList.contains('ready') || splash.classList.contains('leaving')) return;
-        try {
-          if (SPLASH_ONCE) sessionStorage.setItem('novaSplashSeen', '1');
-        } catch (e) {}
-        splash.classList.add('leaving');
-        setTimeout(() => splash.remove(), reduce ? 250 : 900);
-        setTimeout(() => {
-          say('Meow! Welcome home mommy! 🐾');
-          spawnParticle('💕');
-          els.catWrap.classList.add('bouncing');
-          setTimeout(() => els.catWrap.classList.remove('bouncing'), 700);
-        }, reduce ? 150 : 500);
-      }
-      go.addEventListener('click', enter);
-    })();
+        function enter() {
+          if (!splash.classList.contains('ready') || splash.classList.contains('leaving')) return;
+          try {
+            if (SPLASH_ONCE) sessionStorage.setItem('novaSplashSeen', '1');
+          } catch (e) {}
+          splash.classList.add('leaving');
+          setTimeout(() => splash.remove(), reduce ? 250 : 900);
+          setTimeout(() => {
+            say('Meow! Welcome home mommy! 🐾');
+            spawnParticle('💕');
+            els.catWrap.classList.add('bouncing');
+            setTimeout(() => els.catWrap.classList.remove('bouncing'), 700);
+          }, reduce ? 150 : 500);
+        }
+        go.addEventListener('click', enter);
+      })();
     })();
   </script>
 </body>
