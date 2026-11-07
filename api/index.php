@@ -3113,7 +3113,7 @@
       };
       let roomIndex = 0;
       const state = {
-        hunger: 80,
+        hunger: 500,
         happy: 80,
         energy: 80,
         sleeping: false,
