@@ -3591,6 +3591,17 @@
         display: none;
       }
     }
+
+    /* make the header's stitched border click-through and lift the close button above it */
+    .chat-head::before,
+    .chat-head::after {
+      pointer-events: none;
+    }
+
+    .chat-close {
+      position: relative;
+      z-index: 3;
+    }
   </style>
 </head>
 
@@ -5690,7 +5701,7 @@
           splash.classList.add('leaving');
           setTimeout(() => splash.remove(), reduce ? 250 : 900);
           setTimeout(() => {
-            say('Meow! Welcome home! 🐾');
+            say('Meow! Welcome home mommy! 🐾');
             spawnParticle('💕');
             els.catWrap.classList.add('bouncing');
             setTimeout(() => els.catWrap.classList.remove('bouncing'), 700);
