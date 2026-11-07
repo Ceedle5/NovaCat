@@ -69,29 +69,6 @@
       transition: background 0.6s ease;
     }
 
-    .stage.room-transitioning::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(36, 26, 28, 0.7);
-      z-index: 10;
-      pointer-events: none;
-      animation: roomFade 0.5s ease-in-out;
-    }
-
-    @keyframes roomFade {
-      0% {
-        opacity: 0;
-      }
-
-      50% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0;
-      }
-    }
 
     .stage.room-living {
       --accent: var(--sage);
@@ -113,26 +90,26 @@
       content: "";
       position: absolute;
       border-radius: 50%;
-      filter: blur(85px);
       opacity: 0.3;
-      background: var(--accent);
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
       pointer-events: none;
       z-index: 1;
+      will-change: transform;
       animation: driftGlow 9s ease-in-out infinite alternate;
     }
 
     .stage::before {
-      width: 280px;
-      height: 280px;
-      top: -70px;
-      right: -60px;
+      width: 460px;
+      height: 460px;
+      top: -190px;
+      right: -180px;
     }
 
     .stage::after {
-      width: 230px;
-      height: 230px;
-      bottom: 60px;
-      left: -70px;
+      width: 400px;
+      height: 400px;
+      bottom: -30px;
+      left: -190px;
       animation-duration: 11s;
     }
 
@@ -241,6 +218,10 @@
       height: 100%;
       object-fit: contain;
       z-index: 1;
+      opacity: 0;
+      will-change: transform, opacity;
+      backface-visibility: hidden;
+      transform: translateZ(0);
     }
 
     /* ---------- Topbar (floating glass) ---------- */
@@ -3429,6 +3410,187 @@
         filter: none;
       }
     }
+
+    /* ================= Smooth room transitions ================= */
+    .room-bg-main.is-active {
+      opacity: 1;
+    }
+
+    .room-bg-main[class*="enter-"] {
+      z-index: 2;
+    }
+
+    .room-bg-main.enter-next {
+      animation: roomEnterNext 0.8s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .room-bg-main.exit-next {
+      animation: roomExitNext 0.8s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .room-bg-main.enter-prev {
+      animation: roomEnterPrev 0.8s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .room-bg-main.exit-prev {
+      animation: roomExitPrev 0.8s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    /* the entering room fades in on top while the old one holds, so there is no dark dip */
+    @keyframes roomEnterNext {
+      0% {
+        opacity: 0;
+        transform: translate3d(7%, 0, 0) scale(1.07);
+      }
+
+      55% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
+
+    @keyframes roomExitNext {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
+      70% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(-7%, 0, 0) scale(0.96);
+      }
+    }
+
+    @keyframes roomEnterPrev {
+      0% {
+        opacity: 0;
+        transform: translate3d(-7%, 0, 0) scale(1.07);
+      }
+
+      55% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
+
+    @keyframes roomExitPrev {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
+      70% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(7%, 0, 0) scale(0.96);
+      }
+    }
+
+    /* warm light sweep across the screen */
+    .room-veil {
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 226, 170, 0) 25%, rgba(255, 238, 206, 0.6) 50%, rgba(255, 226, 170, 0) 75%, transparent 100%);
+      will-change: transform, opacity;
+    }
+
+    .room-veil.sweep-next {
+      animation: veilNext 0.8s ease-in-out;
+    }
+
+    .room-veil.sweep-prev {
+      animation: veilPrev 0.8s ease-in-out;
+    }
+
+    @keyframes veilNext {
+      0% {
+        opacity: 0;
+        transform: translate3d(60%, 0, 0);
+      }
+
+      35% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(-60%, 0, 0);
+      }
+    }
+
+    @keyframes veilPrev {
+      0% {
+        opacity: 0;
+        transform: translate3d(-60%, 0, 0);
+      }
+
+      35% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(60%, 0, 0);
+      }
+    }
+
+    /* cat: no sliding, just fade out / hop back in */
+    .cat-stage,
+    .cat-stage.moving {
+      transition: opacity 0.3s ease;
+      will-change: opacity;
+    }
+
+    .cat-stage.cat-away {
+      opacity: 0;
+    }
+
+    /* room name pops in */
+    .room-pill.pop {
+      animation: pillPop 0.55s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    @keyframes pillPop {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.85);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .room-bg-main[class*="enter-"],
+      .room-bg-main[class*="exit-"] {
+        animation-duration: 0.01s;
+      }
+
+      .room-veil {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -3477,8 +3639,12 @@
       <div class="room-bg-layer">
         <img class="room-bg-side side-left" id="sideLeft" src="/Assets/AnghelaNova.jfif" alt="" aria-hidden="true">
         <img class="room-bg-side side-right" id="sideRight" src="/Assets/AnghelaNova2.jfif" alt="" aria-hidden="true">
-        <img class="room-bg-main" id="roomBgMain" src="/Assets/LivingRoom.jfif" alt="">
+        <img class="room-bg-main is-active" data-room="living" src="/Assets/LivingRoom.jfif" alt="Living room" decoding="async">
+        <img class="room-bg-main" data-room="kitchen" src="/Assets/Kitchen.jfif" alt="Kitchen" decoding="async">
+        <img class="room-bg-main" data-room="bedroom" src="/Assets/Bedroom.jfif" alt="Bedroom" decoding="async">
       </div>
+      <div class="stage-ambience" aria-hidden="true"></div>
+      <div class="room-veil" id="roomVeil" aria-hidden="true"></div>
       <div class="stage-ambience" aria-hidden="true"></div>
       <div class="motes" id="motes" aria-hidden="true"></div>
       <button class="room-door prev" id="prevRoom" aria-label="Previous room">
@@ -3703,7 +3869,6 @@
       });
       const els = {
         stage: document.getElementById('stage'),
-        roomBgMain: document.getElementById('roomBgMain'),
         sideLeft: document.getElementById('sideLeft'),
         sideRight: document.getElementById('sideRight'),
         catStage: document.querySelector('.cat-stage'),
@@ -3742,6 +3907,24 @@
           document.getElementById('playFrame2'),
         ],
       };
+
+      /* ---- Room images (all three live in the DOM) ---- */
+      const roomImgs = {};
+      document.querySelectorAll('.room-bg-main').forEach(img => {
+        roomImgs[img.dataset.room] = img;
+      });
+      const roomVeil = document.getElementById('roomVeil');
+      let transitioning = false;
+      const TRANSITION_MS = 800;
+
+      /* pre-decode every room so the first switch never hitches */
+      Object.values(roomImgs).forEach(img => {
+        if (img.decode) img.decode().catch(() => {});
+        img.addEventListener('load', () => {
+          if (img.classList.contains('is-active')) positionCat();
+        });
+      });
+
       const ICON = {
         play: '<svg viewBox="0 0 24 24" class="filled"><path d="M12 2c.6 3.7 2.3 5.9 6 6.5-3.7.6-5.4 2.8-6 6.5-.6-3.7-2.3-5.9-6-6.5 3.7-.6 5.4-2.8 6-6.5Z"/><path d="M19 15c.3 1.8 1.1 2.9 3 3.2-1.9.3-2.7 1.4-3 3.2-.3-1.8-1.1-2.9-3-3.2 1.9-.3 2.7-1.4 3-3.2Z"/></svg>',
         pet: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V6a1.4 1.4 0 0 1 2.8 0v6"/><path d="M10.8 12V4.6a1.4 1.4 0 0 1 2.8 0V12"/><path d="M13.6 12V5.6a1.4 1.4 0 0 1 2.8 0V13"/><path d="M16.4 13V8.4a1.4 1.4 0 0 1 2.8 0V15c0 3.6-2.5 6.5-6.5 6.5-2.8 0-4.3-1-5.6-2.8l-2.7-4.1a1.3 1.3 0 0 1 2-1.6L8 13"/></svg>',
@@ -3788,19 +3971,14 @@
           deep: '--dusk-deep'
         }, ]
       };
-      /* ---- Room Rendering with Transition ---- */
-      function renderRoom() {
+
+      /* ---- Room UI (labels, icons, dock, rail) ---- */
+      function updateRoomUI() {
         const room = rooms[roomIndex];
-        cancelPetAnimation();
-        cancelEatAnimation();
-        cancelPlayAnimation();
-
-        // Trigger transition animation
-        els.stage.classList.add('room-transitioning');
-        setTimeout(() => els.stage.classList.remove('room-transitioning'), 500);
-
-        els.roomBgMain.src = ROOM_BG[room];
         els.roomName.textContent = roomLabels[room];
+        els.roomName.classList.remove('pop');
+        void els.roomName.offsetWidth;
+        els.roomName.classList.add('pop');
         const prevRoom = rooms[(roomIndex - 1 + rooms.length) % rooms.length];
         const nextRoom = rooms[(roomIndex + 1) % rooms.length];
         els.prevLabel.textContent = roomLabels[prevRoom];
@@ -3809,12 +3987,71 @@
         els.nextIcon.innerHTML = ROOM_ICON[nextRoom];
         renderDock();
         renderRail();
+      }
+
+      /* ---- Initial render (no animation) ---- */
+      function renderRoom() {
+        const room = rooms[roomIndex];
+        cancelPetAnimation();
+        cancelEatAnimation();
+        cancelPlayAnimation();
+        Object.values(roomImgs).forEach(i => i.classList.remove('is-active'));
+        roomImgs[room].classList.add('is-active');
+        updateRoomUI();
         positionCat();
       }
-      /* ---- Cat positioning with smooth transitions ---- */
+
+      /* ---- Animated room change: dir = 1 (next) or -1 (prev) ---- */
+      function goToRoom(target, dir) {
+        if (transitioning || target === roomIndex) return;
+        transitioning = true;
+
+        const d = dir > 0 ? 'next' : 'prev';
+        const fromImg = roomImgs[rooms[roomIndex]];
+        roomIndex = target;
+        const toImg = roomImgs[rooms[roomIndex]];
+
+        cancelPetAnimation();
+        cancelEatAnimation();
+        cancelPlayAnimation();
+
+        els.catStage.classList.add('cat-away');
+        els.bubble.classList.remove('show');
+        updateRoomUI();
+
+        roomVeil.classList.remove('sweep-next', 'sweep-prev');
+        void roomVeil.offsetWidth;
+        roomVeil.classList.add('sweep-' + d);
+
+        fromImg.classList.add('exit-' + d);
+        toImg.classList.add('is-active', 'enter-' + d);
+
+        /* move the cat while it is invisible, so nothing slides across the screen */
+        setTimeout(positionCat, 300);
+
+        /* cat hops back in */
+        setTimeout(() => {
+          els.catStage.classList.remove('cat-away');
+          if (!state.sleeping) {
+            els.catWrap.classList.add('bouncing');
+            setTimeout(() => els.catWrap.classList.remove('bouncing'), 650);
+          }
+          spawnParticle('✨');
+        }, 520);
+
+        /* cleanup */
+        setTimeout(() => {
+          fromImg.classList.remove('is-active', 'exit-' + d);
+          toImg.classList.remove('enter-' + d);
+          roomVeil.classList.remove('sweep-' + d);
+          transitioning = false;
+        }, TRANSITION_MS);
+      }
+
+      /* ---- Cat positioning ---- */
       function positionCat() {
-        const img = els.roomBgMain;
-        if (!img.naturalWidth || !img.naturalHeight) return;
+        const img = roomImgs[rooms[roomIndex]];
+        if (!img || !img.naturalWidth || !img.naturalHeight) return;
         const anchor = ROOM_ANCHOR[rooms[roomIndex]];
         const containerW = els.stage.clientWidth;
         const containerH = els.stage.clientHeight;
@@ -3880,7 +4117,7 @@
         cancelAnimationFrame(resizeRAF);
         resizeRAF = requestAnimationFrame(positionCat);
       });
-      els.roomBgMain.addEventListener('load', positionCat);
+
       /* ---- Ambient motes ---- */
       const motesEl = document.getElementById('motes');
 
@@ -3910,8 +4147,7 @@
           dot.className = 'rail-dot' + (i === roomIndex ? ' active' : '');
           dot.setAttribute('aria-label', 'Go to ' + roomLabels[r]);
           dot.addEventListener('click', () => {
-            roomIndex = i;
-            renderRoom();
+            goToRoom(i, i > roomIndex ? 1 : -1);
           });
           els.roomRail.appendChild(dot);
         });
@@ -4181,12 +4417,10 @@
       }, 4000);
       /* ---- Room navigation ---- */
       document.getElementById('prevRoom').addEventListener('click', () => {
-        roomIndex = (roomIndex - 1 + rooms.length) % rooms.length;
-        renderRoom();
+        goToRoom((roomIndex - 1 + rooms.length) % rooms.length, -1);
       });
       document.getElementById('nextRoom').addEventListener('click', () => {
-        roomIndex = (roomIndex + 1) % rooms.length;
-        renderRoom();
+        goToRoom((roomIndex + 1) % rooms.length, 1);
       });
       els.catWrap.addEventListener('click', petCat);
       /* ---- Chat widget ---- */
