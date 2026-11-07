@@ -406,9 +406,9 @@ $systemPrompt =
 
 
 $models = [
-    'gemini-3.7-flash',
     'gemini-3.5-flash',
     'gemini-3.5-flash-lite',
+    'gemini-3.7-flash',
 ];
 $url =
     'https://generativelanguage.googleapis.com'
@@ -716,4 +716,10 @@ echo json_encode([
     // Which model actually answered (useful for debugging fallback
     // behavior). The frontend doesn't need to use this.
     'model_used' => $modelUsed
-] + (!empty($GLOBALS['NOVA_DEBUG']) ? ['debug' => novaDebugInfo('ok', ['http_code' => $httpCode])] : []), JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+] + (!empty($GLOBALS['NOVA_DEBUG']) ? ['debug' => novaDebugInfo('ok', [
+    'http_code' => $httpCode,
+    'step_types' => array_map(function ($s) {
+        return $s['type'] ?? '?';
+    }, $data['steps'] ?? []),
+    'meta' => array_diff_key($data, ['steps' => 1]), // usage / token counts, status...
+])] : []), JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
