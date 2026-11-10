@@ -5187,16 +5187,10 @@
         if (e.key === 'Enter') sendChat();
       });
 
-      /* =====================================================
-         Init
-         ===================================================== */
       renderRoom();
       renderAll();
       addMessage("Meow! I'm " + state.name + ". Talk to me!", 'cat');
 
-      /* =====================================================
-         Splash screen
-         ===================================================== */
       (function initSplash() {
         const SPLASH_ONCE = false; // true = only show it the first time per browser tab session
         const MIN_MS = 2200; // shortest time the splash stays up
@@ -5217,35 +5211,25 @@
 
         const MOTIVATION_MODE = 'daily';
         const NOTES = [
-          "Atty. Anghela. I've said it so many times it's basically precedent.",
           "One case at a time. I've never read one, but I'm told that's how it works.",
           "Hard days still count. Read a little, rest a little, come back stronger.",
-          "You already got through 1L. 2L is just a sequel, and sequels are rarely scarier.",
           "Small progress is still progress. Even I only nap in small increments.",
           "Be kind to yourself today. A rested mind learns better than a tired one.",
           "Your outline doesn't have to be perfect. It just has to exist.",
-          "Hard topic? Break it into small pieces. That's how I handle fish, too.",
           "Every page you read is one page closer to the bar. I'm proud of you.",
           "It's okay to be tired. Just don't forget how far you've already come.",
           "Court is adjourned for today, but your future isn't. Rest well, Counsel.",
-          "Confidence tip from a cat: act like you belong in the room. You do.",
           "Not every day has to be a great day. A showed-up day is enough.",
-          "Cases are long. You are patient. Do the math.",
-          "Today's plan: read, breathe, sip something warm. Tomorrow's plan: repeat.",
           "The bar exam is a mountain. Today you only need to take the next step.",
           "You are not behind. You're building something big, and big things take time.",
           "If it gets heavy, come sit with me for a minute. Then back to it, Counsel.",
           "Even the longest case has a last page. Keep going.",
-          "Study smart, sleep enough, snack often. Cat-approved.",
-          "Your effort today is a gift to future Atty. Anghela. She says thank you.",
           "Finals are temporary. 'Atty.' is forever.",
           "Nobody watches you study as closely as I do. You're doing great.",
           "Believe in yourself the way I believe in 3 a.m. zoomies: completely.",
-          "Raise your hand, ask the question, take up space. Your voice belongs in that room.",
           "A messy day of studying still beats a perfect day of waiting.",
           "You've got the brains, the heart, and a very supportive cat. That's a winning brief.",
-          "Rest is part of the plan, not a break from it.",
-          "Go get 'em, future counsel. I'll keep your spot warm."
+          "Rest is part of the plan, not a break from it."
         ];
         const noteL = document.getElementById('splashNoteTextL');
         const noteR = document.getElementById('splashNoteTextR');
