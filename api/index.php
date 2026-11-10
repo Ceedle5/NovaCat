@@ -3872,6 +3872,99 @@
         gap: 12px;
       }
     }
+
+    /* ---- Splash: sign hanging from the top, swinging ---- */
+    .splash {
+      --rope: clamp(46px, 9vh, 90px);
+      /* rope length */
+      padding-top: calc(var(--rope) + 96px);
+      /* keeps the cat clear of the sign */
+    }
+
+    .splash-hanger {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 4;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .splash-sign {
+      margin-top: var(--rope);
+      transform-origin: 50% calc(var(--rope) * -1);
+      /* pivot = where the ropes meet at the top */
+      animation:
+        splashHangIn 1s cubic-bezier(.2, .9, .3, 1) both,
+        splashSwing 4.6s ease-in-out 1s infinite;
+    }
+
+    /* long ropes up to the top edge, meeting at one point */
+    .splash-sign::before {
+      left: 14%;
+      right: 14%;
+      height: var(--rope);
+    }
+
+    /* little nail where the ropes meet */
+    .splash-sign::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + var(--rope) - 7px);
+      width: 14px;
+      height: 14px;
+      margin-left: -7px;
+      border-radius: 50%;
+      border: 2px solid #fff4dc;
+      background: radial-gradient(circle at 35% 30%, #e2c28a, #8a5a2c);
+      box-shadow: 0 2px 0 #6d4620, 0 3px 5px rgba(60, 38, 26, 0.35);
+    }
+
+    /* swings in from the side, then keeps swaying */
+    @keyframes splashHangIn {
+      0% {
+        opacity: 0;
+        transform: rotate(-16deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: rotate(0deg);
+      }
+    }
+
+    @keyframes splashSwing {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(4.5deg);
+      }
+
+      75% {
+        transform: rotate(-4.5deg);
+      }
+
+      100% {
+        transform: rotate(0deg);
+      }
+    }
+
+    @media (max-height: 560px) {
+      .splash {
+        --rope: 36px;
+        padding-top: calc(var(--rope) + 70px);
+      }
+
+      .splash-sign {
+        margin-top: var(--rope);
+        font-size: 1.2rem;
+      }
+    }
   </style>
 </head>
 
@@ -3880,7 +3973,7 @@
     <div class="splash-lights" aria-hidden="true"></div>
     <div class="splash-motes" aria-hidden="true"></div>
 
-    <div class="splash-card">
+    <div class="splash-hanger">
       <div class="splash-sign">
         <svg class="splash-paw" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="6.5" cy="7.5" r="2.1" />
@@ -3891,7 +3984,9 @@
         </svg>
         <span>Nova's House</span>
       </div>
+    </div>
 
+    <div class="splash-card">
       <div class="splash-cat">
         <span class="splash-rug" aria-hidden="true"></span>
         <span class="splash-z" aria-hidden="true">z</span>
