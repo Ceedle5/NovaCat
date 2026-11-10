@@ -3087,7 +3087,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-top: 24px;
+      margin-top: 2px;
       padding: 12px 30px 12px 20px;
       font-family: 'Fredoka', sans-serif;
       font-weight: 700;
