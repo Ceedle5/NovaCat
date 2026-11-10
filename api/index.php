@@ -5015,7 +5015,7 @@
         renderMood();
       }
 
-    
+
       let bubbleTimer = null;
       let chatHistory = [];
       let lastInteractionId = '';
@@ -5099,7 +5099,7 @@
         logAction('💕 You petted Nova', line);
       }
 
-    
+
       let petAnimTimer = null;
 
       function cancelPetAnimation() {
@@ -5381,7 +5381,7 @@
 
       (function initSplash() {
         const SPLASH_ONCE = false; // true = only show it the first time per browser tab session
-        const MIN_MS = 20000; // shortest time the splash stays up
+        const MIN_MS = 10000; // shortest time the splash stays up
         const MAX_MS = 24000; // stop waiting for slow images after this long
         const splash = document.getElementById('splash');
         if (!splash) return;
@@ -5529,9 +5529,13 @@
 
         const lines = [
           [0, 'Warming up the house…'],
-          [0.3, 'Fluffing the cushions…'],
-          [0.55, 'Lighting the fairy lights…'],
-          [0.8, 'Waking Nova up…'],
+          [0.12, 'Fluffing the cushions…'],
+          [0.25, 'Lighting the fairy lights…'],
+          [0.38, 'Pinning up the notes…'],
+          [0.52, 'Brewing something warm…'],
+          [0.66, 'Smoothing the rug…'],
+          [0.80, 'Waking Nova up…'],
+          [0.92, 'Almost there…'],
         ];
         const t0 = performance.now();
         let shown = 0;
@@ -5540,7 +5544,7 @@
         function frame(now) {
           const elapsed = now - t0;
           const target = elapsed > MAX_MS ? 1 : Math.min(done / total, Math.min(1, elapsed / MIN_MS));
-          if (target > shown) shown = Math.min(target, shown + 0.02);
+          if (target > shown) shown = Math.min(target, shown + 0.04);
           fill.style.width = (shown * 100) + '%';
           let line = lines[0][1];
           lines.forEach(l => {
