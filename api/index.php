@@ -3087,7 +3087,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-top: 44px;
+      margin-top: 24px;
       padding: 12px 30px 12px 20px;
       font-family: 'Fredoka', sans-serif;
       font-weight: 700;
@@ -4910,7 +4910,6 @@
           "Small progress is still progress. Even I only nap in small increments.",
           "Be kind to yourself today. A rested mind learns better than a tired one.",
           "Your outline doesn't have to be perfect. It just has to exist.",
-          "I'll guard the sofa. You guard your focus.",
           "Hard topic? Break it into small pieces. That's how I handle fish, too.",
           "Every page you read is one page closer to the bar. I'm proud of you.",
           "It's okay to be tired. Just don't forget how far you've already come.",
