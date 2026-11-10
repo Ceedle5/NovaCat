@@ -3823,36 +3823,86 @@
       }
     }
 
-    /* phones: no room on the sides, so show one small note tucked in the top-left corner under the sign */
+    /* ---- Mobile: notes sit in the empty gap under the sign, no overlap ---- */
     @media (max-width: 760px) {
+      .splash {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: calc(var(--rope) + 80px) 16px 24px;
+      }
+
+      /* the card keeps sign-less content: cat, message, button */
+      .splash-card {
+        margin: 0 auto;
+        padding: 0 0 12px;
+        gap: 14px;
+      }
+
+      /* notes become normal flow items, placed ABOVE the cat */
+      .splash-note,
+      .note-left,
+      .note-right {
+        position: relative;
+        order: -1;
+        top: auto;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        margin: 18px 0 0;
+        width: min(300px, 82vw);
+        padding: 18px 14px 10px;
+        z-index: 3;
+      }
+
+      .note-left {
+        --tilt: -3deg;
+      }
+
+      /* show only one note on phones */
       .note-right {
         display: none;
       }
 
-      .note-left {
-        top: auto;
-        bottom: 150px;
-        left: 8px;
-        margin: 0;
-        width: 150px;
-        padding: 16px 10px 10px;
-        --tilt: -5deg;
-        z-index: 3;
-      }
-
       .note-left .splash-note-label {
-        display: none;
+        display: block;
+        font-size: 0.58rem;
+        margin-bottom: 4px;
       }
 
       .note-left .splash-note-text {
-        font-size: 0.98rem;
-        line-height: 22px;
-        min-height: 0;
-        background-size: 100% 22px;
+        font-size: 1.15rem;
+        line-height: 24px;
+        min-height: 48px;
+        background-size: 100% 24px;
       }
 
       .note-left .splash-note-by {
-        font-size: 0.95rem;
+        font-size: 1rem;
+      }
+
+      .splash-cat {
+        width: min(58vw, 240px);
+      }
+    }
+
+    /* very short phones: shrink things so the button always fits */
+    @media (max-width: 760px) and (max-height: 700px) {
+      .splash {
+        padding-top: calc(var(--rope) + 64px);
+      }
+
+      .splash-note {
+        margin-top: 10px;
+      }
+
+      .splash-note-text {
+        font-size: 1.05rem;
+        min-height: 0;
+      }
+
+      .splash-cat {
+        width: min(44vw, 190px);
       }
     }
 
