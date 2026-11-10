@@ -5541,7 +5541,7 @@
         const lines = [
           [0, 'Go, Anghela, go!'],
           [0.12, 'Future Atty. Anghela is loading… '],
-          [0.25, 'Stubborn and unstoppable, that\'s you '],
+          [0.25, 'Cutie and unstoppable, that\'s you '],
           [0.38, 'One page at a time. You\'ve got this'],
           [0.52, 'Nova is cheering from her rug 🐾'],
           [0.66, 'The bar exam has no idea what\'s coming '],
