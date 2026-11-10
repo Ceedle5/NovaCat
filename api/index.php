@@ -4287,21 +4287,21 @@
 
       <aside class="splash-note n2">
         <span class="splash-note-pin"></span>
-        <small class="splash-note-label">📚 Also, Counsel…</small>
+        <small class="splash-note-label">⚖️ Also, Counsel…</small>
         <p class="splash-note-text"></p>
         <span class="splash-note-by">— Diopet</span>
       </aside>
 
       <aside class="splash-note n3">
         <span class="splash-note-pin"></span>
-        <small class="splash-note-label">🌿 Take it slow</small>
+        <small class="splash-note-label">⚖️ Take it slow</small>
         <p class="splash-note-text"></p>
         <span class="splash-note-by">— Diopet</span>
       </aside>
 
       <aside class="splash-note n4">
         <span class="splash-note-pin"></span>
-        <small class="splash-note-label">☕ Don't forget</small>
+        <small class="splash-note-label">⚖️ Don't forget</small>
         <p class="splash-note-text"></p>
         <span class="splash-note-by">— Diopet</span>
       </aside>
