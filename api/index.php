@@ -5445,7 +5445,6 @@
         const NOTES = [
           "Hi Anghela. Study hard, but eat something first. I'm rooting for you, always.",
           "One case at a time. You've been doing hard things for years, and this is just another one.",
-          "I've known how stubborn you are since Grade 8. That same stubbornness is going to make you a lawyer.",
           "Rest is part of the plan, Anghela. Take a break, then come back stronger.",
           "Back in Nagpayong you won every argument with me. The bar exam doesn't stand a chance.",
           "You don't have to be perfect today. You just have to keep going. I believe in you.",
