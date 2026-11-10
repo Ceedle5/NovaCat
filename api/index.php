@@ -5452,6 +5452,7 @@
           "Be kind to yourself today. You'd never be this hard on anyone else.",
           "I may have teased you in Grade 8, but I never doubted you. Not once.",
           "You're allowed to be tired. You're not allowed to forget how brilliant you are.",
+          "A messy day of studying still beats a perfect day of waiting.",
           "Every page you read is one page closer to the bar. Keep going, Counsel.",
           "Missing you is part of the deal while you study. But I'm cheering for you from here.",
           "Sleep enough, eat well, and trust yourself. The rest will follow.",
@@ -5527,15 +5528,25 @@
         });
         (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(tick, tick);
 
+        // const lines = [
+        //   [0, 'Warming up the house…'],
+        //   [0.12, 'Fluffing the cushions…'],
+        //   [0.25, 'Lighting the fairy lights…'],
+        //   [0.38, 'Pinning up the notes…'],
+        //   [0.52, 'Brewing something warm…'],
+        //   [0.66, 'Smoothing the rug…'],
+        //   [0.80, 'Waking Nova up…'],
+        //   [0.92, 'Almost there…'],
+        // ];
         const lines = [
-          [0, 'Warming up the house…'],
-          [0.12, 'Fluffing the cushions…'],
-          [0.25, 'Lighting the fairy lights…'],
-          [0.38, 'Pinning up the notes…'],
-          [0.52, 'Brewing something warm…'],
-          [0.66, 'Smoothing the rug…'],
-          [0.80, 'Waking Nova up…'],
-          [0.92, 'Almost there…'],
+          [0, 'Go, Anghela, go!'],
+          [0.12, 'Future Atty. Anghela is loading… '],
+          [0.25, 'Stubborn and unstoppable, that\'s you '],
+          [0.38, 'One page at a time. You\'ve got this'],
+          [0.52, 'Nova is cheering from her rug 🐾'],
+          [0.66, 'The bar exam has no idea what\'s coming '],
+          [0.80, 'You\'re doing better than you think '],
+          [0.92, 'Okay, Nova is waking up for you… '],
         ];
         const t0 = performance.now();
         let shown = 0;
