@@ -4287,7 +4287,7 @@
 
       <aside class="splash-note n2">
         <span class="splash-note-pin"></span>
-        <small class="splash-note-label">⚖️ Also, Counsel…</small>
+        <small class="splash-note-label">⚖️ Also, for Anghela</small>
         <p class="splash-note-text"></p>
         <span class="splash-note-by">— Diopet</span>
       </aside>
