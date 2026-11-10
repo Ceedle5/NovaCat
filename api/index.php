@@ -4047,6 +4047,172 @@
     .splash-cat img {
       z-index: 1;
     }
+
+    /* ================= 4 notes ================= */
+    .splash-notes {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .splash-notes .splash-note {
+      position: absolute;
+      margin: 0;
+      width: clamp(170px, 17vw, 260px);
+      animation: noteIn 0.9s cubic-bezier(.34, 1.56, .64, 1) both,
+        noteFloat 6s ease-in-out 1.4s infinite;
+    }
+
+    /* left column */
+    .splash-notes .n1 {
+      left: clamp(12px, 3vw, 60px);
+      top: 12%;
+      --tilt: -6deg;
+      animation-delay: .4s, 1.3s;
+    }
+
+    .splash-notes .n2 {
+      left: clamp(12px, 3vw, 60px);
+      top: 54%;
+      --tilt: 4deg;
+      animation-delay: .6s, 2.1s;
+    }
+
+    /* right column */
+    .splash-notes .n3 {
+      right: clamp(12px, 3vw, 60px);
+      top: 18%;
+      --tilt: 5deg;
+      animation-delay: .8s, 1.7s;
+    }
+
+    .splash-notes .n4 {
+      right: clamp(12px, 3vw, 60px);
+      top: 58%;
+      --tilt: -4deg;
+      animation-delay: 1s, 2.5s;
+    }
+
+    /* different paper + pin color for each card */
+    .splash-notes .n1 {
+      background: linear-gradient(180deg, #fffbe3, #fff3c4);
+    }
+
+    .splash-notes .n2 {
+      background: linear-gradient(180deg, #ffeef0, #ffdfe4);
+    }
+
+    .splash-notes .n3 {
+      background: linear-gradient(180deg, #eaf8ee, #d3efdb);
+    }
+
+    .splash-notes .n4 {
+      background: linear-gradient(180deg, #eef4fd, #d9e6f8);
+    }
+
+    .splash-notes .n1 .splash-note-pin {
+      background: radial-gradient(circle at 35% 30%, #b4e1bf, #74b787 60%, #4f8f64);
+      box-shadow: 0 2px 0 #3d7550, 0 4px 6px rgba(60, 38, 26, .35);
+    }
+
+    .splash-notes .n2 .splash-note-pin {
+      background: radial-gradient(circle at 35% 30%, #ffc9b8, #f0775a 60%, #c9553a);
+      box-shadow: 0 2px 0 #a8452e, 0 4px 6px rgba(60, 38, 26, .35);
+    }
+
+    .splash-notes .n3 .splash-note-pin {
+      background: radial-gradient(circle at 35% 30%, #ffe9a8, #ffbd59 60%, #e2963a);
+      box-shadow: 0 2px 0 #b9782a, 0 4px 6px rgba(60, 38, 26, .35);
+    }
+
+    .splash-notes .n4 .splash-note-pin {
+      background: radial-gradient(circle at 35% 30%, #c6d8f5, #8fa3d6 60%, #5b71ab);
+      box-shadow: 0 2px 0 #44588a, 0 4px 6px rgba(60, 38, 26, .35);
+    }
+
+    .splash-notes .splash-note-text {
+      font-size: clamp(1.05rem, 1.3vw, 1.35rem);
+      min-height: 0;
+    }
+
+    /* phones: 4 notes in a swipeable row above the cat */
+    @media (max-width: 760px) {
+      .splash-notes {
+        position: relative;
+        inset: auto;
+        order: -1;
+        display: flex;
+        gap: 14px;
+        width: min(100%, 380px);
+        padding: 24px 4px 16px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        pointer-events: auto;
+      }
+
+      .splash-notes::-webkit-scrollbar {
+        display: none;
+      }
+
+      .splash-notes .splash-note {
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        flex: 0 0 76%;
+        /* the next card peeks out, so it's clear you can swipe */
+        width: auto;
+        scroll-snap-align: center;
+        padding: 18px 14px 10px;
+        animation: noteIn 0.9s cubic-bezier(.34, 1.56, .64, 1) both;
+      }
+
+      .splash-notes .n1 {
+        --tilt: -2deg;
+      }
+
+      .splash-notes .n2 {
+        --tilt: 2deg;
+      }
+
+      .splash-notes .n3 {
+        --tilt: -2deg;
+      }
+
+      .splash-notes .n4 {
+        --tilt: 2deg;
+      }
+
+      .splash-notes .splash-note-label {
+        font-size: 0.58rem;
+      }
+
+      .splash-notes .splash-note-text {
+        font-size: 1.1rem;
+        line-height: 24px;
+        background-size: 100% 24px;
+      }
+    }
+
+    @media (max-width: 760px) and (max-height: 700px) {
+      .splash-notes {
+        padding: 20px 4px 10px;
+      }
+
+      .splash-notes .splash-note-text {
+        font-size: 1rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .splash-notes .splash-note {
+        animation: none !important;
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 
@@ -4097,7 +4263,7 @@
       </div>
     </div><!-- end .splash-card -->
 
-    <aside class="splash-note note-left" aria-hidden="true">
+    <!-- <aside class="splash-note note-left" aria-hidden="true">
       <span class="splash-note-pin"></span>
       <small class="splash-note-label">⚖️ A note for Anghela</small>
       <p class="splash-note-text" id="splashNoteTextL"></p>
@@ -4109,7 +4275,39 @@
       <small class="splash-note-label">⚖️ Also, Counsel…</small>
       <p class="splash-note-text" id="splashNoteTextR"></p>
       <span class="splash-note-by">— Diopet</span>
-    </aside>
+    </aside> -->
+
+    <div class="splash-notes" aria-hidden="true">
+      <aside class="splash-note n1">
+        <span class="splash-note-pin"></span>
+        <small class="splash-note-label">⚖️ A note for Anghela</small>
+        <p class="splash-note-text"></p>
+        <span class="splash-note-by">— Diopet</span>
+      </aside>
+
+      <aside class="splash-note n2">
+        <span class="splash-note-pin"></span>
+        <small class="splash-note-label">📚 Also, Counsel…</small>
+        <p class="splash-note-text"></p>
+        <span class="splash-note-by">— Diopet</span>
+      </aside>
+
+      <aside class="splash-note n3">
+        <span class="splash-note-pin"></span>
+        <small class="splash-note-label">🌿 Take it slow</small>
+        <p class="splash-note-text"></p>
+        <span class="splash-note-by">— Diopet</span>
+      </aside>
+
+      <aside class="splash-note n4">
+        <span class="splash-note-pin"></span>
+        <small class="splash-note-label">☕ Don't forget</small>
+        <p class="splash-note-text"></p>
+        <span class="splash-note-by">— Diopet</span>
+      </aside>
+    </div>
+
+
   </div><!-- end #splash -->
 
   <div id="app">
@@ -5246,7 +5444,6 @@
 
         const NOTES = [
           "Hi Anghela. Study hard, but eat something first. I'm rooting for you, always.",
-          "2L is a lot, and you're handling it better than you think. I'm proud of you.",
           "One case at a time. You've been doing hard things for years, and this is just another one.",
           "I've known how stubborn you are since Grade 8. That same stubbornness is going to make you a lawyer.",
           "Rest is part of the plan, Anghela. Take a break, then come back stronger.",
@@ -5276,15 +5473,15 @@
           "Hope today treats you gently. And if it doesn't, you're stronger than it is."
         ];
 
-        const noteL = document.getElementById('splashNoteTextL');
-        const noteR = document.getElementById('splashNoteTextR');
-
-        // two different random notes on every open
-        const ni = Math.floor(Math.random() * NOTES.length);
-        let ni2 = Math.floor(Math.random() * (NOTES.length - 1));
-        if (ni2 >= ni) ni2++; // guarantees ni2 !== ni
-        if (noteL) noteL.textContent = NOTES[ni];
-        if (noteR) noteR.textContent = NOTES[ni2];
+        const noteEls = splash.querySelectorAll('.splash-notes .splash-note-text');
+        const pool = NOTES.slice();
+        for (let i = pool.length - 1; i > 0; i--) { // shuffle
+          const j = Math.floor(Math.random() * (i + 1));
+          [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        noteEls.forEach((el, i) => {
+          el.textContent = pool[i];
+        });
 
         /* fairy lights along a gentle wire */
         const lights = splash.querySelector('.splash-lights');
