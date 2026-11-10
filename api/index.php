@@ -4981,9 +4981,6 @@
         });
       }
 
-      /* =====================================================
-         Stats & mood
-         ===================================================== */
       function clamp(n) {
         return Math.max(0, Math.min(100, n));
       }
@@ -5018,9 +5015,7 @@
         renderMood();
       }
 
-      /* =====================================================
-         Bubble & particles
-         ===================================================== */
+    
       let bubbleTimer = null;
       let chatHistory = [];
       let lastInteractionId = '';
@@ -5041,9 +5036,6 @@
         setTimeout(() => span.remove(), 1400);
       }
 
-      /* =====================================================
-         Actions
-         ===================================================== */
       function feedCat() {
         if (state.sleeping) {
           say('Zzz... too sleepy to eat.');
@@ -5107,9 +5099,7 @@
         logAction('💕 You petted Nova', line);
       }
 
-      /* =====================================================
-         Pose animations
-         ===================================================== */
+    
       let petAnimTimer = null;
 
       function cancelPetAnimation() {
