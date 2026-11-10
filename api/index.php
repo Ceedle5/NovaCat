@@ -4099,14 +4099,14 @@
 
     <aside class="splash-note note-left" aria-hidden="true">
       <span class="splash-note-pin"></span>
-      <small class="splash-note-label">💌 A note for Anghela</small>
+      <small class="splash-note-label">⚖️ A note for Anghela</small>
       <p class="splash-note-text" id="splashNoteTextL"></p>
       <span class="splash-note-by">— Diopet 🤍</span>
     </aside>
 
     <aside class="splash-note note-right" aria-hidden="true">
       <span class="splash-note-pin"></span>
-      <small class="splash-note-label">📚 Also, Counsel…</small>
+      <small class="splash-note-label">⚖️ Also, Counsel…</small>
       <p class="splash-note-text" id="splashNoteTextR"></p>
       <span class="splash-note-by">— Diopet 🤍</span>
     </aside>
