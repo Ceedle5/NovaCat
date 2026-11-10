@@ -3773,7 +3773,7 @@
       margin-top: -60px;
       /* sits a little lower than the left one, so it feels scattered */
       animation-delay: 0.75s, 2.2s;
-      background: linear-gradient(180deg, #ffeef0, #ffdfe4);
+      background: linear-gradient(180deg, #fffbe3, #fff3c4);
       /* pink paper for variety */
     }
 
