@@ -3080,7 +3080,8 @@
       gap: clamp(16px, 3.5vh, 28px);
       text-align: center;
     }
- /* wooden sign */
+
+    /* wooden sign */
     .splash-sign {
       position: relative;
       display: flex;
@@ -3859,6 +3860,16 @@
       .splash-note {
         animation: none !important;
         opacity: 1;
+      }
+    }
+
+    @media (max-height: 800px) {
+      .splash-cat {
+        width: min(40vh, 260px);
+      }
+
+      .splash-card {
+        gap: 12px;
       }
     }
   </style>
