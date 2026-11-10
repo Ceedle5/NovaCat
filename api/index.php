@@ -4113,60 +4113,75 @@
                           include props such as a food bowl)
          s = size multiplier    x = nudge right (px)    y = lift up (px)
          ===================================================== */
-      const REF_SELECTOR = '.cat-img'; // Character.png is the reference
-      const POSE_SCALE = 368 / 1156; // reference canvas 864x1156 is shown 368px tall
+      const REF_SELECTOR = '.cat-img'; // Character.png defines the fixed frame
+      const POSE_SCALE = 368 / 1156; // how the standing pose is displayed
+
+      /* Every pose is fitted inside the SAME box (the standing cat's visible size).
+         s  = size multiplier for this pose only (1 = fits the box exactly)
+         bw = box width multiplier  (wide poses like sleeping need more room)
+         bh = box height multiplier
+         x / y = nudge right / up in px */
       const POSE_ADJUST = {
         '.cat-img': {
-          fit: 'height',
           s: 1,
+          bw: 1,
+          bh: 1,
           x: 0,
           y: 0
-        }, // Character.png (reference)
+        },
         '.cat-img-sleep': {
-          fit: 'native',
           s: 1,
+          bw: 1.7,
+          bh: 1,
           x: 0,
           y: 0
         },
         '.cat-img-hungry': {
-          fit: 'height',
           s: 1,
+          bw: 1,
+          bh: 1,
           x: 0,
           y: 0
         },
         '.cat-img-eating': {
-          fit: 'height',
           s: 1,
+          bw: 1,
+          bh: 1,
           x: 0,
           y: 0
         },
         '#petFrame1': {
-          fit: 'height',
           s: 1,
+          bw: 1,
+          bh: 1,
           x: 0,
           y: 0
         },
         '#petFrame2': {
-          fit: 'height',
           s: 1,
+          bw: 1,
+          bh: 1,
           x: 0,
           y: 0
         },
         '#petFrame3': {
-          fit: 'height',
           s: 1,
+          bw: 1.2,
+          bh: 1,
           x: 0,
           y: 0
         },
         '#playFrame1': {
-          fit: 'height',
           s: 1,
+          bw: 1,
+          bh: 1,
           x: 0,
           y: 0
         },
         '#playFrame2': {
-          fit: 'height',
           s: 1,
+          bw: 1,
+          bh: 1,
           x: 0,
           y: 0
         }
@@ -4179,8 +4194,9 @@
           if (img.matches(sel)) return POSE_ADJUST[sel];
         }
         return {
-          fit: 'native',
           s: 1,
+          bw: 1,
+          bh: 1,
           x: 0,
           y: 0
         };
@@ -4243,25 +4259,22 @@
         const ref = ready.find(i => i.matches(REF_SELECTOR));
         if (!ref) return;
 
-        const refAdj = getPoseAdj(ref);
+        // the fixed frame = the standing cat's visible footprint
         const refBox = measurePose(ref);
-        const refK = POSE_SCALE * refAdj.s;
-        // where the reference cat's feet and body centre sit inside its own canvas (screen px)
-        const refPad = (ref.naturalHeight - (refBox.y + refBox.h)) * refK;
-        const refDx = (refBox.x + refBox.w / 2) * refK - (ref.naturalWidth * refK) / 2;
+        const frameW = refBox.w * POSE_SCALE;
+        const frameH = refBox.h * POSE_SCALE;
+        // where the standing cat's feet and centre sit (so Nova stays in her current spot)
+        const floor = (ref.naturalHeight - (refBox.y + refBox.h)) * POSE_SCALE;
+        const centreX = (refBox.x + refBox.w / 2) * POSE_SCALE - (ref.naturalWidth * POSE_SCALE) / 2;
 
         ready.forEach(img => {
           const adj = getPoseAdj(img);
           const W = img.naturalWidth,
             H = img.naturalHeight;
-          const plain = img === ref || adj.auto === false;
           const box = measurePose(img);
 
-          let k;
-          if (plain || adj.fit === 'native') k = POSE_SCALE;
-          else if (adj.fit === 'width') k = (refBox.w * refK) / box.w;
-          else k = (refBox.h * refK) / box.h;
-          k *= adj.s;
+          // one rule for every pose: fit the visible cat inside the same frame
+          const k = Math.min((frameW * adj.bw) / box.w, (frameH * adj.bh) / box.h) * adj.s;
 
           img.style.width = Math.round(W * k) + 'px';
           img.style.height = Math.round(H * k) + 'px';
@@ -4269,17 +4282,10 @@
           img.style.right = 'auto';
           img.style.margin = '0';
 
-          if (plain) {
-            // canvas centred on the stage, bottom on the floor line (the original behaviour)
-            img.style.bottom = Math.round(adj.y) + 'px';
-            img.style.marginLeft = Math.round(-(W * k) / 2 + adj.x) + 'px';
-          } else {
-            // line this pose's feet and body centre up with the standing pose
-            const pad = (H - (box.y + box.h)) * k;
-            const centre = (box.x + box.w / 2) * k;
-            img.style.bottom = Math.round(refAdj.y + refPad - pad + adj.y) + 'px';
-            img.style.marginLeft = Math.round(refAdj.x + refDx - centre + adj.x) + 'px';
-          }
+          const padBottom = (H - (box.y + box.h)) * k; // empty space under the paws
+          const catCentre = (box.x + box.w / 2) * k; // cat's centre inside its canvas
+          img.style.bottom = Math.round(floor - padBottom + adj.y) + 'px';
+          img.style.marginLeft = Math.round(centreX - catCentre + adj.x) + 'px';
         });
       }
       poseImgs.forEach(img => img.addEventListener('load', layoutPoses));
