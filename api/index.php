@@ -5381,8 +5381,8 @@
 
       (function initSplash() {
         const SPLASH_ONCE = false; // true = only show it the first time per browser tab session
-        const MIN_MS = 2200; // shortest time the splash stays up
-        const MAX_MS = 9000; // stop waiting for slow images after this long
+        const MIN_MS = 20000; // shortest time the splash stays up
+        const MAX_MS = 24000; // stop waiting for slow images after this long
         const splash = document.getElementById('splash');
         if (!splash) return;
         try {
