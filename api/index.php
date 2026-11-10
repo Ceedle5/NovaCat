@@ -5264,7 +5264,6 @@
           "Even the longest case has a last page. You'll get there, and I'll be cheering.",
           "No pressure. Just know that someone out there thinks you're amazing, with or without the grades.",
           "Be kind to yourself today. You'd never be this hard on anyone else.",
-          "Valorant can wait. Okay, fine, it can wait a little. Study first, then we play.",
           "I may have teased you in Grade 8, but I never doubted you. Not once.",
           "You're allowed to be tired. You're not allowed to forget how brilliant you are.",
           "Every page you read is one page closer to the bar. Keep going, Counsel.",
