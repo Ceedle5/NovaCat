@@ -70,14 +70,12 @@
       background: var(--paper);
     }
 
-    /* ---------- Stage (full-bleed room) ---------- */
     .stage {
       position: relative;
       position: absolute;
       inset: 0;
       overflow: hidden;
       background: #241a1c;
-      /* fallback while bg images load */
       transition: background 0.6s ease;
     }
 
@@ -3624,6 +3622,117 @@
     .cat-stage:not(.placed) {
       visibility: hidden;
     }
+
+    /* ---- Splash: motivational note (legal pad) ---- */
+    .splash-note {
+      position: relative;
+      width: min(340px, 86vw);
+      margin-top: 18px;
+      padding: 18px 18px 12px;
+      text-align: center;
+      background: linear-gradient(180deg, #fffbe3, #fff3c4);
+      border: 2.5px solid #fff4dc;
+      border-radius: 14px;
+      box-shadow: 0 0 0 1.5px #cdbd95, 0 5px 0 1.5px rgba(79, 143, 100, 0.5), 0 14px 20px rgba(60, 38, 26, 0.25);
+      transform: rotate(-1.2deg);
+      animation: splashNoteIn 0.8s 0.55s cubic-bezier(.34, 1.56, .64, 1) both;
+    }
+
+    .splash-note::after {
+      /* running stitch inside the note */
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1.5px dashed rgba(110, 150, 115, 0.5);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+
+    .splash-note-pin {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      width: 22px;
+      height: 22px;
+      margin-left: -11px;
+      border-radius: 50%;
+      border: 2px solid #fff4dc;
+      background: radial-gradient(circle at 35% 30%, #b4e1bf, #74b787 60%, #4f8f64);
+      box-shadow: 0 2px 0 #3d7550, 0 4px 6px rgba(60, 38, 26, 0.35);
+    }
+
+    .splash-note-label {
+      display: block;
+      margin-bottom: 6px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 0.64rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #8a7a6e;
+    }
+
+    .splash-note-text {
+      /* ruled lines are drawn by the paragraph itself so they line up with the text */
+      margin: 0;
+      padding: 0 4px;
+      min-height: 52px;
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: 1.3rem;
+      line-height: 26px;
+      color: #4a3b2e;
+      background: repeating-linear-gradient(180deg, transparent 0 25px, rgba(120, 150, 125, 0.3) 25px 26px);
+    }
+
+    .splash-note-by {
+      display: block;
+      margin-top: 6px;
+      text-align: right;
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #6b5a45;
+    }
+
+    @keyframes splashNoteIn {
+      0% {
+        opacity: 0;
+        transform: translateY(16px) rotate(-6deg) scale(0.9);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotate(-1.2deg) scale(1);
+      }
+    }
+
+    /* small phones: make room for the note */
+    @media (max-height: 700px) {
+      .splash-cat {
+        width: min(48vw, 240px);
+      }
+
+      .splash-note {
+        margin-top: 12px;
+      }
+    }
+
+    @media (max-height: 560px) {
+      .splash-note {
+        margin-top: 6px;
+        padding: 12px 14px 8px;
+      }
+
+      .splash-note-label {
+        display: none;
+      }
+
+      .splash-note-text {
+        font-size: 1.1rem;
+        min-height: 26px;
+      }
+    }
   </style>
 </head>
 
@@ -3649,7 +3758,15 @@
         <span class="splash-z z3" aria-hidden="true">z</span>
         <img src="/Assets/Sleeping.png" alt="Nova is sleeping">
       </div>
+      <!-- <p class="splash-msg" id="splashMsg">Warming up the house…</p> -->
+      <div class="splash-note" id="splashNote">
+        <span class="splash-note-pin" aria-hidden="true"></span>
+        <small class="splash-note-label">⚖️ Today's note for Anghela</small>
+        <p class="splash-note-text" id="splashNoteText"></p>
+        <span class="splash-note-by">— Nova 🐾</span>
+      </div>
       <p class="splash-msg" id="splashMsg">Warming up the house…</p>
+
       <div class="splash-action">
         <div class="splash-bar">
           <div class="splash-fill" id="splashFill"></div>
@@ -4783,6 +4900,51 @@
         const msg = document.getElementById('splashMsg');
         const go = document.getElementById('splashGo');
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        const MOTIVATION_MODE = 'daily'; 
+        const NOTES = [
+          "Atty. Anghela. I've said it so many times it's basically precedent.",
+          "One case at a time. I've never read one, but I'm told that's how it works.",
+          "Hard days still count. Read a little, rest a little, come back stronger.",
+          "You already got through 1L. 2L is just a sequel, and sequels are rarely scarier.",
+          "Small progress is still progress. Even I only nap in small increments.",
+          "Be kind to yourself today. A rested mind learns better than a tired one.",
+          "Your outline doesn't have to be perfect. It just has to exist.",
+          "I'll guard the sofa. You guard your focus.",
+          "Hard topic? Break it into small pieces. That's how I handle fish, too.",
+          "Every page you read is one page closer to the bar. I'm proud of you.",
+          "It's okay to be tired. Just don't forget how far you've already come.",
+          "Court is adjourned for today, but your future isn't. Rest well, Counsel.",
+          "Confidence tip from a cat: act like you belong in the room. You do.",
+          "Not every day has to be a great day. A showed-up day is enough.",
+          "Cases are long. You are patient. Do the math.",
+          "Today's plan: read, breathe, sip something warm. Tomorrow's plan: repeat.",
+          "The bar exam is a mountain. Today you only need to take the next step.",
+          "You are not behind. You're building something big, and big things take time.",
+          "If it gets heavy, come sit with me for a minute. Then back to it, Counsel.",
+          "Even the longest case has a last page. Keep going.",
+          "Study smart, sleep enough, snack often. Cat-approved.",
+          "Your effort today is a gift to future Atty. Anghela. She says thank you.",
+          "Finals are temporary. 'Atty.' is forever.",
+          "Nobody watches you study as closely as I do. You're doing great.",
+          "Believe in yourself the way I believe in 3 a.m. zoomies: completely.",
+          "Raise your hand, ask the question, take up space. Your voice belongs in that room.",
+          "A messy day of studying still beats a perfect day of waiting.",
+          "You've got the brains, the heart, and a very supportive cat. That's a winning brief.",
+          "Rest is part of the plan, not a break from it.",
+          "Go get 'em, future counsel. I'll keep your spot warm."
+        ];
+        const noteEl = document.getElementById('splashNoteText');
+        if (noteEl) {
+          let ni;
+          if (MOTIVATION_MODE === 'random') {
+            ni = Math.floor(Math.random() * NOTES.length);
+          } else {
+            const t = new Date();
+            ni = Math.floor(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) / 86400000) % NOTES.length;
+          }
+          noteEl.textContent = NOTES[ni];
+        }
 
         /* fairy lights along a gentle wire */
         const lights = splash.querySelector('.splash-lights');
