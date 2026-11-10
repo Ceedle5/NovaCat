@@ -3170,6 +3170,7 @@
     .splash-rug {
       position: absolute;
       left: 50%;
+      bottom: -14px;
       width: 128%;
       height: 64px;
       transform: translateX(-50%);
