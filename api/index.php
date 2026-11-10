@@ -3080,14 +3080,13 @@
       gap: clamp(16px, 3.5vh, 28px);
       text-align: center;
     }
-
-    /* wooden sign */
+ /* wooden sign */
     .splash-sign {
       position: relative;
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-top: 24px;
+      margin-top: 44px;
       padding: 12px 30px 12px 20px;
       font-family: 'Fredoka', sans-serif;
       font-weight: 700;
