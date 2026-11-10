@@ -3087,7 +3087,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-top: 2px;
+      margin-top: 24px;
       padding: 12px 30px 12px 20px;
       font-family: 'Fredoka', sans-serif;
       font-weight: 700;
@@ -3733,6 +3733,135 @@
         min-height: 26px;
       }
     }
+
+    /* ---- Splash: side notes + never-cut-off button ---- */
+    .splash {
+      overflow-y: auto;
+      /* if the screen is really short, you can scroll to the button */
+      overflow-x: hidden;
+      align-items: flex-start;
+    }
+
+    .splash-card {
+      margin: auto;
+      /* centers when there's room, scrolls safely when there isn't */
+      padding: 8px 0 20px;
+    }
+
+    .splash-note {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      margin: -100px 0 0;
+      /* vertical centering without touching transform */
+      width: clamp(190px, 19vw, 280px);
+      padding: 20px 16px 14px;
+      transform: rotate(var(--tilt, -4deg));
+      animation: noteIn 0.9s cubic-bezier(.34, 1.56, .64, 1) both,
+        noteFloat 6s ease-in-out 1.2s infinite;
+    }
+
+    .note-left {
+      left: clamp(12px, 3.5vw, 70px);
+      --tilt: -6deg;
+      animation-delay: 0.5s, 1.4s;
+    }
+
+    .note-right {
+      right: clamp(12px, 3.5vw, 70px);
+      --tilt: 5deg;
+      margin-top: -60px;
+      /* sits a little lower than the left one, so it feels scattered */
+      animation-delay: 0.75s, 2.2s;
+      background: linear-gradient(180deg, #ffeef0, #ffdfe4);
+      /* pink paper for variety */
+    }
+
+    .note-right .splash-note-pin {
+      background: radial-gradient(circle at 35% 30%, #ffc9b8, #f0775a 60%, #c9553a);
+      box-shadow: 0 2px 0 #a8452e, 0 4px 6px rgba(60, 38, 26, 0.35);
+    }
+
+    .splash-note-text {
+      font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+      min-height: 78px;
+    }
+
+    @keyframes noteIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) rotate(calc(var(--tilt) * 2.5)) scale(0.85);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotate(var(--tilt)) scale(1);
+      }
+    }
+
+    @keyframes noteFloat {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(var(--tilt));
+      }
+
+      50% {
+        transform: translateY(-8px) rotate(calc(var(--tilt) + 1.5deg));
+      }
+    }
+
+    /* tablets / small laptops: slightly smaller cards */
+    @media (max-width: 1100px) {
+      .splash-note {
+        width: 170px;
+      }
+
+      .splash-note-text {
+        font-size: 1.1rem;
+        min-height: 70px;
+      }
+    }
+
+    /* phones: no room on the sides, so show one small note tucked in the top-left corner under the sign */
+    @media (max-width: 760px) {
+      .note-right {
+        display: none;
+      }
+
+      .note-left {
+        top: auto;
+        bottom: 150px;
+        left: 8px;
+        margin: 0;
+        width: 150px;
+        padding: 16px 10px 10px;
+        --tilt: -5deg;
+        z-index: 3;
+      }
+
+      .note-left .splash-note-label {
+        display: none;
+      }
+
+      .note-left .splash-note-text {
+        font-size: 0.98rem;
+        line-height: 22px;
+        min-height: 0;
+        background-size: 100% 22px;
+      }
+
+      .note-left .splash-note-by {
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .splash-note {
+        animation: none !important;
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 
@@ -3759,30 +3888,40 @@
         <img src="/Assets/Sleeping.png" alt="Nova is sleeping">
       </div>
       <!-- <p class="splash-msg" id="splashMsg">Warming up the house…</p> -->
-      <div class="splash-note" id="splashNote">
-        <span class="splash-note-pin" aria-hidden="true"></span>
-        <small class="splash-note-label">⚖️ Today's note for Anghela</small>
-        <p class="splash-note-text" id="splashNoteText"></p>
-        <span class="splash-note-by">— Nova 🐾</span>
-      </div>
-      <p class="splash-msg" id="splashMsg">Warming up the house…</p>
+    </div><!-- end .splash-card -->
 
-      <div class="splash-action">
-        <div class="splash-bar">
-          <div class="splash-fill" id="splashFill"></div>
-        </div>
-        <button class="splash-go" id="splashGo" type="button" disabled>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="6.5" cy="7.5" r="2.1" />
-            <circle cx="11.5" cy="5.3" r="2.1" />
-            <circle cx="16.5" cy="7.5" r="2.1" />
-            <circle cx="19.3" cy="12.2" r="1.9" />
-            <path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z" />
-          </svg>
-          Wake Nova up
-        </button>
-      </div>
+    <aside class="splash-note note-left" aria-hidden="true">
+      <span class="splash-note-pin"></span>
+      <small class="splash-note-label">⚖️ Today's note for Anghela</small>
+      <p class="splash-note-text" id="splashNoteTextL"></p>
+      <span class="splash-note-by">— Nova 🐾</span>
+    </aside>
+
+    <aside class="splash-note note-right" aria-hidden="true">
+      <span class="splash-note-pin"></span>
+      <small class="splash-note-label">📚 Also, Counsel…</small>
+      <p class="splash-note-text" id="splashNoteTextR"></p>
+      <span class="splash-note-by">— Nova 🐾</span>
+    </aside>
+  </div><!-- end #splash -->
+  <p class="splash-msg" id="splashMsg">Warming up the house…</p>
+
+  <div class="splash-action">
+    <div class="splash-bar">
+      <div class="splash-fill" id="splashFill"></div>
     </div>
+    <button class="splash-go" id="splashGo" type="button" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="6.5" cy="7.5" r="2.1" />
+        <circle cx="11.5" cy="5.3" r="2.1" />
+        <circle cx="16.5" cy="7.5" r="2.1" />
+        <circle cx="19.3" cy="12.2" r="1.9" />
+        <path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z" />
+      </svg>
+      Wake Nova up
+    </button>
+  </div>
+  </div>
   </div>
   <div id="app">
     <div class="stage room-living" id="stage">
@@ -4901,7 +5040,7 @@
         const go = document.getElementById('splashGo');
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        const MOTIVATION_MODE = 'daily'; 
+        const MOTIVATION_MODE = 'daily';
         const NOTES = [
           "Atty. Anghela. I've said it so many times it's basically precedent.",
           "One case at a time. I've never read one, but I'm told that's how it works.",
@@ -4933,17 +5072,18 @@
           "Rest is part of the plan, not a break from it.",
           "Go get 'em, future counsel. I'll keep your spot warm."
         ];
-        const noteEl = document.getElementById('splashNoteText');
-        if (noteEl) {
-          let ni;
-          if (MOTIVATION_MODE === 'random') {
-            ni = Math.floor(Math.random() * NOTES.length);
-          } else {
-            const t = new Date();
-            ni = Math.floor(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) / 86400000) % NOTES.length;
-          }
-          noteEl.textContent = NOTES[ni];
+        const noteL = document.getElementById('splashNoteTextL');
+        const noteR = document.getElementById('splashNoteTextR');
+        let ni;
+        if (MOTIVATION_MODE === 'random') {
+          ni = Math.floor(Math.random() * NOTES.length);
+        } else {
+          const t = new Date();
+          ni = Math.floor(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) / 86400000) % NOTES.length;
         }
+        const ni2 = (ni + Math.floor(NOTES.length / 2)) % NOTES.length; // a different quote for the other side
+        if (noteL) noteL.textContent = NOTES[ni];
+        if (noteR) noteR.textContent = NOTES[ni2];
 
         /* fairy lights along a gentle wire */
         const lights = splash.querySelector('.splash-lights');
