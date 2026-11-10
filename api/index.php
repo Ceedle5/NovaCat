@@ -4015,6 +4015,38 @@
         font-size: 1.2rem;
       }
     }
+
+    /* ---- Splash: cat sits ON the rug ---- */
+    .splash-cat {
+      --rug-lift: 14%;
+      /* raise this if she still floats, lower it if she sinks into the rug */
+    }
+
+    .splash-rug {
+      bottom: var(--rug-lift);
+      z-index: 0;
+    }
+
+    /* soft contact shadow where she touches the rug */
+    .splash-cat::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(var(--rug-lift) + 18px);
+      width: 78%;
+      height: 26px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(40, 60, 45, 0.45), transparent 70%);
+      filter: blur(2px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* the cat image stays above the rug and the shadow */
+    .splash-cat img {
+      z-index: 1;
+    }
   </style>
 </head>
 
@@ -4253,29 +4285,10 @@
       };
       const CAT_BASE_WIDTH = 170;
 
-      /* =====================================================
-         Pose normalising
-         Every pose PNG has a different canvas size and different transparent
-         padding. Each pose is measured (bounding box of its visible pixels),
-         scaled to match the reference pose, then lined up with the reference
-         by its feet + body centre. The standing pose (Character.png) stays
-         exactly where it always was; every other pose snaps to it.
 
-         fit:  'height' = visible cat height matches Character.png
-               'width'  = visible cat width matches Character.png
-               'native' = trust the file's own pixel scale (sleeping / lying poses)
-         auto: false    = skip the measuring, plain centering (use for poses that
-                          include props such as a food bowl)
-         s = size multiplier    x = nudge right (px)    y = lift up (px)
-         ===================================================== */
       const REF_SELECTOR = '.cat-img'; // Character.png defines the fixed frame
       const POSE_SCALE = 368 / 1156; // how the standing pose is displayed
 
-      /* Every pose is fitted inside the SAME box (the standing cat's visible size).
-         s  = size multiplier for this pose only (1 = fits the box exactly)
-         bw = box width multiplier  (wide poses like sleeping need more room)
-         bh = box height multiplier
-         x / y = nudge right / up in px */
       const POSE_ADJUST = {
         '.cat-img': {
           s: 1,
@@ -4357,7 +4370,6 @@
         };
       }
 
-      /* bounding box of the visible (non-transparent) pixels, in natural-image px */
       function measurePose(img) {
         if (poseBoxCache.has(img)) return poseBoxCache.get(img);
         const W = img.naturalWidth,
