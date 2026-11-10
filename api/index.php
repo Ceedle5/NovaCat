@@ -3869,6 +3869,7 @@
   <div class="splash" id="splash" role="dialog" aria-modal="true" aria-label="Welcome to Nova's House">
     <div class="splash-lights" aria-hidden="true"></div>
     <div class="splash-motes" aria-hidden="true"></div>
+
     <div class="splash-card">
       <div class="splash-sign">
         <svg class="splash-paw" viewBox="0 0 24 24" aria-hidden="true">
@@ -3880,6 +3881,7 @@
         </svg>
         <span>Nova's House</span>
       </div>
+
       <div class="splash-cat">
         <span class="splash-rug" aria-hidden="true"></span>
         <span class="splash-z" aria-hidden="true">z</span>
@@ -3887,7 +3889,25 @@
         <span class="splash-z z3" aria-hidden="true">z</span>
         <img src="/Assets/Sleeping.png" alt="Nova is sleeping">
       </div>
-      <!-- <p class="splash-msg" id="splashMsg">Warming up the house…</p> -->
+
+      <!-- these two MUST stay inside .splash-card -->
+      <p class="splash-msg" id="splashMsg">Warming up the house…</p>
+
+      <div class="splash-action">
+        <div class="splash-bar">
+          <div class="splash-fill" id="splashFill"></div>
+        </div>
+        <button class="splash-go" id="splashGo" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="6.5" cy="7.5" r="2.1" />
+            <circle cx="11.5" cy="5.3" r="2.1" />
+            <circle cx="16.5" cy="7.5" r="2.1" />
+            <circle cx="19.3" cy="12.2" r="1.9" />
+            <path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z" />
+          </svg>
+          Wake Nova up
+        </button>
+      </div>
     </div><!-- end .splash-card -->
 
     <aside class="splash-note note-left" aria-hidden="true">
@@ -3904,25 +3924,7 @@
       <span class="splash-note-by">— Nova 🐾</span>
     </aside>
   </div><!-- end #splash -->
-  <p class="splash-msg" id="splashMsg">Warming up the house…</p>
 
-  <div class="splash-action">
-    <div class="splash-bar">
-      <div class="splash-fill" id="splashFill"></div>
-    </div>
-    <button class="splash-go" id="splashGo" type="button" disabled>
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="6.5" cy="7.5" r="2.1" />
-        <circle cx="11.5" cy="5.3" r="2.1" />
-        <circle cx="16.5" cy="7.5" r="2.1" />
-        <circle cx="19.3" cy="12.2" r="1.9" />
-        <path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z" />
-      </svg>
-      Wake Nova up
-    </button>
-  </div>
-  </div>
-  </div>
   <div id="app">
     <div class="stage room-living" id="stage">
       <div class="room-bg-layer">
