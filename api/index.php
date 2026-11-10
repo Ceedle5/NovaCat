@@ -5210,37 +5210,80 @@
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         const MOTIVATION_MODE = 'daily';
+        // const NOTES = [
+        //   "One case at a time. I've never read one, but I'm told that's how it works.",
+        //   "Hard days still count. Read a little, rest a little, come back stronger.",
+        //   "Small progress is still progress. Even I only nap in small increments.",
+        //   "Be kind to yourself today. A rested mind learns better than a tired one.",
+        //   "Your outline doesn't have to be perfect. It just has to exist.",
+        //   "Every page you read is one page closer to the bar. I'm proud of you.",
+        //   "It's okay to be tired. Just don't forget how far you've already come.",
+        //   "Court is adjourned for today, but your future isn't. Rest well, Counsel.",
+        //   "Not every day has to be a great day. A showed-up day is enough.",
+        //   "The bar exam is a mountain. Today you only need to take the next step.",
+        //   "You are not behind. You're building something big, and big things take time.",
+        //   "If it gets heavy, come sit with me for a minute. Then back to it, Counsel.",
+        //   "Even the longest case has a last page. Keep going.",
+        //   "Finals are temporary. 'Atty.' is forever.",
+        //   "Nobody watches you study as closely as I do. You're doing great.",
+        //   "Believe in yourself the way I believe in 3 a.m. zoomies: completely.",
+        //   "A messy day of studying still beats a perfect day of waiting.",
+        //   "You've got the brains, the heart, and a very supportive cat. That's a winning brief.",
+        //   "Rest is part of the plan, not a break from it."
+        // ];
+        // const noteL = document.getElementById('splashNoteTextL');
+        // const noteR = document.getElementById('splashNoteTextR');
+        // let ni;
+        // if (MOTIVATION_MODE === 'random') {
+        //   ni = Math.floor(Math.random() * NOTES.length);
+        // } else {
+        //   const t = new Date();
+        //   ni = Math.floor(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) / 86400000) % NOTES.length;
+        // }
+        // const ni2 = (ni + Math.floor(NOTES.length / 2)) % NOTES.length; // a different quote for the other side
+        // if (noteL) noteL.textContent = NOTES[ni];
+        // if (noteR) noteR.textContent = NOTES[ni2];
+
         const NOTES = [
-          "One case at a time. I've never read one, but I'm told that's how it works.",
-          "Hard days still count. Read a little, rest a little, come back stronger.",
-          "Small progress is still progress. Even I only nap in small increments.",
-          "Be kind to yourself today. A rested mind learns better than a tired one.",
-          "Your outline doesn't have to be perfect. It just has to exist.",
-          "Every page you read is one page closer to the bar. I'm proud of you.",
-          "It's okay to be tired. Just don't forget how far you've already come.",
-          "Court is adjourned for today, but your future isn't. Rest well, Counsel.",
-          "Not every day has to be a great day. A showed-up day is enough.",
-          "The bar exam is a mountain. Today you only need to take the next step.",
-          "You are not behind. You're building something big, and big things take time.",
-          "If it gets heavy, come sit with me for a minute. Then back to it, Counsel.",
-          "Even the longest case has a last page. Keep going.",
-          "Finals are temporary. 'Atty.' is forever.",
-          "Nobody watches you study as closely as I do. You're doing great.",
-          "Believe in yourself the way I believe in 3 a.m. zoomies: completely.",
-          "A messy day of studying still beats a perfect day of waiting.",
-          "You've got the brains, the heart, and a very supportive cat. That's a winning brief.",
-          "Rest is part of the plan, not a break from it."
+          "Hi Anghela. Study hard, but eat something first. I'm rooting for you, always.",
+          "2L is a lot, and you're handling it better than you think. I'm proud of you.",
+          "One case at a time. You've been doing hard things for years, and this is just another one.",
+          "I've known how stubborn you are since Grade 8. That same stubbornness is going to make you a lawyer.",
+          "Rest is part of the plan, Anghela. Take a break, then come back stronger.",
+          "Back in Nagpayong you won every argument with me. The bar exam doesn't stand a chance.",
+          "You don't have to be perfect today. You just have to keep going. I believe in you.",
+          "Whatever your grades say, you're already someone worth being proud of.",
+          "Drink some water, stretch a little, and then crush that reading. You've got this.",
+          "Future Atty. Anghela is counting on today's you. And so am I.",
+          "Hard day? Close the book for a bit and breathe. It will still be there, and so will you.",
+          "I built this little house so you'd have a place to rest. Stay as long as you need.",
+          "When you're tired, remember how far you've come since Grade 8. It's a long way.",
+          "You make everything look harder than it is, and then you do it anyway. That's what I admire.",
+          "A messy study day still counts. Showing up is the hard part, and you always do.",
+          "Take it slow, Anghela. You're building something big, and big things take time.",
+          "Even the longest case has a last page. You'll get there, and I'll be cheering.",
+          "No pressure. Just know that someone out there thinks you're amazing, with or without the grades.",
+          "Be kind to yourself today. You'd never be this hard on anyone else.",
+          "Valorant can wait. Okay, fine, it can wait a little. Study first, then we play.",
+          "I may have teased you in Grade 8, but I never doubted you. Not once.",
+          "You're allowed to be tired. You're not allowed to forget how brilliant you are.",
+          "Every page you read is one page closer to the bar. Keep going, Counsel.",
+          "Missing you is part of the deal while you study. But I'm cheering for you from here.",
+          "Sleep enough, eat well, and trust yourself. The rest will follow.",
+          "You were scary even in Grade 8, and now you're going to be a scary good lawyer.",
+          "Don't compare your chapter 2 to someone else's chapter 20. You're on your own path.",
+          "Whatever happens today, I'm on your side. Nova is too, probably. She just won't admit it.",
+          "Breathe in, breathe out, then one more page. You're doing great, Anghela.",
+          "Hope today treats you gently. And if it doesn't, you're stronger than it is."
         ];
+
         const noteL = document.getElementById('splashNoteTextL');
         const noteR = document.getElementById('splashNoteTextR');
-        let ni;
-        if (MOTIVATION_MODE === 'random') {
-          ni = Math.floor(Math.random() * NOTES.length);
-        } else {
-          const t = new Date();
-          ni = Math.floor(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) / 86400000) % NOTES.length;
-        }
-        const ni2 = (ni + Math.floor(NOTES.length / 2)) % NOTES.length; // a different quote for the other side
+
+        // two different random notes on every open
+        const ni = Math.floor(Math.random() * NOTES.length);
+        let ni2 = Math.floor(Math.random() * (NOTES.length - 1));
+        if (ni2 >= ni) ni2++; // guarantees ni2 !== ni
         if (noteL) noteL.textContent = NOTES[ni];
         if (noteR) noteR.textContent = NOTES[ni2];
 
