@@ -4605,11 +4605,8 @@
         const ref = ready.find(i => i.matches(REF_SELECTOR));
         if (!ref) return;
 
-
+        // where the standing cat's feet and body centre sit (so Nova stays in her spot)
         const refBox = measurePose(ref);
-        const frameW = refBox.w * POSE_SCALE;
-        const frameH = refBox.h * POSE_SCALE;
-
         const floor = (ref.naturalHeight - (refBox.y + refBox.h)) * POSE_SCALE;
         const centreX = (refBox.x + refBox.w / 2) * POSE_SCALE - (ref.naturalWidth * POSE_SCALE) / 2;
 
@@ -4619,8 +4616,7 @@
             H = img.naturalHeight;
           const box = measurePose(img);
 
-
-          const k = Math.min((frameW * adj.bw) / box.w, (frameH * adj.bh) / box.h) * adj.s;
+          const k = POSE_SCALE * adj.s; // the SAME scale for every pose
 
           img.style.width = Math.round(W * k) + 'px';
           img.style.height = Math.round(H * k) + 'px';
@@ -4628,8 +4624,9 @@
           img.style.right = 'auto';
           img.style.margin = '0';
 
-          const padBottom = (H - (box.y + box.h)) * k; // empty space under the paws
-          const catCentre = (box.x + box.w / 2) * k; // cat's centre inside its canvas
+          // measuring is only used to line up feet + centre, not to resize
+          const padBottom = (H - (box.y + box.h)) * k;
+          const catCentre = (box.x + box.w / 2) * k;
           img.style.bottom = Math.round(floor - padBottom + adj.y) + 'px';
           img.style.marginLeft = Math.round(centreX - catCentre + adj.x) + 'px';
         });
