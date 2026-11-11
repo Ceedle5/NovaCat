@@ -4033,7 +4033,7 @@
       content: "";
       position: absolute;
       left: 50%;
-      bottom: calc(var(--rug-lift) + 18px);
+      bottom: var(--shadow-lift, calc(var(--rug-lift) + 18px));
       width: 78%;
       height: 26px;
       transform: translateX(-50%);
@@ -5380,7 +5380,7 @@
       renderAll();
       addMessage("Meow! I'm " + state.name + ". Talk to me!", 'cat');
 
-    
+
       (function initSplash() {
         const SPLASH_ONCE = false; // true = only show it the first time per browser tab session
         const MIN_MS = 10000; // shortest time the splash stays up
@@ -5437,16 +5437,18 @@
             const padBottom = ((ch - 1 - maxY) / ch) * dispH; // empty space under her belly (px)
             const visW = ((maxX - minX + 1) / cw) * dispW; // her visible width (px)
             const rugH = rugEl.offsetHeight || 64;
-            catBox.style.setProperty('--rug-lift', (padBottom - rugH * 0.62 + NUDGE) + 'px');
+            catBox.style.setProperty('--rug-lift', (padBottom - rugH * 0.30 + NUDGE) + 'px');
+            catBox.style.setProperty('--shadow-lift', (padBottom - rugH * 0.30 + NUDGE + rugH * 0.28) + 'px');
             rugEl.style.width = Math.round(visW * 1.3) + 'px';
           } catch (e) {
-            /* canvas blocked: keep the CSS fallback */ }
+            /* canvas blocked: keep the CSS fallback */
+          }
         }
         if (catImg.complete) fitRug();
         else catImg.addEventListener('load', fitRug);
         window.addEventListener('resize', fitRug);
 
-      const MOTIVATION_MODE = 'daily';
+        const MOTIVATION_MODE = 'daily';
         // const NOTES = [
         //   "One case at a time. I've never read one, but I'm told that's how it works.",
         //   "Hard days still count. Read a little, rest a little, come back stronger.",
@@ -5577,7 +5579,7 @@
         (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(tick, tick);
 
 
-        
+
         // const lines = [
         //   [0, 'Warming up the house…'],
         //   [0.12, 'Fluffing the cushions…'],
