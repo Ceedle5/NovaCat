@@ -8,13 +8,13 @@
   <meta property="og:title" content="Nova's House">
   <meta property="og:description" content="Come hang out with Nova, a cozy little cat. Feed her, play, pet her, and chat!">
   <meta property="og:url" content="https://nova-cat.vercel.app/">
-  <meta property="og:image" content="https://nova-cat.vercel.app/Assets/MessageBubble.png?v=2">
+  <meta property="og:image" content="https://nova-cat.vercel.app/Assets/Sleeping1.png?v=2">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="864">
   <meta property="og:image:height" content="1156">
   <meta property="og:image:alt" content="Nova the cat standing in her cozy house">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://nova-cat.vercel.app/Assets/MessageBubble.png?v=2">
+  <meta name="twitter:image" content="https://nova-cat.vercel.app/Assets/Sleeping1.png?v=2">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-visual">
   <title>Nova's House</title>
