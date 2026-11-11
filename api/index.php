@@ -5399,55 +5399,6 @@
         const go = document.getElementById('splashGo');
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        /* ---------- put the rug under the cat's real feet, whatever the PNG's padding is ---------- */
-        const catBox = splash.querySelector('.splash-cat');
-        const catImg = catBox.querySelector('img');
-        const rugEl = catBox.querySelector('.splash-rug');
-        const NUDGE = 0; // px: negative = cat sinks deeper into the rug, positive = sits higher
-
-        function fitRug() {
-          if (!catImg.naturalWidth || !catImg.clientHeight) return;
-          try {
-            const sc = 200 / Math.max(catImg.naturalWidth, catImg.naturalHeight);
-            const cw = Math.round(catImg.naturalWidth * sc);
-            const ch = Math.round(catImg.naturalHeight * sc);
-            const c = document.createElement('canvas');
-            c.width = cw;
-            c.height = ch;
-            const ctx = c.getContext('2d', {
-              willReadFrequently: true
-            });
-            ctx.drawImage(catImg, 0, 0, cw, ch);
-            const d = ctx.getImageData(0, 0, cw, ch).data;
-            let minX = cw,
-              maxX = -1,
-              maxY = -1;
-            for (let y = 0; y < ch; y++) {
-              for (let x = 0; x < cw; x++) {
-                if (d[(y * cw + x) * 4 + 3] > 20) {
-                  if (x < minX) minX = x;
-                  if (x > maxX) maxX = x;
-                  if (y > maxY) maxY = y;
-                }
-              }
-            }
-            if (maxX < 0) return;
-            const dispH = catImg.clientHeight,
-              dispW = catImg.clientWidth;
-            const padBottom = ((ch - 1 - maxY) / ch) * dispH; // empty space under her belly (px)
-            const visW = ((maxX - minX + 1) / cw) * dispW; // her visible width (px)
-            const rugH = rugEl.offsetHeight || 64;
-            catBox.style.setProperty('--rug-lift', (padBottom - rugH * 0.30 + NUDGE) + 'px');
-            catBox.style.setProperty('--shadow-lift', (padBottom - rugH * 0.30 + NUDGE + rugH * 0.28) + 'px');
-            rugEl.style.width = Math.round(visW * 1.3) + 'px';
-          } catch (e) {
-            /* canvas blocked: keep the CSS fallback */
-          }
-        }
-        if (catImg.complete) fitRug();
-        else catImg.addEventListener('load', fitRug);
-        window.addEventListener('resize', fitRug);
-
         const MOTIVATION_MODE = 'daily';
         // const NOTES = [
         //   "One case at a time. I've never read one, but I'm told that's how it works.",
@@ -5503,6 +5454,7 @@
           "Be kind to yourself today. You'd never be this hard on anyone else.",
           "I may have teased you in Grade 8, but I never doubted you. Not once.",
           "You're allowed to be tired. You're not allowed to forget how brilliant you are.",
+          "A messy day of studying still beats a perfect day of waiting.",
           "Every page you read is one page closer to the bar. Keep going, Counsel.",
           "Missing you is part of the deal while you study. But I'm cheering for you from here.",
           "Sleep enough, eat well, and trust yourself. The rest will follow.",
@@ -5523,7 +5475,7 @@
           el.textContent = pool[i];
         });
 
-        /* ---------- fairy lights along a gentle wire ---------- */
+        /* fairy lights along a gentle wire */
         const lights = splash.querySelector('.splash-lights');
         const wireY = x => 16 + 9 * Math.sin(x * Math.PI * 6);
         const pts = [];
@@ -5545,7 +5497,7 @@
           lights.appendChild(b);
         }
 
-        /* ---------- floating warm dust ---------- */
+        /* floating warm dust */
         const motes = splash.querySelector('.splash-motes');
         for (let i = 0; i < 16; i++) {
           const m = document.createElement('span');
@@ -5560,7 +5512,7 @@
           motes.appendChild(m);
         }
 
-        /* ---------- real loading progress: images + room backgrounds + fonts ---------- */
+        /* real loading progress: every image on the page + room backgrounds + fonts */
         const urls = new Set();
         Array.from(document.images).forEach(im => {
           if (im.src) urls.add(im.src);
@@ -5578,8 +5530,6 @@
         });
         (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(tick, tick);
 
-
-
         // const lines = [
         //   [0, 'Warming up the house…'],
         //   [0.12, 'Fluffing the cushions…'],
@@ -5590,16 +5540,15 @@
         //   [0.80, 'Waking Nova up…'],
         //   [0.92, 'Almost there…'],
         // ];
-
         const lines = [
           [0, 'Go, Anghela, go!'],
-          [0.12, 'Future Atty. Anghela is loading…'],
-          [0.25, "Cutie and unstoppable, that's you"],
-          [0.38, "One page at a time. You've got this"],
+          [0.12, 'Future Atty. Anghela is loading… '],
+          [0.25, 'Cutie and unstoppable, that\'s you '],
+          [0.38, 'One page at a time. You\'ve got this'],
           [0.52, 'Nova is cheering from her rug 🐾'],
-          [0.66, "The bar exam has no idea what's coming"],
-          [0.80, "You're doing better than you think"],
-          [0.92, 'Okay, Nova is waking up for you…'],
+          [0.66, 'The bar exam has no idea what\'s coming '],
+          [0.80, 'You\'re doing better than you think '],
+          [0.92, 'Okay, Nova is waking up for you… '],
         ];
         const t0 = performance.now();
         let shown = 0;
