@@ -4438,9 +4438,7 @@
 
   <script>
     (function() {
-      /* =====================================================
-         State & constants
-         ===================================================== */
+    
       const HUNGER_THRESHOLD = 30;
       const rooms = ['living', 'kitchen', 'bedroom'];
       const roomLabels = {
@@ -4627,11 +4625,11 @@
         const ref = ready.find(i => i.matches(REF_SELECTOR));
         if (!ref) return;
 
-        // the fixed frame = the standing cat's visible footprint
+
         const refBox = measurePose(ref);
         const frameW = refBox.w * POSE_SCALE;
         const frameH = refBox.h * POSE_SCALE;
-        // where the standing cat's feet and centre sit (so Nova stays in her current spot)
+
         const floor = (ref.naturalHeight - (refBox.y + refBox.h)) * POSE_SCALE;
         const centreX = (refBox.x + refBox.w / 2) * POSE_SCALE - (ref.naturalWidth * POSE_SCALE) / 2;
 
@@ -4641,7 +4639,7 @@
             H = img.naturalHeight;
           const box = measurePose(img);
 
-          // one rule for every pose: fit the visible cat inside the same frame
+
           const k = Math.min((frameW * adj.bw) / box.w, (frameH * adj.bh) / box.h) * adj.s;
 
           img.style.width = Math.round(W * k) + 'px';
@@ -4659,9 +4657,8 @@
       poseImgs.forEach(img => img.addEventListener('load', layoutPoses));
       layoutPoses();
 
-      /* =====================================================
-         Element references
-         ===================================================== */
+   
+      
       const els = {
         stage: document.getElementById('stage'),
         sideLeft: document.getElementById('sideLeft'),
@@ -4703,9 +4700,7 @@
         ],
       };
 
-      /* =====================================================
-         Room images (all three live in the DOM)
-         ===================================================== */
+     
       const roomImgs = {};
       document.querySelectorAll('.room-bg-main').forEach(img => {
         roomImgs[img.dataset.room] = img;
@@ -4717,7 +4712,6 @@
       let transitioning = false;
       const TRANSITION_MS = 800;
 
-      /* pre-decode every room so the first switch never hitches */
       Object.values(roomImgs).forEach(img => {
         if (img.decode) img.decode().catch(() => {});
         img.addEventListener('load', () => {
@@ -4725,9 +4719,7 @@
         });
       });
 
-      /* =====================================================
-         Icons & actions
-         ===================================================== */
+    
       const ICON = {
         play: '<svg viewBox="0 0 24 24" class="filled"><path d="M12 2c.6 3.7 2.3 5.9 6 6.5-3.7.6-5.4 2.8-6 6.5-.6-3.7-2.3-5.9-6-6.5 3.7-.6 5.4-2.8 6-6.5Z"/><path d="M19 15c.3 1.8 1.1 2.9 3 3.2-1.9.3-2.7 1.4-3 3.2-.3-1.8-1.1-2.9-3-3.2 1.9-.3 2.7-1.4 3-3.2Z"/></svg>',
         pet: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V6a1.4 1.4 0 0 1 2.8 0v6"/><path d="M10.8 12V4.6a1.4 1.4 0 0 1 2.8 0V12"/><path d="M13.6 12V5.6a1.4 1.4 0 0 1 2.8 0V13"/><path d="M16.4 13V8.4a1.4 1.4 0 0 1 2.8 0V15c0 3.6-2.5 6.5-6.5 6.5-2.8 0-4.3-1-5.6-2.8l-2.7-4.1a1.3 1.3 0 0 1 2-1.6L8 13"/></svg>',
@@ -4775,9 +4767,8 @@
         }, ],
       };
 
-      /* =====================================================
-         Room UI (labels, icons, dock, rail)
-         ===================================================== */
+   
+      
       function updateRoomUI() {
         const room = rooms[roomIndex];
         els.roomName.textContent = roomLabels[room];
