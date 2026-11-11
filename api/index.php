@@ -8,13 +8,13 @@
   <meta property="og:title" content="Nova's House 🐾 Developed by Diopet for Anghela">
   <meta property="og:description" content="A cozy little cat game developed by Diopet for Anghela. Come hang out with Nova! 🐾">
   <meta property="og:url" content="https://nova-cat.vercel.app/">
-  <meta property="og:image" content="https://nova-cat.vercel.app/Assets/Sleeping1.png?v=2">
+  <meta property="og:image" content="https://nova-cat.vercel.app/Assets/novaCover.png?v=2">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="864">
   <meta property="og:image:height" content="1156">
   <meta property="og:image:alt" content="Nova the cat standing in her cozy house">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://nova-cat.vercel.app/Assets/Sleeping1.png?v=2">
+  <meta name="twitter:image" content="https://nova-cat.vercel.app/Assets/novaCover.png?v=2">
   <meta name="twitter:title" content="Nova's House 🐾 Developed by Diopet for Anghela">
   <meta name="twitter:description" content="A cozy little cat game developed by Diopet for Anghela. Come hang out with Nova! 🐾">
   <meta charset="UTF-8">
@@ -5545,12 +5545,12 @@
         const lines = [
           [0, 'Go, Anghela, go!'],
           [0.12, 'Future Atty. Anghela is loading… '],
-          [0.25, 'Cutie and unstoppable, that\'s you '],
-          [0.38, 'One page at a time. You\'ve got this'],
-          [0.52, 'Nova is cheering from her rug 🐾'],
-          [0.66, 'The bar exam has no idea what\'s coming '],
-          [0.80, 'You\'re doing better than you think '],
-          [0.92, 'Okay, Nova is waking up for you… '],
+          [0.25, 'Look how far you\'ve come already'],
+          [0.38, 'Smart, Pretty, and so determined'],
+          [0.52, 'Nova is cheering for you 🐾'],
+          [0.66, 'Every page you read is progress'],
+          [0.80, 'Keep going, you\'re closer than you think '],
+          [0.92, 'Nova is waking up to cheer for you 🐾'],
         ];
         const t0 = performance.now();
         let shown = 0;
