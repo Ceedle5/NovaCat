@@ -5537,7 +5537,7 @@
         // ];
         const lines = [
           [0, 'Go, Anghela, go!'],
-          [0.08, 'Future Atty. Anghela is loading… '],
+          [0.18, 'Future Atty. Anghela is loading… '],
           [0.1667, 'Look how far you\'ve come already'],
           [0.3467, 'Nova and Diopet is cheering for you 🐾'],
           [0.44, 'Every page you read is progress'],
