@@ -5462,7 +5462,7 @@
 
         const noteEls = splash.querySelectorAll('.splash-notes .splash-note-text');
         const pool = NOTES.slice();
-        for (let i = pool.length - 1; i > 0; i--) { // shuffle
+        for (let i = pool.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [pool[i], pool[j]] = [pool[j], pool[i]];
         }
