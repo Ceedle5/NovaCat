@@ -5541,7 +5541,7 @@
           [0.1367, 'Look how far you\'ve come already'],
           [0.2467, 'Nova and Diopet is cheering for you 🐾'],
           [0.44, 'Every page you read is progress'],
-          [0.5333, 'Keep going, you\'re closer than you think '],
+          [0.5933, 'Keep going, you\'re closer than you think '],
           [0.6133, 'Nova is waking up to cheer for you 🐾'],
         ];
         const t0 = performance.now();
