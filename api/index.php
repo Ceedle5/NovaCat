@@ -4234,6 +4234,35 @@
         opacity: 1;
       }
     }
+
+
+    @media (max-width: 760px) {
+
+      /* never let flexbox squash these; the splash scrolls instead */
+      .splash-notes,
+      .splash-card {
+        flex-shrink: 0;
+      }
+
+      .splash-notes {
+        align-items: flex-start;
+        /* each card is as tall as its own text */
+        padding-bottom: 22px;
+        /* room for the card shadow and the tilt */
+      }
+
+      .splash-notes .splash-note {
+        flex-shrink: 0;
+        height: auto;
+        overflow: visible;
+      }
+
+      .splash-notes .splash-note-text {
+        min-height: 48px;
+        /* even a one-line note keeps its card shape */
+        padding-bottom: 4px;
+      }
+    }
   </style>
 </head>
 
@@ -4554,7 +4583,8 @@
             };
           }
         } catch (e) {
-          /* canvas blocked: fall back to the full image box */ }
+          /* canvas blocked: fall back to the full image box */
+        }
         poseBoxCache.set(img, box);
         return box;
       }
