@@ -5430,7 +5430,7 @@
           "Hi Anghela. Study hard, but eat something first. I'm rooting for you, always.",
           "One case at a time. You've been doing hard things for years, and this is just another one.",
           "Rest is part of the plan, Anghela. Take a break, then come back stronger.",
-          "Back in Nagpayong you won every argument with me. The bar exam doesn't stand a chance.",
+          "It's okay to be tired. Just don't forget how far you've already come.",
           "You don't have to be perfect today. You just have to keep going. I believe in you.",
           "Whatever your grades say, you're already someone worth being proud of.",
           "Drink some water, stretch a little, and then crush that reading. You've got this.",
