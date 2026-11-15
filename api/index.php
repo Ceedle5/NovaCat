@@ -4505,7 +4505,59 @@
 
       const REF_SELECTOR = '.cat-img'; // Character.png defines the fixed frame
       const POSE_SCALE = 368 / 1156; // how the standing pose is displayed
+      const poseImgs = Array.from(document.querySelectorAll('.cat-pose-img'));
+      const poseBoxCache = new Map();
 
+      /* bounding box of the visible (non-transparent) pixels, in natural-image px */
+      function measurePose(img) {
+        if (poseBoxCache.has(img)) return poseBoxCache.get(img);
+        const W = img.naturalWidth,
+          H = img.naturalHeight;
+        let box = {
+          x: 0,
+          y: 0,
+          w: W,
+          h: H
+        };
+        try {
+          const sc = Math.min(1, 160 / Math.max(W, H));
+          const cw = Math.max(1, Math.round(W * sc)),
+            ch = Math.max(1, Math.round(H * sc));
+          const c = document.createElement('canvas');
+          c.width = cw;
+          c.height = ch;
+          const ctx = c.getContext('2d', {
+            willReadFrequently: true
+          });
+          ctx.drawImage(img, 0, 0, cw, ch);
+          const d = ctx.getImageData(0, 0, cw, ch).data;
+          let minX = cw,
+            minY = ch,
+            maxX = -1,
+            maxY = -1;
+          for (let y = 0; y < ch; y++) {
+            for (let x = 0; x < cw; x++) {
+              if (d[(y * cw + x) * 4 + 3] > 20) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+              }
+            }
+          }
+          if (maxX >= 0) {
+            box = {
+              x: minX / sc,
+              y: minY / sc,
+              w: (maxX - minX + 1) / sc,
+              h: (maxY - minY + 1) / sc
+            };
+          }
+        } catch (e) {
+          /* canvas blocked: fall back to the full image box */ }
+        poseBoxCache.set(img, box);
+        return box;
+      }
       const POSE_ADJUST = {
         '.cat-img': {
           s: 1,
