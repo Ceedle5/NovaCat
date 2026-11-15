@@ -1000,15 +1000,14 @@
       filter: none;
     }
 
-    .cat-wrap.mood-sad .cat-img {
-      filter: grayscale(0.35) brightness(0.92);
-      transform: translateY(4px);
-    }
-
     .cat-wrap.mood-sleepy {
       animation: none;
-      width: 390px;
-      height: 322px;
+      /* delete: width: 390px; height: 322px; */
+    }
+
+    .cat-wrap.mood-sad .cat-img {
+      filter: grayscale(0.35) brightness(0.92);
+      /* delete: transform: translateY(4px); */
     }
 
     .cat-wrap.mood-sleepy .cat-img {
@@ -4139,6 +4138,25 @@
       min-height: 0;
     }
 
+    /* don't render the game while the splash covers it */
+    body.splash-on #app {
+      visibility: hidden;
+    }
+
+    /* the cat's animated drop-shadow filter is expensive; the contact shadow already grounds her */
+    .splash-cat img {
+      filter: none;
+      will-change: transform;
+    }
+
+    /* keep animated splash pieces on the GPU */
+    .splash-bulb,
+    .splash-notes .splash-note,
+    .splash-sign,
+    .splash-z {
+      will-change: transform, opacity;
+    }
+
     /* phones: 4 notes in a swipeable row above the cat */
     @media (max-width: 760px) {
       .splash-notes {
@@ -4219,7 +4237,7 @@
   </style>
 </head>
 
-<body>
+<body class="splash-on">
   <div class="splash" id="splash" role="dialog" aria-modal="true" aria-label="Welcome to Nova's House">
     <div class="splash-lights" aria-hidden="true"></div>
     <div class="splash-motes" aria-hidden="true"></div>
@@ -4860,7 +4878,7 @@
       const motesEl = document.getElementById('motes');
 
       function spawnMote() {
-        if (!motesEl) return;
+        if (!motesEl || document.body.classList.contains('splash-on')) return;
         const m = document.createElement('span');
         m.className = 'mote';
         const size = 3 + Math.random() * 4;
@@ -5507,6 +5525,7 @@
             if (SPLASH_ONCE) sessionStorage.setItem('novaSplashSeen', '1');
           } catch (e) {}
           splash.classList.add('leaving');
+          document.body.classList.remove('splash-on');
           setTimeout(() => splash.remove(), reduce ? 250 : 900);
           setTimeout(() => {
             say('Meow! Welcome home mommy! 🐾');
