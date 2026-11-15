@@ -4251,7 +4251,7 @@
           <circle cx="19.3" cy="12.2" r="1.9" />
           <path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z" />
         </svg>
-        <span>Welcome Anghela!</span>
+        <span>Welcome May Angela Bruan!</span>
       </div>
     </div>
 
