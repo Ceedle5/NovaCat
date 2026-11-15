@@ -4251,7 +4251,7 @@
           <circle cx="19.3" cy="12.2" r="1.9" />
           <path d="M12 20.2c-3.4 0-6-1.8-6-4.4 0-2.3 2.1-4 6-4s6 1.7 6 4c0 2.6-2.6 4.4-6 4.4Z" />
         </svg>
-        <span>Nova's House</span>
+        <span>Welcome Anghela!</span>
       </div>
     </div>
 
@@ -5435,6 +5435,7 @@
           "Whatever your grades say, you're already someone worth being proud of.",
           "Drink some water, stretch a little, and then crush that reading. You've got this.",
           "Future Atty. Anghela is counting on today's you. And so am I.",
+          "Hope today treats you gently. And if it doesn't, you're stronger than it is.",
           "Hard day? Close the book for a bit and breathe. It will still be there, and so will you.",
           "I built this little house so you'd have a place to rest. Stay as long as you need.",
           "When you're tired, remember how far you've come since Grade 8. It's a long way.",
@@ -5450,7 +5451,6 @@
           "Every page you read is one page closer to the bar. Keep going, Counsel.",
           "Missing you is part of the deal while you study. But I'm cheering for you from here.",
           "Sleep enough, eat well, and trust yourself. The rest will follow.",
-          "You were scary even in Grade 8, and now you're going to be a scary good lawyer.",
           "Don't compare your chapter 2 to someone else's chapter 20. You're on your own path.",
           "Whatever happens today, I'm on your side. Nova is too, probably. She just won't admit it.",
           "Breathe in, breathe out, then one more page. You're doing great, Anghela.",
