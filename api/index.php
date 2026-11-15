@@ -4491,133 +4491,66 @@
       const POSE_ADJUST = {
         '.cat-img': {
           s: 1,
-          bw: 1,
-          bh: 1,
           x: 0,
           y: 0
         },
         '.cat-img-sleep': {
           s: 1,
-          bw: 1.7,
-          bh: 1,
           x: 0,
           y: 0
         },
         '.cat-img-hungry': {
           s: 1,
-          bw: 1,
-          bh: 1,
           x: 0,
           y: 0
         },
         '.cat-img-eating': {
           s: 1,
-          bw: 1,
-          bh: 1,
           x: 0,
           y: 0
         },
         '#petFrame1': {
           s: 1,
-          bw: 1,
-          bh: 1,
           x: 0,
           y: 0
         },
         '#petFrame2': {
           s: 1,
-          bw: 1,
-          bh: 1,
           x: 0,
           y: 0
         },
         '#petFrame3': {
           s: 1,
-          bw: 1.2,
-          bh: 1,
           x: 0,
           y: 0
         },
         '#playFrame1': {
           s: 1,
-          bw: 1,
-          bh: 1,
           x: 0,
           y: 0
         },
         '#playFrame2': {
           s: 1,
-          bw: 1,
-          bh: 1,
           x: 0,
           y: 0
         }
       };
-      const poseImgs = Array.from(document.querySelectorAll('.cat-pose-img'));
-      const poseBoxCache = new Map();
 
       function getPoseAdj(img) {
-        for (const sel in POSE_ADJUST) {
+        for (const sel in POSE_ADJUST)
           if (img.matches(sel)) return POSE_ADJUST[sel];
-        }
         return {
           s: 1,
-          bw: 1,
-          bh: 1,
           x: 0,
           y: 0
         };
       }
 
-      function measurePose(img) {
-        if (poseBoxCache.has(img)) return poseBoxCache.get(img);
-        const W = img.naturalWidth,
-          H = img.naturalHeight;
-        let box = {
-          x: 0,
-          y: 0,
-          w: W,
-          h: H
-        };
-        try {
-          const sc = Math.min(1, 160 / Math.max(W, H));
-          const cw = Math.max(1, Math.round(W * sc)),
-            ch = Math.max(1, Math.round(H * sc));
-          const c = document.createElement('canvas');
-          c.width = cw;
-          c.height = ch;
-          const ctx = c.getContext('2d', {
-            willReadFrequently: true
-          });
-          ctx.drawImage(img, 0, 0, cw, ch);
-          const d = ctx.getImageData(0, 0, cw, ch).data;
-          let minX = cw,
-            minY = ch,
-            maxX = -1,
-            maxY = -1;
-          for (let y = 0; y < ch; y++) {
-            for (let x = 0; x < cw; x++) {
-              if (d[(y * cw + x) * 4 + 3] > 20) {
-                if (x < minX) minX = x;
-                if (x > maxX) maxX = x;
-                if (y < minY) minY = y;
-                if (y > maxY) maxY = y;
-              }
-            }
-          }
-          if (maxX >= 0) {
-            box = {
-              x: minX / sc,
-              y: minY / sc,
-              w: (maxX - minX + 1) / sc,
-              h: (maxY - minY + 1) / sc
-            };
-          }
-        } catch (e) {
-          /* canvas blocked (e.g. file://): fall back to the full image box */
-        }
-        poseBoxCache.set(img, box);
-        return box;
+      let layoutRAF = null;
+
+      function scheduleLayout() { // runs once per frame, not once per image load
+        cancelAnimationFrame(layoutRAF);
+        layoutRAF = requestAnimationFrame(layoutPoses);
       }
 
       function layoutPoses() {
@@ -4625,11 +4558,7 @@
         const ref = ready.find(i => i.matches(REF_SELECTOR));
         if (!ref) return;
 
-
         const refBox = measurePose(ref);
-        const frameW = refBox.w * POSE_SCALE;
-        const frameH = refBox.h * POSE_SCALE;
-
         const floor = (ref.naturalHeight - (refBox.y + refBox.h)) * POSE_SCALE;
         const centreX = (refBox.x + refBox.w / 2) * POSE_SCALE - (ref.naturalWidth * POSE_SCALE) / 2;
 
@@ -4638,9 +4567,7 @@
           const W = img.naturalWidth,
             H = img.naturalHeight;
           const box = measurePose(img);
-
-          // one rule for every pose: fit the visible cat inside the same frame
-          const k = Math.min((frameW * adj.bw) / box.w, (frameH * adj.bh) / box.h) * adj.s;
+          const k = POSE_SCALE * adj.s; // SAME scale for every pose
 
           img.style.width = Math.round(W * k) + 'px';
           img.style.height = Math.round(H * k) + 'px';
@@ -4648,14 +4575,14 @@
           img.style.right = 'auto';
           img.style.margin = '0';
 
-          const padBottom = (H - (box.y + box.h)) * k; // empty space under the paws
-          const catCentre = (box.x + box.w / 2) * k; // cat's centre inside its canvas
+          const padBottom = (H - (box.y + box.h)) * k;
+          const catCentre = (box.x + box.w / 2) * k;
           img.style.bottom = Math.round(floor - padBottom + adj.y) + 'px';
           img.style.marginLeft = Math.round(centreX - catCentre + adj.x) + 'px';
         });
       }
-      poseImgs.forEach(img => img.addEventListener('load', layoutPoses));
-      layoutPoses();
+      poseImgs.forEach(img => img.addEventListener('load', scheduleLayout));
+      scheduleLayout();
 
       /* =====================================================
          Element references
