@@ -4973,7 +4973,6 @@
         motesEl.appendChild(m);
         setTimeout(() => m.remove(), dur * 1000 + 200);
       }
-      for (let i = 0; i < 7; i++) setTimeout(spawnMote, i * 900);
       setInterval(spawnMote, 1900);
 
 
@@ -5240,7 +5239,10 @@
       /* =====================================================
          Stat decay loop
          ===================================================== */
-      setInterval(() => {
+      let gameStarted = false;
+      let statTimer = null;
+
+      function tickStats() {
         if (state.sleeping) {
           state.energy = clamp(state.energy + 6);
           if (state.energy >= 100) {
@@ -5254,7 +5256,16 @@
           state.happy = clamp(state.happy - (state.hunger < 20 ? 3 : 1));
         }
         renderAll();
-      }, 4000);
+      }
+
+      /* called once, when she presses "Wake Nova up" */
+      function startGame() {
+        if (gameStarted) return;
+        gameStarted = true;
+        startGame();
+        statTimer = setInterval(tickStats, 4000); // hunger / energy / happiness start here
+        for (let i = 0; i < 7; i++) setTimeout(spawnMote, i * 900); // floating dust starts here
+      }
 
       /* =====================================================
          Room navigation
@@ -5408,10 +5419,14 @@
         const MIN_MS = 15000; // shortest time the splash stays up
         const MAX_MS = 24000; // stop waiting for slow images after this long
         const splash = document.getElementById('splash');
-        if (!splash) return;
+        if (!splash) {
+          startGame();
+          return;
+        }
         try {
           if (SPLASH_ONCE && sessionStorage.getItem('novaSplashSeen')) {
             splash.remove();
+            startGame();
             return;
           }
         } catch (e) {}
