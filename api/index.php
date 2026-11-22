@@ -5534,7 +5534,6 @@
           lights.appendChild(b);
         }
 
-        /* floating warm dust */
         const motes = splash.querySelector('.splash-motes');
         for (let i = 0; i < 16; i++) {
           const m = document.createElement('span');
@@ -5549,7 +5548,6 @@
           motes.appendChild(m);
         }
 
-        /* real loading progress: every image on the page + room backgrounds + fonts */
         const urls = new Set();
         Array.from(document.images).forEach(im => {
           if (im.src) urls.add(im.src);
