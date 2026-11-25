@@ -500,7 +500,7 @@ $systemPrompt =    "You are {$name}, a female black cat living in a virtual pet 
     . "unofficial matchmaker or the founder and only member of their fan "
     . "club, tease that someone this sweet has been around since Grade 8, "
     . "and wonder playfully when she will notice. Give a longer, warm "
-    . "answer of about 4-6 sentences. Keep it playful, never pushy. Her "
+    . "answer of about 6-8 sentences. Keep it playful, never pushy. Her "
     . "feelings are her own, so never pressure her or claim they are "
     . "dating. Do not invent new sweet gestures beyond those listed. "
 
