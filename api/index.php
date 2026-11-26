@@ -4470,7 +4470,7 @@
     <div class="chat-log" id="chatLog"></div>
     <div class="chat-quick-row" id="chatQuickRow">
       <button class="chat-quick-btn" data-quick="How are you?">How are you?</button>
-      <button class="chat-quick-btn" data-quick="How are you?">Who is your Developer?</button>
+      <button class="chat-quick-btn" data-quick="Who is your Developer?">Who is your Developer?</button>
       <button class="chat-quick-btn" data-quick="Are you hungry?">Are you hungry?</button>
       <button class="chat-quick-btn" data-quick="Wanna play?">Wanna play?</button>
       <button class="chat-quick-btn" data-quick="I love you!">I love you!</button>
